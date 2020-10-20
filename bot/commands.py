@@ -3,12 +3,14 @@ from typing import Union, List
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from bot.constants import ADMINS_KEY, SURVEYS_MANAGE
+from bot.constants import ADMINS_KEY, SURVEYS_MANAGE, START_ARGLESS
 from bot.manage import manage
 
 def start(update: Update, context: CallbackContext) -> None:
     if context.args[0] == SURVEYS_MANAGE:
         manage(context.bot_data)
+    else:
+        update.message.reply_text(START_ARGLESS)
 
 def show_id(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.from_user.id)
