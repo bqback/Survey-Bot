@@ -14,6 +14,7 @@ def check(update: Update, context: CallbackContext, commands: List[str], logger)
     bot_data = context.bot_data
 
     if user_id in bot_data[ADMINS_KEY]:
+        logger.info('Admin {} used command {}'.format(user_id, update.message.text))
         return
     elif update.message.text in commands:
         logger.info('User {} tried to access admin only command {}'.format(user_id, update.message.text))

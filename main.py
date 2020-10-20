@@ -16,8 +16,8 @@ def main():
 
     log = config['bot']['log']
     token = config['bot']['token']
-    admins = config['bot']['admins']
     pickle = config['bot']['pickle']
+    admins = [int(admin_id) for admin_id in config['bot']['admins'].split(', ')]
     defaults = config.items('defaults')
     defaults = dict(defaults)
 
