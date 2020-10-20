@@ -18,8 +18,7 @@ def main():
     token = config['bot']['token']
     pickle = config['bot']['pickle']
     admins = [int(admin_id) for admin_id in config['bot']['admins'].split(', ')]
-    defaults = config.items('defaults')
-    defaults = dict(defaults)
+    defaults = dict(config.items('defaults'))
 
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,

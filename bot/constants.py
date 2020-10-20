@@ -1,2 +1,7 @@
 SURVEYS_KEY = 'surveys'
 ADMINS_KEY = 'admins'
+SURVEY_TITLE_KEY = 'survey_title'
+SURVEY_DESCRIPTION_KEY = 'survey_description'
+SURVEYS_NONE = 'Опросов пока что нет! Создайте новый опрос, нажав на кнопку выше'
+SURVEYS_MANAGE_BUTTON = 'Управление опросами'
+SURVEYS_MANAGE = 'manage'

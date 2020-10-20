@@ -13,12 +13,19 @@ def check(update: Update, context: CallbackContext, commands: List[str], logger)
     user_id = update.effective_user.id
     bot_data = context.bot_data
 
-    if user_id in bot_data[ADMINS_KEY]:
-        logger.info('Admin {} used command {}'.format(user_id, update.message.text))
-        return
-    elif update.message.text in commands:
-        logger.info('User {} tried to access admin only command {}'.format(user_id, update.message.text))
-        raise DispatcherHandlerStop()
+    if update.message:
+        if user_id in bot_data[ADMINS_KEY]:
+            logger.info('Admin {} used command {}'.format(user_id, update.message.text))
+            return
+        elif update.message.text in commands:
+            logger.info('User {} tried to access admin only command {}'.format(user_id, update.message.text))
+            raise DispatcherHandlerStop()
+
+    if update.inline_query:
+        if user_id in bot_data[ADMINS_KEY]:
+            return
+        else:
+            raise DispatcherHandlerStop()
 
     if update.poll_answer:
         return

@@ -9,11 +9,12 @@ import bot.access as access
 
 from telegram import BotCommand, Update
 from telegram.utils.request import Request
-from telegram.ext import Dispatcher, CommandHandler, Filters, TypeHandler
+from telegram.ext import Dispatcher, CommandHandler, InlineQueryHandler, TypeHandler
 
 BOT_COMMANDS: List[BotCommand] = [
-    BotCommand('show_id', 'Replies with id of the user. Admins only.'),
-    BotCommand('update_admins', 'Updates the list of admin ids. Admins only.')
+    BotCommand('start', 'Reserved for managing surveys'),
+    BotCommand('show_id', 'Replies with id of the user'),
+    BotCommand('update_admins', 'Updates the list of admin ids')
 ]
 
 COMMAND_LIST: List[str] = [entry.command for entry in BOT_COMMANDS]
@@ -22,9 +23,10 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
 
     dispatcher.add_handler(TypeHandler(Update, partial(access.check, commands = COMMAND_LIST, logger = logger)), group = -2)
 
-    # dispatcher.add_handler(InlineQueryHandler(inline.surveys))
-    dispatcher.add_handler(CommandHandler('show_id', partial(commands.show_id, logger = logger)))
-    dispatcher.add_handler(CommandHandler('update_admins', partial(commands.update_admins, logger = logger, admins = admins)))
+    dispatcher.add_handler(InlineQueryHandler(inline.surveys))
+    dispatcher.add_handler(CommandHandler('start', commands.start))
+    dispatcher.add_handler(CommandHandler('show_id', commands.show_id))
+    dispatcher.add_handler(CommandHandler('update_admins', partial(commands.update_admins, admins = admins)))
 
     # Set commands
     dispatcher.bot.set_my_commands(BOT_COMMANDS)
