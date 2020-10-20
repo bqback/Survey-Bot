@@ -1,2 +1,2 @@
 SURVEYS_KEY = 'surveys'
-ADMIN_KEY = 'admin'
+ADMINS_KEY = 'admins'
