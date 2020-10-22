@@ -3,13 +3,18 @@ from typing import Union, List
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from bot.constants import ADMINS_KEY, SURVEYS_MANAGE, START_ARGLESS
-from bot.manage import manage
+import bot.conv_constants as cc
+
+from bot.constants import ADMINS_KEY, SURVEYS_MANAGE_ARG, START_ARGLESS
+from bot.keyboards import INITIAL_STATE
+
 
 def start(update: Update, context: CallbackContext) -> None:
     try:
-        if context.args[0] == SURVEYS_MANAGE:
-            manage(context.bot_data)
+        if context.args[0] == SURVEYS_MANAGE_ARG:
+            user = update.effective_user
+            update.message.reply_text('Добро пожаловать, {}!'.format(user.first_name), reply_markup = INITIAL_STATE)
+            return cc.START
     except IndexError:
         update.message.reply_text(START_ARGLESS)
 
