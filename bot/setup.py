@@ -31,29 +31,33 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
     dispatcher.add_handler(ConversationHandler(
                 entry_points = [CommandHandler('start', commands.start)],
                 states = {
-                    cc.START: [
+                    cc.START_STATE: [
                         CallbackQueryHandler(manage.start_survey, pattern='^'+cc.START_SURVEY_CB+'$'),
                         CallbackQueryHandler(manage.manage_surveys, pattern='^'+cc.MANAGE_SURVEYS_CB+'$')
                     ],
-                    cc.START_SURV: [
-                        CallbackQueryHandler(manage.get_description, pattern='^'+cc.CREATE_SURVEY_CB+'$'),
+                    cc.START_SURVEY_STATE: [
+                        CallbackQueryHandler(manage.get_title, pattern='^'+cc.CREATE_SURVEY_CB+'$'),
                     ],
-                    cc.GET_DESC: [
-                        MessageHandler(filters.Filters.text, manage.save_description)
-                    ]
-                    сс.START_OVER: [
-                        CallbackQueryHandler(manage.get_description, pattern='^'+cc.YES_CB+'$'),
+                    cc.GET_TITLE_STATE: [
+                        MessageHandler(filters.Filters.text, manage.save_title)
+                    ],
+                    cc.START_OVER_STATE: [
+                        CallbackQueryHandler(manage.get_title, pattern='^'+cc.YES_CB+'$'),
                         CallbackQueryHandler(manage.to_prev_step, pattern='^'+cc.NO_CB+'$')
                     ],
-                    cc.MAIN_MENU: [
-                        CallbackQueryHandler(manage.get_description, pattern='^'+cc.YES_CB+'$'),
+                    cc.MAIN_MENU_STATE: [
+                        CallbackQueryHandler(manage.start, pattern='^'+cc.YES_CB+'$'),
                         CallbackQueryHandler(manage.to_prev_step, pattern='^'+cc.NO_CB+'$')
+                    ],
+                    cc.MANAGE_SURVEYS_STATE: [
+                        CallbackQueryHandler(manage.get_title, pattern='^'+cc.CREATE_SURVEY_CB+'$'),
+                        CallbackQueryHandler(manage.choose_survey, pattern='^'+cc.CREATE_SURVEY_CB+'$')
                     ]
                 },
                 fallbacks = [
-                    CallbackQueryHandler(manage.to_prev_step, pattern='^'+cc.RETURN_CB+'$')
-                    CallbackQueryHandler(manage.confirm_start_over, pattern='^'+cc.RETURN_START_OVER_CB+'$')
-                    CallbackQueryHandler(manage.confirm_return_to_main, pattern='^'+cc.RETURN_TO_MAIN_CB+'$')
+                    CallbackQueryHandler(manage.to_prev_step, pattern='^'+cc.RETURN_CB+'$'),
+                    CallbackQueryHandler(manage.confirm_start_over, pattern='^'+cc.RETURN_START_OVER_CB+'$'),
+                    CallbackQueryHandler(manage.confirm_return_to_main, pattern='^'+cc.RETURN_TO_MAIN_CB+'$'),
                     CommandHandler('start', commands.start)
                 ]
         ))

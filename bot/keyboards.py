@@ -2,7 +2,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 import bot.conv_constants as cc
 
-INITIAL_STATE = InlineKeyboardMarkup(
+INITIAL_STATE_KB = InlineKeyboardMarkup(
 	[
 		[
 			InlineKeyboardButton(cc.START_SURVEY, callback_data = cc.START_SURVEY_CB),
@@ -11,7 +11,7 @@ INITIAL_STATE = InlineKeyboardMarkup(
 	]
 )
 
-START_SURVEY_NONE = InlineKeyboardMarkup(
+START_SURVEY_NONE_KB = InlineKeyboardMarkup(
 	[
 		[
 			InlineKeyboardButton(cc.CREATE_SURVEY, callback_data = cc.CREATE_SURVEY_CB),
@@ -20,7 +20,7 @@ START_SURVEY_NONE = InlineKeyboardMarkup(
 	]
 )
 
-RETURN_FROM_FIRST_STEP = InlineKeyboardMarkup(
+RETURN_FROM_FIRST_STEP_KB = InlineKeyboardMarkup(
 	[
 		[
 			InlineKeyboardButton(cc.RETURN, callback_data = cc.RETURN_CB)
@@ -28,7 +28,7 @@ RETURN_FROM_FIRST_STEP = InlineKeyboardMarkup(
 	]
 )
 
-RETURN_KEYBOARD = InlineKeyboardMarkup(
+RETURN_KB = InlineKeyboardMarkup(
 	[
 		[
 			InlineKeyboardButton(cc.RETURN, callback_data = cc.RETURN_CB),
@@ -38,7 +38,16 @@ RETURN_KEYBOARD = InlineKeyboardMarkup(
 	]
 )
 
-MULTIPLE_ANSWERS = InlineKeyboardMarkup(
+MANAGE_SURVEYS_KB = InlineKeyboardMarkup(
+	[
+		[
+			InlineKeyboardButton(cc.CREATE_SURVEY, callback_data = cc.CREATE_SURVEY_CB),
+			InlineKeyboardButton('Несколько', callback_data = 'MULTIPLE')
+		]
+	]
+)
+
+MULTIPLE_ANSWERS_KB = InlineKeyboardMarkup(
 	[
 		[
 			InlineKeyboardButton('Один вариант', callback_data = 'ONE'),
@@ -47,7 +56,8 @@ MULTIPLE_ANSWERS = InlineKeyboardMarkup(
 	]
 )
 
-YES_NO = InlineKeyboardMarkup(
+
+YES_NO_KB = InlineKeyboardMarkup(
 	[
 		[
 			InlineKeyboardButton(cc.YES, callback_data = cc.YES_CB),

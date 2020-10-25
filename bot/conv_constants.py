@@ -1,17 +1,17 @@
-START, START_SURV, GET_DESC, START_OVER, MAIN_MENU = range(5)
+START_STATE, START_SURVEY_STATE, GET_TITLE_STATE, START_OVER_STATE, MAIN_MENU_STATE, MANAGE_SURVEYS_STATE = range(6)
 
 START_SURVEY = 'Начать опрос'
 START_SURVEY_CB = 'START_SURVEY'
 MANAGE_SURVEYS = 'Управление'
 MANAGE_SURVEYS_CB = 'MANAGE_SURVEYS'
-CREATE_SURVEY = 'Новый опрос'
+CREATE_SURVEY = 'Создать опрос'
 CREATE_SURVEY_CB = 'CREATE_SURVEY'
 RETURN = 'Вернуться назад'
 RETURN_CB = 'RETURN'
-RETURN_RESTART = 'Начать заново'
-RETURN_RESTART_CB = 'RETURN_RESTART'
+RETURN_START_OVER = 'Начать заново'
+RETURN_START_OVER_CB = 'RETURN_RESTART'
 RETURN_TO_MAIN = 'Вернуться в главное меню'
-RETURN_RESTART_CB = 'RETURN_TO_MAIN'
+RETURN_TO_MAIN_CB = 'RETURN_TO_MAIN'
 CONFIRM_START_OVER = 'Вы уверены, что хотите начать заново? Данные не будут сохранены!'
 CONFIRM_RETURN_TO_MAIN = 'Вы уверены, что хотите вернуться в главное меню? Данные не будут сохранены!'
 YES = 'Да'
