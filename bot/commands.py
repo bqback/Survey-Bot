@@ -6,14 +6,14 @@ from telegram.ext import CallbackContext
 import bot.conv_constants as cc
 
 from bot.constants import ADMINS_KEY, SURVEYS_MANAGE_ARG, START_ARGLESS
-from bot.keyboards import INITIAL_STATE
+from bot.keyboards import INITIAL_STATE_KB
 
 
 def start(update: Update, context: CallbackContext) -> None:
     try:
         if context.args[0] == SURVEYS_MANAGE_ARG:
             user = update.effective_user
-            update.message.reply_text('Добро пожаловать, {}!'.format(user.first_name), reply_markup = INITIAL_STATE)
+            update.message.reply_text('Добро пожаловать, {}!'.format(user.first_name), reply_markup = INITIAL_STATE_KB)
             return cc.START
     except IndexError:
         update.message.reply_text(START_ARGLESS)

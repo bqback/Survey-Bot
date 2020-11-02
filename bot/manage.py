@@ -55,8 +55,10 @@ def save_title(update: Update, context: CallbackContext) -> int:
 
 def manage_surveys(update: Update, context: CallbackContext) -> int:
 	update.message.reply_text('Выберите действие', reply_markup = MANAGE_SURVEYS_KB)
-
 	return cc.MANAGE_SURVEYS_STATE
+
+def choose_survey(update: Update, context: CallbackContext) -> int:
+	
 
 def to_prev_step(update: Update, context: CallbackContext) -> int:
 	argsdict = {'update': update, 'context': context}
