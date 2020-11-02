@@ -51,7 +51,7 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
                     ],
                     cc.MANAGE_SURVEYS_STATE: [
                         CallbackQueryHandler(manage.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB)),
-                        CallbackQueryHandler(manage.choose_survey, pattern='^{}$'.format(cc.CREATE_SURVEY_CB))
+                        CallbackQueryHandler(manage.choose_survey, pattern='^{}$'.format(cc.EDIT_SURVEY_CB))
                     ]
                 },
                 fallbacks = [

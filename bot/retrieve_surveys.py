@@ -1,7 +1,9 @@
 from typing import Dict, List, Tuple, Union
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import ConversationHandler, CallbackQueryHandler
 
+from bot.manage import manage
 import bot.conv_constants as cc
 
 def _prepare_titles(surveys: Dict) -> Tuple[List[List[str]], List[str]]:
@@ -16,7 +18,7 @@ def _prepare_titles(surveys: Dict) -> Tuple[List[List[str]], List[str]]:
 			page = []
 	return (titles, callbacks)
 
-def _prepare_keyboards(surveys: Dict, titles: List[List[str]], callbacks: List[str]) -> List[List[Union[InlineKeyboardButton, List[InlineKeyboardButton]]]]:
+def _prepare_keyboards(surveys: Dict, titles: List[List[str]], callbacks: List[str]) -> List[InlineKeyboardMarkup]:
 	keyboards = []
 	kb_page = []
 	row = []
@@ -45,9 +47,22 @@ def _prepare_keyboards(surveys: Dict, titles: List[List[str]], callbacks: List[s
 							]	
 						)
 		page.append(InlineKeyboardButton(cc.RETURN, callback_data = cc.RETURN_CB))	
-		keyboards.append(page)
+		keyboards.append(InlineKeyboardMarkup(page))
 		page = []
 	return keyboards
+
+def _prepare_conversation(titles, keyboards):
+	pages = range(7, 7+len(titles)-1)
+	states = {}
+	for i, page in enumerate(pages):
+		handlers = []
+		for key in sum(keyboards[i]):
+			handlers.append(CallbackQueryHandler())
+	conversation = ConversationHandler(
+		entry_points = [CallbackQueryHandler(manage.choose_survey, pattern='^{}$'.format(cc.EDIT_SURVEY_CB))],
+
+	)
+	return conversation
 
 class SurveyList():
 	def __init__(surveys: Dict):

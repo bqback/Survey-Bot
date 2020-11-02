@@ -42,7 +42,7 @@ MANAGE_SURVEYS_KB = InlineKeyboardMarkup(
 	[
 		[
 			InlineKeyboardButton(cc.CREATE_SURVEY, callback_data = cc.CREATE_SURVEY_CB),
-
+			InlineKeyboardButton(cc.CHOOSE_SURVEY, callback_data = cc.CHOOSE_SURVEY_CB),
 		]
 	]
 )
