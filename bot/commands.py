@@ -14,7 +14,7 @@ def start(update: Update, context: CallbackContext) -> None:
         if context.args[0] == SURVEYS_MANAGE_ARG:
             user = update.effective_user
             update.message.reply_text('Добро пожаловать, {}!'.format(user.first_name), reply_markup = INITIAL_STATE_KB)
-            return cc.START
+            return cc.START_STATE
     except IndexError:
         update.message.reply_text(START_ARGLESS)
 

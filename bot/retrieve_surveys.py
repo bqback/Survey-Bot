@@ -1,4 +1,6 @@
 from typing import Dict, List, Tuple, Union
+from functools import partial
+import re
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ConversationHandler, CallbackQueryHandler
@@ -51,13 +53,14 @@ def _prepare_keyboards(surveys: Dict, titles: List[List[str]], callbacks: List[s
 		page = []
 	return keyboards
 
-def _prepare_conversation(titles, keyboards):
+def _prepare_conversation(titles, keyboards, callbacks):
 	pages = range(7, 7+len(titles)-1)
 	states = {}
 	for i, page in enumerate(pages):
 		handlers = []
 		for key in sum(keyboards[i]):
-			handlers.append(CallbackQueryHandler())
+			if not re.match('^(PAGE\d*|{})$'.format(cc.RETURN_CB), key.callback_data):
+				handlers.append(CallbackQueryHandler(partial(manage.load_survey, title = key.callback_data)))
 	conversation = ConversationHandler(
 		entry_points = [CallbackQueryHandler(manage.choose_survey, pattern='^{}$'.format(cc.EDIT_SURVEY_CB))],
 
@@ -68,5 +71,6 @@ class SurveyList():
 	def __init__(surveys: Dict):
 		self.titles, self.callbacks = _prepare_titles(surveys)
 		self.keyboards = _prepare_keyboards(surveys, self.titles, self.callbacks)
+		self.conversation = _prepare_conversation(self.titles, self.keyboards, self.callbacks)
 
 	
