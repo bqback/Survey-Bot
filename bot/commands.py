@@ -24,3 +24,27 @@ def show_id(update: Update, context: CallbackContext) -> None:
 def update_admins(update: Update, context: CallbackContext, admins: Union[int, List[int]]) -> None:
     context.bot_data[ADMINS_KEY] = admins
     update.message.reply_text('Admin list updated!')
+
+def show_current_survey(update: Update, context: CallbackContext) -> None:
+    try:
+        current = context.chat_data['current_survey']
+        title_error, desc_error, question_error = False, False, False
+        try:
+            print('Название текущего опроса: {}'.format(current['title']))
+        except KeyError:
+            title_error = True
+            print('У текущего опроса нет названия (Чё)')
+        try:
+            print('Описание текущего опроса: {}'.format(current['desc']))
+        except KeyError:
+            desc_error = True
+            print('У текущего опроса нет описания (Чё)')
+        try:
+            for question in current['questions']:
+                print('{} ({})'.format(question['question'], ))
+        except KeyError:
+            desc_error = True
+            print('У текущего опроса нет описания (Чё)')
+    except KeyError:
+        print('В настоящее время не обрабатывается опрос')
+    

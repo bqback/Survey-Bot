@@ -5,9 +5,8 @@ from telegram import Update
 
 
 from bot.constants import SURVEYS_NONE, SURVEYS_KEY
-from bot.keyboards import (INITIAL_STATE_KB, START_SURVEY_NONE_KB, RETURN_FROM_FIRST_STEP_KB, YES_NO_KB,
-						  RETURN_KB, MANAGE_SURVEYS_KB)
 
+import bot.keyboards as kb
 import bot.conv_constants as cc
 
 def start(update: Update, context: CallbackContext)	-> int:
@@ -15,7 +14,7 @@ def start(update: Update, context: CallbackContext)	-> int:
 	user = update.effective_user
 	query.answer()
 	query.edit_message_text(
-        	'Добро пожаловать, {}!'.format(user.first_name), reply_markup = INITIAL_STATE_KB
+        	'Добро пожаловать, {}!'.format(user.first_name), reply_markup = kb.INITIAL_STATE_KB
     )	
 	context.chat_data['last_handler'] = 'start'
 	context.chat_data['last_state'] = cc.START_STATE
@@ -36,7 +35,7 @@ def start_survey(update: Update, context: CallbackContext) -> int:
 	return cc.START_SURVEY_STATE
 
 def manage_surveys(update: Update, context: CallbackContext) -> int:
-	update.message.reply_text('Выберите действие', reply_markup = MANAGE_SURVEYS_KB)
+	update.message.reply_text('Выберите действие', reply_markup = kb.MANAGE_SURVEYS_KB)
 	return cc.MANAGE_SURVEYS_STATE
 
 def choose_survey(update: Update, context: CallbackContext) -> int:

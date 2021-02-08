@@ -9,6 +9,7 @@ import bot.inline as inline
 import bot.access as access
 import bot.manage as manage
 import bot.compose as compose
+import bot.edit as edit
 
 from telegram import BotCommand, Update
 from telegram.utils.request import Request
@@ -90,7 +91,8 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
             CallbackQueryHandler(manage.confirm_start_over, pattern='^{}$'.format(cc.START_OVER_SURVEY_CB)),
         ],
         map_to_parent = {
-            cc.END: cc.START_STATE
+            cc.END: cc.START_STATE,
+            cc.START_STATE: cc.START_STATE
         })
 
     edit_survey = ConversationHandler(
@@ -100,16 +102,28 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
                 MessageHandler(filters.Filters.text, edit.pick_part)
             ],
             cc.PICK_PART_STATE: [
-                CallbackQueryHandler(edit.title, pattern='^{}$'.format(cc.CREATION_COMPLETE_CB)),
-                CallbackQueryHandler(edit.desc, pattern='^{}$'.format(cc.EDIT_SURVEY_CB)),
-                CallbackQueryHandler(edit.questions, pattern='^{}$'.format(cc.START_OVER_SURVEY_CB)),
-            ]
+                CallbackQueryHandler(edit.title, pattern='^{}$'.format(cc.EDIT_TITLE_CB)),
+                CallbackQueryHandler(edit.desc, pattern='^{}$'.format(cc.EDIT_DESC_CB)),
+                CallbackQueryHandler(edit.questions, pattern='^{}$'.format(cc.EDIT_QUESTIONS_CB)),
+            ],
+            cc.EDIT_TITLE_STATE: [
+                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.NEW_TITLE_CB)),
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.KEEP_CURRENT_TITLE_CB))
+            ],
+            cc.GET_TITLE_STATE: [
+                MessageHandler(filters.Filters.text, compose.save_title)
+            ],
+            cc.SAVE_TITLE_STATE: [
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.SAVE_TITLE_CB)),
+                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+            ],
         },
         fallbacks=[
-            CallbackQueryHandler(edit.title, pattern='^{}$'.format(cc.CREATION_COMPLETE_CB)),
+            CallbackQueryHandler(manage.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
         ],
         map_to_parent = {
-            cc.END: cc.START_STATE
+            cc.END: cc.START_STATE,
+            cc.START_STATE: cc.START_STATE
         })
 
     main_conv = ConversationHandler(
@@ -120,7 +134,7 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
                         CallbackQueryHandler(manage.manage_surveys, pattern='^{}$'.format(cc.MANAGE_SURVEYS_CB))
                     ],
                     cc.START_SURVEY_STATE: [
-                        CallbackQueryHandler(manage.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB)),
+                        CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB)),
                     ],
                     cc.START_OVER_STATE: [
                         CallbackQueryHandler(manage.get_title, pattern='^{}$'.format(cc.YES_CB)),

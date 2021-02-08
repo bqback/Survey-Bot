@@ -14,7 +14,6 @@ INITIAL_STATE_KB = InlineKeyboardMarkup(
 MAIN_MENU_KB = InlineKeyboardMarkup(
 	[
 		[
-			InlineKeyboardButton(cc.START_OVER, callback_data = cc.RETURN_TO_MAIN_CB)
 			InlineKeyboardButton(cc.RETURN_TO_MAIN, callback_data = cc.RETURN_TO_MAIN_CB)
 		]
 	]
@@ -94,6 +93,33 @@ REVIEW_KB = InlineKeyboardMarkup(
 		[
 			InlineKeyboardButton(cc.EDIT_SURVEY, callback_data = cc.EDIT_SURVEY_CB),
 			InlineKeyboardButton(cc.START_OVER_SURVEY, callback_data = cc.START_OVER_SURVEY_CB)
+		]
+	]
+)
+
+PICK_PART_KB = InlineKeyboardMarkup(
+	[
+		[
+			InlineKeyboardButton(cc.EDIT_TITLE, callback_data = cc.EDIT_TITLE_CB),
+			InlineKeyboardButton(cc.EDIT_DESC, callback_data = cc.EDIT_DESC_CB),
+			InlineKeyboardButton(cc.EDIT_QUESTIONS, callback_data = cc.EDIT_QUESTIONS_CB)
+		],
+		[
+			InlineKeyboardButton(cc.CHOOSE_ANOTHER, callback_data = cc.CHOOSE_ANOTHER_CB)
+		],
+		[
+			InlineKeyboardButton(cc.RETURN_TO_MAIN, callback_data = cc.RETURN_TO_MAIN_CB)
+		]
+	]
+)
+
+EDIT_TITLE_KB = InlineKeyboardMarkup(
+	[
+		[
+			InlineKeyboardButton(cc.NEW_TITLE, callback_data = cc.NEW_TITLE_CB)
+		],
+		[
+			InlineKeyboardButton(cc.KEEP_CURRENT_TITLE, callback_data = cc.KEEP_CURRENT_TITLE_CB)
 		]
 	]
 )
