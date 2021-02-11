@@ -36,3 +36,12 @@ def title(update: Update, context: CallbackContext) -> int:
 	query.answer()
 	update.message.reply_text('Текущее название: {}'.format(context.chat_data['current_survey']['title']), reply_markup = kb.EDIT_TITLE_KB)
 	return cc.EDIT_TITLE_STATE
+
+def desc(update: Update, context: CallbackContext) -> int:
+	query = update.callback_query
+	query.answer()
+	update.message.reply_text('Текущее описание: {}'.format(context.chat_data['current_survey']['desc']), reply_markup = kb.EDIT_DESC_KB)
+	return cc.EDIT_DESC_STATE
+
+def questions(update: Update, context: CallbackContext) -> int:
+	return cc.PICK_QUESTION_STATE

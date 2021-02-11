@@ -1,50 +1,117 @@
+import os
+import sys
+import re
+import logging
+
+from functools import partial
+from threading import Thread
 from typing import Union, List
+from configparser import ConfigParser
 
 from telegram import Update
-from telegram.ext import CallbackContext
+from telegram.ext import CallbackContext, Updater
 
 import bot.conv_constants as cc
+import bot.keyboards as kb
 
-from bot.constants import ADMINS_KEY, SURVEYS_MANAGE_ARG, START_ARGLESS
-from bot.keyboards import INITIAL_STATE_KB
-
+from bot.constants import ADMINS_KEY, SURVEYS_MANAGE_ARG
 
 def start(update: Update, context: CallbackContext) -> None:
     try:
         if context.args[0] == SURVEYS_MANAGE_ARG:
             user = update.effective_user
-            update.message.reply_text('Добро пожаловать, {}!'.format(user.first_name), reply_markup = INITIAL_STATE_KB)
+            update.message.reply_text('Добро пожаловать, {}!'.format(user.first_name), reply_markup = kb.INITIAL_STATE_KB)
             return cc.START_STATE
     except IndexError:
-        update.message.reply_text(START_ARGLESS)
+        update.message.reply_text(cc.START_ARGLESS)
 
 def show_id(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.from_user.id)
 
-def update_admins(update: Update, context: CallbackContext, admins: Union[int, List[int]]) -> None:
+def update_admins(update: Update, context: CallbackContext) -> None:
+    config = ConfigParser()
+    config.read('bot.ini')
+    admins = [int(admin_id) for admin_id in config.get('bot', 'admins').split(',')]
     context.bot_data[ADMINS_KEY] = admins
     update.message.reply_text('Admin list updated!')
+
+def add_admin(update: Update, context: CallbackContext) -> None:
+    if len(context.args) > 0:
+        config = ConfigParser(comment_prefixes = '/', allow_no_value = True)
+        config.read_file(open('bot.ini'))
+        admins = config['bot']['admins']
+        admin_list = admins.split(',')
+        for new_admin in context.args:
+            new_admin = re.sub('[^0-9 ]+', '', new_admin)
+            if new_admin not in admin_list:
+                admins += ',{}'.format(new_admin)
+                update.message.reply_text('New admin {} was added!'.format(new_admin))
+            else:
+                update.message.reply_text('Admin {} is already on the list!'.format(new_admin))
+        config['bot']['admins'] = admins
+        config.write(open('bot.ini', 'w'))
+    else:
+        update.message.reply_text('You must include a list of IDs to add!')
+
+def remove_admin(update: Update, context: CallbackContext) -> None:
+    if len(context.args) > 0:
+        config = ConfigParser(comment_prefixes = '/', allow_no_value = True)
+        config.read_file(open('bot.ini'))
+        admins = config['bot']['admins']
+        admin_list = admins.split(',')
+        for remove_admin in context.args:
+            remove_admin = re.sub('[^0-9 ]+', '', remove_admin)
+            if remove_admin in admin_list:
+                admin_list.remove(remove_admin)
+                update.message.reply_text('Admin {} was removed!'.format(remove_admin))
+            else:
+                update.message.reply_text('Admin {} is not on the admin list!'.format(remove_admin))
+        config['bot']['admins'] = ','.join(admin_list)
+        config.write(open('bot.ini', 'w'))
+    else:
+        update.message.reply_text('You must include a list of IDs to remove!')
+
+def restart(update: Update, context: CallbackContext, updater: Updater) -> None:
+    update.message.reply_text('Restarting...')
+    Thread(target = partial(stop_and_restart, updater = updater)).start()
+
+def stop_and_restart(updater: Updater) -> None:
+    updater.stop()
+    sys.argv[0] = '"' + sys.argv[0] + '"'
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+def rotate_log(update: Update, context: CallbackContext) -> None:
+    logger = logging.getLogger(__name__)
+    logger.info("Rotating log over as per {}'s request".format(update.effective_user.id))
+    logger.info('\n---------\nLog closed on %s.\n---------\n' % time.asctime())
+    logger.handlers[0].doRollover()
 
 def show_current_survey(update: Update, context: CallbackContext) -> None:
     try:
         current = context.chat_data['current_survey']
-        title_error, desc_error, question_error = False, False, False
+        print(current)
+        out = ''
         try:
-            print('Название текущего опроса: {}'.format(current['title']))
+            out += 'Название текущего опроса:\n{}\n\n'.format(current['title'])
         except KeyError:
-            title_error = True
-            print('У текущего опроса нет названия (Чё)')
+            out += 'У текущего опроса нет названия (Чё)\n\n'
         try:
-            print('Описание текущего опроса: {}'.format(current['desc']))
+            out += 'Описание текущего опроса:\n{}\n\n'.format(current['desc'])
         except KeyError:
-            desc_error = True
-            print('У текущего опроса нет описания (Чё)')
+            out += 'У текущего опроса нет описания (Чё)\n\n'
         try:
+            out += 'Вопросы:\n'
             for question in current['questions']:
-                print('{} ({})'.format(question['question'], ))
+                multi = 'неск. вариантов' if question['multi'] else 'один вариант'
+                out += '\n{} ({})'.format(question['question'], multi)
+                try:
+                    for answer in question['answers']:
+                        out += '\n\t{}'.format(answer)
+                except KeyError:
+                    out += 'У текущего вопроса нет ответов (Чё)\n'
         except KeyError:
-            desc_error = True
-            print('У текущего опроса нет описания (Чё)')
+            out += 'У текущего опроса нет вопросов (Чё)\n\n'
     except KeyError:
-        print('В настоящее время не обрабатывается опрос')
+        out += 'В настоящее время не обрабатывается опрос'
+    update.message.reply_text(out)
     

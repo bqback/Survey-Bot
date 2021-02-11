@@ -3,8 +3,11 @@
 SAVE_QUESTION_STATE, GET_MULTIANS_STATE, RECORD_MULTIANS_STATE, SAVE_MULTIANS_STATE,
 GET_ANSWER_STATE, RECORD_ANSWER_STATE, SAVE_ANSWER_STATE, REVIEW_STATE, END,
 START_OVER_STATE) = range(5, 20)
-(PICK_SURVEY_STATE, PICK_PART_STATE, EDIT_TITLE_STATE, EDIT_DESC_STATE) = range(20, 24)
+(PICK_SURVEY_STATE, PICK_PART_STATE, EDIT_TITLE_STATE, EDIT_DESC_STATE, PICK_QUESTION_STATE) = range(20, 25)
 
+START_ARGLESS = 'Команда зарезервирована для управления опросами через результаты поиска. Используйте /start manage'
+SURVEYS_NONE = 'Опросов пока что нет! Создайте новый опрос, нажав на кнопку выше'
+CHOOOSE_ACTION = 'Выберите действие'
 START_SURVEY = 'Начать опрос'
 START_SURVEY_CB = 'START_SURVEY'
 MANAGE_SURVEYS = 'Управление'

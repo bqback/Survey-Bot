@@ -124,6 +124,17 @@ EDIT_TITLE_KB = InlineKeyboardMarkup(
 	]
 )
 
+EDIT_TITLE_KB = InlineKeyboardMarkup(
+	[
+		[
+			InlineKeyboardButton(cc.NEW_DESC, callback_data = cc.NEW_DESC_CB)
+		],
+		[
+			InlineKeyboardButton(cc.KEEP_CURRENT_DESC, callback_data = cc.KEEP_CURRENT_DESC_CB)
+		]
+	]
+)
+
 RETURN_FROM_FIRST_STEP_KB = InlineKeyboardMarkup(
 	[
 		[

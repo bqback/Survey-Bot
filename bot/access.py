@@ -1,3 +1,5 @@
+import logging
+
 from re import match
 from typing import List
 
@@ -6,7 +8,9 @@ from telegram.ext import CallbackContext, DispatcherHandlerStop
 
 from bot.constants import ADMINS_KEY
 
-def check(update: Update, context: CallbackContext, logger) -> None:
+def check(update: Update, context: CallbackContext) -> None:
+
+    logger = logging.getLogger(__name__)
  
     if not update.effective_user:
         raise DispatcherHandlerStop()

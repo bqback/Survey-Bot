@@ -13,23 +13,35 @@ import bot.edit as edit
 
 from telegram import BotCommand, Update
 from telegram.utils.request import Request
-from telegram.ext import (Dispatcher, CommandHandler, InlineQueryHandler, ConversationHandler, 
+from telegram.ext import (Updater, CommandHandler, InlineQueryHandler, ConversationHandler, 
                           TypeHandler, CallbackQueryHandler, MessageHandler, filters)
 
 BOT_COMMANDS: List[BotCommand] = [
-    BotCommand('start', 'Reserved for managing surveys'),
+    BotCommand('add_admin', '[ADMIN] Adds an admin or a list of admins,\nseparated by a space, comma or semicolon'),
+    BotCommand('restart', '[ADMIN] Restarts the bot'),
+    BotCommand('remove_admin', '[ADMIN] Removes an admin or a list of admins. separated by a space, comma or semicolon'),
+    BotCommand('rotate_log', '[ADMIN] Backs up current log and starts a new one'),
+    BotCommand('show_current_survey', 'Displays everything contained in the current survey'),
     BotCommand('show_id', 'Replies with id of the user'),
-    BotCommand('update_admins', 'Updates the list of admin ids')
+    BotCommand('start', 'Reserved for managing surveys'),
+    BotCommand('update_admins', '[ADMIN] Updates the list of admin ids')
 ]
 
-def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], logger) -> None:
+def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None:
 
-    dispatcher.add_handler(TypeHandler(Update, partial(access.check, logger = logger)), group = -2)
+    dispatcher = updater.dispatcher
+
+    dispatcher.add_handler(TypeHandler(Update, access.check), group = -2)
 
     dispatcher.add_handler(InlineQueryHandler(inline.surveys))
+    dispatcher.add_handler(CommandHandler('add_admin', commands.add_admin))
+    dispatcher.add_handler(CommandHandler('restart', partial(commands.restart, updater = updater)))
+    dispatcher.add_handler(CommandHandler('remove_admin', commands.remove_admin))
+    dispatcher.add_handler(CommandHandler('rotate_log', commands.rotate_log))
+    dispatcher.add_handler(CommandHandler('show_current_survey', commands.show_current_survey))
     dispatcher.add_handler(CommandHandler('show_id', commands.show_id))
-    dispatcher.add_handler(CommandHandler('update_admins', partial(commands.update_admins, admins = admins)))
-
+    dispatcher.add_handler(CommandHandler('update_admins', commands.update_admins))
+    
     add_survey = ConversationHandler(
         entry_points = [CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB))],
         states = {
@@ -117,6 +129,20 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
                 CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.SAVE_TITLE_CB)),
                 CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
             ],
+            cc.EDIT_DESC_STATE: [
+                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.NEW_DESC_CB)),
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.KEEP_CURRENT_DESC_CB))
+            ],
+            cc.GET_DESC_STATE: [
+                MessageHandler(filters.Filters.text, compose.save_desc)
+            ],
+            cc.SAVE_DESC_STATE: [
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.SAVE_DESC_CB)),
+                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+            ],
+            cc.PICK_QUESTION_STATE: [
+                MessageHandler(filters.Filters.text, compose.save_title)
+            ]
         },
         fallbacks=[
             CallbackQueryHandler(manage.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
@@ -134,21 +160,8 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
                         CallbackQueryHandler(manage.manage_surveys, pattern='^{}$'.format(cc.MANAGE_SURVEYS_CB))
                     ],
                     cc.START_SURVEY_STATE: [
-                        CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB)),
-                    ],
-                    cc.START_OVER_STATE: [
-                        CallbackQueryHandler(manage.get_title, pattern='^{}$'.format(cc.YES_CB)),
-                        CallbackQueryHandler(manage.to_prev_step, pattern='^{}$'.format(cc.NO_CB))
-                    ],
-                    cc.MAIN_MENU_STATE: [
-                        CallbackQueryHandler(manage.start, pattern='^{}$'.format(cc.YES_CB)),
-                        CallbackQueryHandler(manage.to_prev_step, pattern='^{}$'.format(cc.NO_CB))
-                    ],
-                    cc.MANAGE_SURVEYS_STATE: [
-                        CallbackQueryHandler(manage.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB)),
-                        CallbackQueryHandler(manage.choose_survey, pattern='^{}$'.format(cc.CHOOSE_SURVEY_CB))
-                    ],
-                    cc.GET_TITLE_STATE: add_survey
+                        add_survey,
+                    ]
                 },
                 fallbacks = [
                     CallbackQueryHandler(manage.to_prev_step, pattern='^{}$'.format(cc.RETURN_CB)),
@@ -157,6 +170,8 @@ def register_dispatcher(dispatcher: Dispatcher, admins: Union[int, List[int]], l
                     CommandHandler('start', commands.start)
                 ]
         )
+
+    dispatcher.add_handler(main_conv)
 
     # Set commands
     dispatcher.bot.set_my_commands(BOT_COMMANDS)
