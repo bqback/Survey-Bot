@@ -2,6 +2,7 @@ import os
 import sys
 import re
 import logging
+import importlib
 
 from functools import partial
 from threading import Thread
@@ -12,18 +13,15 @@ from telegram import Update
 from telegram.ext import CallbackContext, Updater
 
 import bot.conv_constants as cc
-import bot.keyboards as kb
+import bot.root as root
+import bot.keyboards as kbs
 
 from bot.constants import ADMINS_KEY, SURVEYS_MANAGE_ARG
 
-def start(update: Update, context: CallbackContext) -> None:
-    try:
-        if context.args[0] == SURVEYS_MANAGE_ARG:
-            user = update.effective_user
-            update.message.reply_text('Добро пожаловать, {}!'.format(user.first_name), reply_markup = kb.INITIAL_STATE_KB)
-            return cc.START_STATE
-    except IndexError:
-        update.message.reply_text(cc.START_ARGLESS)
+text = None
+kb = None
+
+logger = logging.getLogger(__name__)
 
 def show_id(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.from_user.id)
@@ -82,7 +80,7 @@ def stop_and_restart(updater: Updater) -> None:
 
 def rotate_log(update: Update, context: CallbackContext) -> None:
     logger = logging.getLogger(__name__)
-    logger.info("Rotating log over as per {}'s request".format(update.effective_user.id))
+    logger.info('{}: Rotating log over as requested'.format(update.effective_user.id))
     logger.info('\n---------\nLog closed on %s.\n---------\n' % time.asctime())
     logger.handlers[0].doRollover()
 
@@ -114,4 +112,18 @@ def show_current_survey(update: Update, context: CallbackContext) -> None:
     except KeyError:
         out += 'В настоящее время не обрабатывается опрос'
     update.message.reply_text(out)
-    
+
+def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
+    global text
+    global kb
+    if lang == '🇷🇺':
+        context.user_data['lang'] = 'ru'
+        text = importlib.import_module('locale.{}'.format(context.user_data['lang']))
+        kb = kbs.Keyboards(context.user_data['lang'])
+    elif lang == '🇺🇸':
+        context.user_data['lang'] = 'en'
+        text = importlib.import_module('locale.{}'.format(context.user_data['lang']))
+        kb = kbs.Keyboards(context.user_data['lang'])
+    else:
+        logger.error('User {} picked an invalid language?'.format(update.effective_user.id))
+    root.start(update, context)

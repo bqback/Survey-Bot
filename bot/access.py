@@ -17,19 +17,23 @@ def check(update: Update, context: CallbackContext) -> None:
     
     user_id = update.effective_user.id
     bot_data = context.bot_data
+    user_data = context.user_data
 
     if update.message:
-        if match('^\/.*', update.message.text):
-            if not match('^\/show_id$', update.message.text):
-                if user_id in bot_data[ADMINS_KEY]:
-                    logger.info('Admin {} used command {}'.format(user_id, update.message.text))
-                    return
+        if not user_data['lang']:
+            raise DispatcherHandlerStop()
+        else:
+            if match('^\/.*', update.message.text):
+                if not match('^\/show_id$', update.message.text):
+                    if user_id in bot_data[ADMINS_KEY]:
+                        logger.info('Admin {} used command {}'.format(user_id, update.message.text))
+                        return
+                    else:
+                        logger.info('User {} tried to access admin only command {}'.format(user_id, update.message.text))
+                        raise DispatcherHandlerStop()
                 else:
-                    logger.info('User {} tried to access admin only command {}'.format(user_id, update.message.text))
-                    raise DispatcherHandlerStop()
-            else:
-                logger.info('User {} used command {}'.format(user_id, update.message.text))
-                return
+                    logger.info('User {} used command {}'.format(user_id, update.message.text))
+                    return
 
     if update.inline_query:
         if user_id in bot_data[ADMINS_KEY]:

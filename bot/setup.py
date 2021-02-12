@@ -23,7 +23,7 @@ BOT_COMMANDS: List[BotCommand] = [
     BotCommand('rotate_log', '[ADMIN] Backs up current log and starts a new one'),
     BotCommand('show_current_survey', 'Displays everything contained in the current survey'),
     BotCommand('show_id', 'Replies with id of the user'),
-    BotCommand('start', 'Reserved for managing surveys'),
+    # BotCommand('start', 'Reserved for managing surveys'),
     BotCommand('update_admins', '[ADMIN] Updates the list of admin ids')
 ]
 
@@ -44,7 +44,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
 
     edit_survey = ConversationHandler(
         entry_points = [
-            CallbackQueryHandler(partial(edit.pick_part, source = 'compose'), pattern='^{}$'.format(cc.EDIT_SURVEY_COMPOSE_CB))
+            CallbackQueryHandler(partial(edit.pick_part, source = 'compose'), pattern='^{}$'.format(cc.EDIT_SURVEY_COMPOSE_CB)),
             CallbackQueryHandler(partial(edit.pick_part, source = 'manage'), pattern='^{}$'.format(cc.EDIT_SURVEY_MANAGE_CB))
         ],
         states = {
@@ -80,7 +80,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             ]
         },
         fallbacks=[
-            CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
+            CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB)),
             CallbackQueryHandler(edit.save_changes, pattern='^{}$'.format(cc.SAVE_AND_EXIT_CB))
         ],
         map_to_parent = {
@@ -154,8 +154,12 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
         })
 
     main_conv = ConversationHandler(
-                entry_points = [CommandHandler('start', commands.start)],
+                entry_points = [CommandHandler('start', root.start)],
                 states = {
+                    cc.LANG_STATE: [
+                        CallbackQueryHandler(partial(commands.set_lang, lang = ru), pattern='^{}$'.format(cc.RU_CB)),
+                        CallbackQueryHandler(partial(commands.set_lang, lang = en), pattern='^{}$'.format(cc.EN_CB)),
+                    ],
                     cc.START_STATE: [
                         CallbackQueryHandler(root.start_survey, pattern='^{}$'.format(cc.START_SURVEY_CB)),
                         CallbackQueryHandler(root.manage_surveys, pattern='^{}$'.format(cc.MANAGE_SURVEYS_CB))
@@ -169,7 +173,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                     CallbackQueryHandler(root.to_prev_step, pattern='^{}$'.format(cc.RETURN_CB)),
                     CallbackQueryHandler(root.confirm_start_over, pattern='^{}$'.format(cc.RETURN_START_OVER_CB)),
                     CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB)),
-                    CommandHandler('start', commands.start)
+                    CommandHandler('start', root.start)
                 ]
         )
 
