@@ -6,14 +6,15 @@ from functools import partial
 
 from bot.constants import SURVEYS_KEY
 
-import bot.manage as manage
+import bot.root as root
 import bot.conv_constants as cc
 import bot.keyboards as kb
 
 def get_title(update: Update, context: CallbackContext) -> int:
 	query = update.callback_query
 	query.answer()
-	context.chat_data['current_survey'] = {'id': str(uuid4())}
+	if not context.chat_data['current_survey']:
+		context.chat_data['current_survey'] = {'id': str(uuid4())}
 	context.bot.send_message(
 			chat_id = update.effective_chat.id,
 			text = 'Введите краткое название опроса.\nЭто название будет отображаться в списке опросов при управлении или запуске опроса.'
@@ -152,5 +153,5 @@ def finish(update: Update, context: CallbackContext, returning = False) -> int:
 	context.bot_data[SURVEYS_KEY].append(surv)
 	context.chat_data['current_survey'] = None
 	context.chat_data['survey_out'] = None
-	manage.start(update, context)
+	root.start(update, context)
 	return cc.END

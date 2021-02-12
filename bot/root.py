@@ -14,10 +14,9 @@ def start(update: Update, context: CallbackContext)	-> int:
 	user = update.effective_user
 	query.answer()
 	query.edit_message_text(
-        	'Добро пожаловать, {}!'.format(user.first_name), reply_markup = kb.INITIAL_STATE_KB
-    )	
-	context.chat_data['last_handler'] = 'start'
-	context.chat_data['last_state'] = cc.START_STATE
+        	text = cc.WELCOME + ', {}!'.format(user.first_name), 
+        	reply_markup = kb.INITIAL_STATE_KB
+    	)
 	return cc.START_STATE
 
 def start_survey(update: Update, context: CallbackContext) -> int:
@@ -25,13 +24,19 @@ def start_survey(update: Update, context: CallbackContext) -> int:
 	query.answer()
 	bot_data = context.bot_data
 	if len(context.bot_data[SURVEYS_KEY]) > 0:
-		return
+		survey_list = ''
+		for idx, survey in enumerate(context.bot_data[SURVEYS_KEY]):
+			survey_list.append('{}. {}\n'.format(idx, survey['title']))
+		query.edit_message_text(
+				text = cc.SURVEYS_EXIST + '\n\n' + survey_list + 
+				'\n\n' + cc.SELECT_SURVEY_HOWTO,
+				reply_markup = kb.MAIN_MENU_KB
+			)
 	else:
 		query.edit_message_text(
-        	text = cc.SURVEYS_NONE, reply_markup = kb.START_SURVEY_NONE_KB
-    	)
-	context.chat_data['last_handler'] = 'start_survey'
-	context.chat_data['last_state'] = cc.START_SURVEY_STATE
+        		text = cc.SURVEYS_NONE, 
+        		reply_markup = kb.START_SURVEY_NONE_KB
+    		)
 	return cc.START_SURVEY_STATE
 
 def manage_surveys(update: Update, context: CallbackContext) -> int:
@@ -39,7 +44,9 @@ def manage_surveys(update: Update, context: CallbackContext) -> int:
 	user = update.effective_user
 	query.answer()
 	query.edit_message_text(
-			text = cc.CHOOSE_ACTION, reply_markup = kb.MANAGE_SURVEYS_KB)
+			text = cc.CHOOSE_ACTION, 
+			reply_markup = kb.MANAGE_SURVEYS_KB
+		)
 	return cc.MANAGE_SURVEYS_STATE
 
 def choose_survey(update: Update, context: CallbackContext) -> int:

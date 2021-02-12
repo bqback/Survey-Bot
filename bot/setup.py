@@ -7,7 +7,7 @@ import bot.conv_constants as cc
 import bot.commands as commands
 import bot.inline as inline
 import bot.access as access
-import bot.manage as manage
+import bot.root as root
 import bot.compose as compose
 import bot.edit as edit
 
@@ -41,6 +41,52 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
     dispatcher.add_handler(CommandHandler('show_current_survey', commands.show_current_survey))
     dispatcher.add_handler(CommandHandler('show_id', commands.show_id))
     dispatcher.add_handler(CommandHandler('update_admins', commands.update_admins))
+
+    edit_survey = ConversationHandler(
+        entry_points = [
+            CallbackQueryHandler(partial(edit.pick_part, source = 'compose'), pattern='^{}$'.format(cc.EDIT_SURVEY_COMPOSE_CB))
+            CallbackQueryHandler(partial(edit.pick_part, source = 'manage'), pattern='^{}$'.format(cc.EDIT_SURVEY_MANAGE_CB))
+        ],
+        states = {
+            cc.PICK_PART_STATE: [
+                CallbackQueryHandler(edit.title, pattern='^{}$'.format(cc.EDIT_TITLE_CB)),
+                CallbackQueryHandler(edit.desc, pattern='^{}$'.format(cc.EDIT_DESC_CB)),
+                CallbackQueryHandler(edit.questions, pattern='^{}$'.format(cc.EDIT_QUESTIONS_CB)),
+            ],
+            cc.EDIT_TITLE_STATE: [
+                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.NEW_TITLE_CB)),
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.KEEP_CURRENT_TITLE_CB))
+            ],
+            cc.GET_TITLE_STATE: [
+                MessageHandler(filters.Filters.text, compose.save_title)
+            ],
+            cc.SAVE_TITLE_STATE: [
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.SAVE_TITLE_CB)),
+                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+            ],
+            cc.EDIT_DESC_STATE: [
+                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.NEW_DESC_CB)),
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.KEEP_CURRENT_DESC_CB))
+            ],
+            cc.GET_DESC_STATE: [
+                MessageHandler(filters.Filters.text, compose.save_desc)
+            ],
+            cc.SAVE_DESC_STATE: [
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.SAVE_DESC_CB)),
+                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+            ],
+            cc.PICK_QUESTION_STATE: [
+                MessageHandler(filters.Filters.text, edit.question)
+            ]
+        },
+        fallbacks=[
+            CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
+            CallbackQueryHandler(edit.save_changes, pattern='^{}$'.format(cc.SAVE_AND_EXIT_CB))
+        ],
+        map_to_parent = {
+            cc.END_COMPOSE: cc.REVIEW_STATE,
+            cc.END_MANAGE: cc.PICK_SURVEY_STATE
+        })
     
     add_survey = ConversationHandler(
         entry_points = [CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB))],
@@ -92,7 +138,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             ],
             cc.REVIEW_STATE: [
                 CallbackQueryHandler(compose.finish, pattern='^{}$'.format(cc.CREATION_COMPLETE_CB)),
-                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.EDIT_SURVEY_CB)),
+                edit_survey
             ],
             cc.START_OVER_STATE: [
                 CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.YES_CB)),
@@ -100,52 +146,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             ]
         },
         fallbacks=[
-            CallbackQueryHandler(manage.confirm_start_over, pattern='^{}$'.format(cc.START_OVER_SURVEY_CB)),
-        ],
-        map_to_parent = {
-            cc.END: cc.START_STATE,
-            cc.START_STATE: cc.START_STATE
-        })
-
-    edit_survey = ConversationHandler(
-        entry_points = [CallbackQueryHandler(edit.pick_survey, pattern='^{}$'.format(cc.PICK_SURVEY_CB))],
-        states = {
-            cc.PICK_SURVEY_STATE: [
-                MessageHandler(filters.Filters.text, edit.pick_part)
-            ],
-            cc.PICK_PART_STATE: [
-                CallbackQueryHandler(edit.title, pattern='^{}$'.format(cc.EDIT_TITLE_CB)),
-                CallbackQueryHandler(edit.desc, pattern='^{}$'.format(cc.EDIT_DESC_CB)),
-                CallbackQueryHandler(edit.questions, pattern='^{}$'.format(cc.EDIT_QUESTIONS_CB)),
-            ],
-            cc.EDIT_TITLE_STATE: [
-                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.NEW_TITLE_CB)),
-                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.KEEP_CURRENT_TITLE_CB))
-            ],
-            cc.GET_TITLE_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_title)
-            ],
-            cc.SAVE_TITLE_STATE: [
-                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.SAVE_TITLE_CB)),
-                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.EDIT_DESC_STATE: [
-                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.NEW_DESC_CB)),
-                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.KEEP_CURRENT_DESC_CB))
-            ],
-            cc.GET_DESC_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_desc)
-            ],
-            cc.SAVE_DESC_STATE: [
-                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.SAVE_DESC_CB)),
-                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.PICK_QUESTION_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_title)
-            ]
-        },
-        fallbacks=[
-            CallbackQueryHandler(manage.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
+            CallbackQueryHandler(root.confirm_start_over, pattern='^{}$'.format(cc.START_OVER_SURVEY_CB)),
         ],
         map_to_parent = {
             cc.END: cc.START_STATE,
@@ -156,17 +157,18 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                 entry_points = [CommandHandler('start', commands.start)],
                 states = {
                     cc.START_STATE: [
-                        CallbackQueryHandler(manage.start_survey, pattern='^{}$'.format(cc.START_SURVEY_CB)),
-                        CallbackQueryHandler(manage.manage_surveys, pattern='^{}$'.format(cc.MANAGE_SURVEYS_CB))
+                        CallbackQueryHandler(root.start_survey, pattern='^{}$'.format(cc.START_SURVEY_CB)),
+                        CallbackQueryHandler(root.manage_surveys, pattern='^{}$'.format(cc.MANAGE_SURVEYS_CB))
                     ],
                     cc.START_SURVEY_STATE: [
                         add_survey,
+                        MessageHandler(filters.Filters.text)
                     ]
                 },
                 fallbacks = [
-                    CallbackQueryHandler(manage.to_prev_step, pattern='^{}$'.format(cc.RETURN_CB)),
-                    CallbackQueryHandler(manage.confirm_start_over, pattern='^{}$'.format(cc.RETURN_START_OVER_CB)),
-                    CallbackQueryHandler(manage.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB)),
+                    CallbackQueryHandler(root.to_prev_step, pattern='^{}$'.format(cc.RETURN_CB)),
+                    CallbackQueryHandler(root.confirm_start_over, pattern='^{}$'.format(cc.RETURN_START_OVER_CB)),
+                    CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB)),
                     CommandHandler('start', commands.start)
                 ]
         )

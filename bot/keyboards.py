@@ -91,7 +91,9 @@ REVIEW_KB = InlineKeyboardMarkup(
 			InlineKeyboardButton(cc.CREATION_COMPLETE, callback_data = cc.CREATION_COMPLETE_CB)
 		],
 		[
-			InlineKeyboardButton(cc.EDIT_SURVEY, callback_data = cc.EDIT_SURVEY_CB),
+			InlineKeyboardButton(cc.EDIT_SURVEY, callback_data = cc.EDIT_SURVEY_COMPOSE_CB)
+		],
+		[
 			InlineKeyboardButton(cc.START_OVER_SURVEY, callback_data = cc.START_OVER_SURVEY_CB)
 		]
 	]
@@ -105,7 +107,7 @@ PICK_PART_KB = InlineKeyboardMarkup(
 			InlineKeyboardButton(cc.EDIT_QUESTIONS, callback_data = cc.EDIT_QUESTIONS_CB)
 		],
 		[
-			InlineKeyboardButton(cc.CHOOSE_ANOTHER, callback_data = cc.CHOOSE_ANOTHER_CB)
+			InlineKeyboardButton(cc.SAVE_AND_EXIT, callback_data = cc.SAVE_AND_EXIT_CB)
 		],
 		[
 			InlineKeyboardButton(cc.RETURN_TO_MAIN, callback_data = cc.RETURN_TO_MAIN_CB)
