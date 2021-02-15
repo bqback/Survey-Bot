@@ -10,6 +10,7 @@ import bot.access as access
 import bot.root as root
 import bot.compose as compose
 import bot.edit as edit
+import bot.poll as poll
 
 from telegram import BotCommand, Update
 from telegram.utils.request import Request
@@ -121,7 +122,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                 CallbackQueryHandler(partial(compose.save_multi, multi = False), pattern='^{}$'.format(cc.NO_CB))
             ],
             cc.SAVE_MULTIANS_STATE: [
-                CallbackQueryHandler(compose.get_answer, pattern='^{}$'.format(cc.SAVE_MULTI_CB)),
+                CallbackQueryHandler(compose.get_answer, pattern='^{}$'.format(cc.YES_CB)),
                 CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
             ],
             cc.GET_ANSWER_STATE: [
@@ -157,16 +158,16 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                 entry_points = [CommandHandler('start', root.start)],
                 states = {
                     cc.LANG_STATE: [
-                        CallbackQueryHandler(partial(commands.set_lang, lang = ru), pattern='^{}$'.format(cc.RU_CB)),
-                        CallbackQueryHandler(partial(commands.set_lang, lang = en), pattern='^{}$'.format(cc.EN_CB)),
+                        CallbackQueryHandler(partial(commands.set_lang, lang = "ru"), pattern="^{}$".format(cc.RU_CB)),
+                        CallbackQueryHandler(partial(commands.set_lang, lang = "en"), pattern="^{}$".format(cc.EN_CB)),
                     ],
                     cc.START_STATE: [
-                        CallbackQueryHandler(root.start_survey, pattern='^{}$'.format(cc.START_SURVEY_CB)),
-                        CallbackQueryHandler(root.manage_surveys, pattern='^{}$'.format(cc.MANAGE_SURVEYS_CB))
+                        CallbackQueryHandler(root.start_survey, pattern="^{}$".format(cc.START_SURVEY_CB)),
+                        CallbackQueryHandler(root.manage_surveys, pattern="^{}$".format(cc.MANAGE_SURVEYS_CB))
                     ],
                     cc.START_SURVEY_STATE: [
                         add_survey,
-                        MessageHandler(filters.Filters.text)
+                        MessageHandler(filters.Filters.text, poll.preview)
                     ]
                 },
                 fallbacks = [

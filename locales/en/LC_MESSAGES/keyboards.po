@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-02-14 00:10+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:26
+msgid "Начать опрос"
+msgstr "Start a survey"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:27
+msgid "Управлениe"
+msgstr "Survey management"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:35
+msgid "Вернуться в главное меню"
+msgstr "Return to main menu"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:43
+msgid "Создать опрос"
+msgstr "Create a survey"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:44
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:161
+msgid "Вернуться назад"
+msgstr "Return"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:52
+msgid "Сохранить название"
+msgstr "Save title"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:53
+msgid "Ввести название заново"
+msgstr "Enter the title again"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:61
+msgid "Сохранить описание"
+msgstr "Save description"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:62
+msgid "Ввести описание заново"
+msgstr "Enter the description again"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:70
+msgid "Сохранить вопрос"
+msgstr "Save question"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:71
+msgid "Ввести вопрос заново"
+msgstr "Enter the question again"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:79
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:188
+msgid "Да"
+msgstr "Yes"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:80
+msgid "Выбрать заново"
+msgstr "Choose again"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:88
+msgid "Сохранить ответ"
+msgstr "Save answer"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:89
+msgid "Ввести ответ заново"
+msgstr "Enter the answer again"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:97
+msgid "Добавить ещё один ответ"
+msgstr "Add another answer"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:98
+msgid "Перейти к следующему вопросу"
+msgstr "Add another question"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:101
+msgid "Закончить и перейти к проверке опроса"
+msgstr "Save and review the survey"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:109
+msgid "Закончить создание и сохранить опрос"
+msgstr "Finish creating and save the survey"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:112
+msgid "Отредактировать опрос"
+msgstr "Edit survey"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:115
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:170
+msgid "Начать заново"
+msgstr "Start over"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:123
+msgid "Редактировать название"
+msgstr "Edit title"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:124
+msgid "Редактировать описание"
+msgstr "Edit description"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:125
+msgid "Редактировать вопросы"
+msgstr "Edit questions"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:128
+msgid "Сохранить изменения и выйти"
+msgstr "Save changes and return"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:131
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:171
+msgid "Выйти в главное меню"
+msgstr "Exit to main menu"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:139
+msgid "Ввести новое название"
+msgstr "Enter a new title"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:142
+msgid "Сохранить текущее название"
+msgstr "Keep current title"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:150
+msgid "Ввести новое описание"
+msgstr "Enter a new description"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:153
+msgid "Сохранить текущее описание"
+msgstr "Keep current description"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:169
+msgid "Вернуться на предыдущий шаг"
+msgstr "Return to previous step"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:179
+msgid "Создать новый опрос"
+msgstr "Create a new survey"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:180
+msgid "Выбрать из существующих"
+msgstr "Choose an existing survey"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:189
+msgid "Нет"
+msgstr "No"
+

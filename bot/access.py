@@ -20,16 +20,17 @@ def check(update: Update, context: CallbackContext) -> None:
     user_data = context.user_data
 
     if update.message:
-        if not user_data['lang']:
+        text = update.message.text
+        if 'lang' not in user_data and not match('^\/start$', text):
             raise DispatcherHandlerStop()
         else:
-            if match('^\/.*', update.message.text):
-                if not match('^\/show_id$', update.message.text):
+            if match('^\/.*', text):
+                if not match('^\/show_id$', text):
                     if user_id in bot_data[ADMINS_KEY]:
-                        logger.info('Admin {} used command {}'.format(user_id, update.message.text))
+                        logger.info('Admin {} used command {}'.format(user_id, text))
                         return
                     else:
-                        logger.info('User {} tried to access admin only command {}'.format(user_id, update.message.text))
+                        logger.info('User {} tried to access admin only command {}'.format(user_id, text))
                         raise DispatcherHandlerStop()
                 else:
                     logger.info('User {} used command {}'.format(user_id, update.message.text))
