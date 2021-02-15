@@ -29,7 +29,10 @@ class Keyboards():
             [
                 [
                     InlineKeyboardButton(_("Начать опрос"), callback_data = cc.START_SURVEY_CB),
-                    InlineKeyboardButton(_("Управлениe"), callback_data = cc.MANAGE_SURVEYS_CB)
+                    InlineKeyboardButton(_("Управлениe опросами"), callback_data = cc.MANAGE_SURVEYS_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Настройки"), callback_data = cc.START_SURVEY_CB)
                 ]
             ]
         )
@@ -192,6 +195,14 @@ class Keyboards():
                 [
                     InlineKeyboardButton(_("Да"), callback_data = cc.YES_CB),
                     InlineKeyboardButton(_("Нет"), callback_data = cc.NO_CB)
+                ]
+            ]
+        )
+
+        self.SETTINGS_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Язык"), callback_data = cc.SETTINGS_LANG_CB)
                 ]
             ]
         )

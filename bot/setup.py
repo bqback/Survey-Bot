@@ -11,6 +11,7 @@ import bot.root as root
 import bot.compose as compose
 import bot.edit as edit
 import bot.poll as poll
+import bot.settings as settings
 
 from telegram import BotCommand, Update
 from telegram.utils.request import Request
@@ -154,6 +155,18 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             cc.START_STATE: cc.START_STATE
         })
 
+    settings_conv = ConversationHandler(
+        entry_points = [CallbackQueryHandler(settings.pick, pattern='^{}$'.format(cc.SETTINGS_CB))],
+        states = {
+            cc.PICK_SETTING_STATE: [
+                CallbackQueryHandler(settings.lang, pattern="^{}$".format(cc.SETTINGS_LANG_CB))
+            ]
+        },
+        fallbacks = [],
+        map_to_parent = {
+            cc.LANG_STATE: cc.LANG_STATE
+        })
+
     main_conv = ConversationHandler(
                 entry_points = [CommandHandler('start', root.start)],
                 states = {
@@ -163,7 +176,8 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                     ],
                     cc.START_STATE: [
                         CallbackQueryHandler(root.start_survey, pattern="^{}$".format(cc.START_SURVEY_CB)),
-                        CallbackQueryHandler(root.manage_surveys, pattern="^{}$".format(cc.MANAGE_SURVEYS_CB))
+                        CallbackQueryHandler(root.manage_surveys, pattern="^{}$".format(cc.MANAGE_SURVEYS_CB)),
+                        settings_conv
                     ],
                     cc.START_SURVEY_STATE: [
                         add_survey,

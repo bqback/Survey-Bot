@@ -11,9 +11,9 @@ from bot.constants import SURVEYS_KEY
 import bot.conv_constants as cc
 import bot.keyboards as kbs
 
+_ = gettext.gettext
 kb = None
 
-_ = gettext.gettext
 logger = logging.getLogger(__name__)
 
 def start(update: Update, context: CallbackContext) -> int:

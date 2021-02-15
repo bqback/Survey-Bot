@@ -155,3 +155,6 @@ msgstr "Choose an existing survey"
 msgid "Нет"
 msgstr "No"
 
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:205
+msgid "Язык"
+msgstr "Language"

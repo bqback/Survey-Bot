@@ -155,3 +155,6 @@ msgstr "Выбрать из существующих"
 msgid "Нет"
 msgstr "Нет"
 
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:205
+msgid "Язык"
+msgstr "Язык"
