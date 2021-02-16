@@ -149,6 +149,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
         },
         fallbacks=[
             CallbackQueryHandler(root.confirm_start_over, pattern='^{}$'.format(cc.START_OVER_SURVEY_CB)),
+            CommandHandler('start', root.start)
         ],
         map_to_parent = {
             cc.END: cc.START_STATE,
@@ -164,7 +165,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
         },
         fallbacks = [],
         map_to_parent = {
-            cc.LANG_STATE: cc.LANG_STATE
+            cc.SETTINGS_LANG_STATE: cc.LANG_STATE
         })
 
     main_conv = ConversationHandler(

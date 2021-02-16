@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-02-16 01:30+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:34
+msgid ""
+"Введите краткое название опроса.\n"
+"Это название будет отображаться в списке опросов при управлении или запуске опроса."
+msgstr ""
+"Enter a short title for the survey.\n"
+"This title will be displayed in the survey list when managing surveys or starting one."
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:41
+msgid "Хотите сохранить это название?"
+msgstr "Do you want to save this title?"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:49
+msgid ""
+"Введите описание опроса.\n"
+"Это описание будет отправляться перед опросом для ознакомления."
+msgstr ""
+"Enter a description for this survey.\n"
+"This description will be submitted before the survey for users to get more information."
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:56
+msgid "Хотите сохранить это описание?"
+msgstr "Do you want to save this description?"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:68
+msgid "Введите текст вопроса №{num}"
+msgstr "Enter question #{num}"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:75
+msgid "Хотите сохранить этот вопрос?"
+msgstr "Do you want to save this question?"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:83
+msgid "У этого вопроса должно быть несколько вариантов ответа?"
+msgstr "Should this question have multiple choices?"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:93
+msgid "В этом вопросе можно будет выбрать несколько вариантов ответа"
+msgstr "Users will be able to select multiple answers"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:95
+msgid "В этом вопросе можно будет выбрать только один вариант ответа"
+msgstr "Users will only be able to select one answer"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:98
+msgid "Перейти к вводу ответов?"
+msgstr "Do you want to start adding answers?"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:112
+msgid "Введите текст ответа №{num}"
+msgstr "Enter answer #{num}"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:119
+msgid "Хотите сохранить этот ответ?"
+msgstr "Do you want to save this answer?"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:127
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:158
+msgid "Выберите действие"
+msgstr "Choose an action"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:137
+msgid "Проверьте, правильно ли составлен опрос"
+msgstr "Please review the survey and make sure everything is correct"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:145
+msgid " (можно выбрать несколько вариантов)"
+msgstr " (has multiple choices)"
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:147
+msgid " (можно выбрать только один вариант)"
+msgstr " (has a single choice)"

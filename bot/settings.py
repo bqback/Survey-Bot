@@ -35,4 +35,4 @@ def lang(update: Update, context: CallbackContext) -> int:
             text = f"{cc.CHOOSE_LANG}", 
             reply_markup = kbs.LANG_KB
         )
-    return cc.LANG_STATE
+    return cc.SETTINGS_LANG_STATE

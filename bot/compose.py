@@ -1,4 +1,5 @@
 import gettext
+import logging
 
 from uuid import uuid4
 
@@ -15,26 +16,29 @@ import bot.keyboards as kbs
 _ = gettext.gettext
 kb = None
 
+logger = logging.getLogger(__name__)
+
 def get_title(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
-    global text
     global kb
-    if not text:
-        text = importlib.import_module(f"locale.{context.user_data['lang']}")
-        kb = kbs.Keyboards(context.user_data['lang'])
+    global _
+    kb = kbs.Keyboards(context.user_data['lang'])
+    locale = gettext.translation('compose', localedir = 'locales', languages = [context.user_data['lang']])
+    locale.install()
+    _ = locale.gettext
     if 'current_survey' not in context.chat_data:
         context.chat_data['current_survey'] = {'id': str(uuid4())}
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.ENTER_TITLE}"
+            text = _("Введите краткое название опроса.\nЭто название будет отображаться в списке опросов при управлении или запуске опроса.")
         )
     return cc.GET_TITLE_STATE
 
 def save_title(update: Update, context: CallbackContext) -> int:
     context.chat_data['current_survey']['title'] = update.message.text
     update.message.reply_text(update.message.text)
-    update.message.reply_text(f"{text.SAVE_TITLE_TEXT}", reply_markup = kb.SAVE_TITLE_KB)
+    update.message.reply_text(_("Хотите сохранить это название?"), reply_markup = kb.SAVE_TITLE_KB)
     return cc.SAVE_TITLE_STATE
 
 def get_desc(update: Update, context: CallbackContext) -> int:
@@ -42,14 +46,14 @@ def get_desc(update: Update, context: CallbackContext) -> int:
     query.answer()
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.ENTER_DESC}"
+            text = _("Введите описание опроса.\nЭто описание будет отправляться перед опросом для ознакомления.")
         )
     return cc.GET_DESC_STATE
 
 def save_desc(update: Update, context: CallbackContext) -> int:
     context.chat_data['current_survey']['desc'] = update.message.text
     update.message.reply_text(update.message.text)
-    update.message.reply_text(f"{text.SAVE_DESC_TEXT}", reply_markup = kb.SAVE_DESC_KB)
+    update.message.reply_text(_("Хотите сохранить это описание?"), reply_markup = kb.SAVE_DESC_KB)
     return cc.SAVE_DESC_STATE
 
 def get_question(update: Update, context: CallbackContext, returning = False) -> int:
@@ -61,14 +65,14 @@ def get_question(update: Update, context: CallbackContext, returning = False) ->
         context.chat_data['current_survey']['questions'].pop()
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.ENTER_QUESTION}{len(context.chat_data['current_survey']['questions'])+1}"
+            text = _("Введите текст вопроса №{num}").format(num = len(context.chat_data['current_survey']['questions'])+1)
         )
     return cc.GET_QUESTION_STATE
 
 def save_question(update: Update, context: CallbackContext) -> int:
     context.chat_data['current_survey']['questions'].append({'question': update.message.text})
     update.message.reply_text(update.message.text)
-    update.message.reply_text(f"{text.SAVE_QUESTION_TEXT}", reply_markup = kb.SAVE_QUESTION_KB)
+    update.message.reply_text(_("Хотите сохранить этот вопрос?"), reply_markup = kb.SAVE_QUESTION_KB)
     return cc.GET_MULTIANS_STATE
 
 def get_multi(update: Update, context: CallbackContext) -> int:
@@ -76,7 +80,7 @@ def get_multi(update: Update, context: CallbackContext) -> int:
     query.answer()
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.ENTER_MULTI}", 
+            text = _("У этого вопроса должно быть несколько вариантов ответа?"), 
             reply_markup = kb.YES_NO_KB
         )
     return cc.RECORD_MULTIANS_STATE
@@ -86,12 +90,12 @@ def save_multi(update: Update, context: CallbackContext, multi: bool) -> int:
     query.answer()
     context.chat_data['current_survey']['questions'][-1]['multi'] = multi
     if multi:
-        query.edit_message_text(f"{text.MULTI_TRUE}")
+        query.edit_message_text(_("В этом вопросе можно будет выбрать несколько вариантов ответа"))
     else:
-        query.edit_message_text(f"{text.MULTI_FALSE}")
+        query.edit_message_text(_("В этом вопросе можно будет выбрать только один вариант ответа"))
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.START_ANSWERS}", 
+            text = _("Перейти к вводу ответов?"), 
             reply_markup = kb.SAVE_MULTI_KB
         )
     return cc.SAVE_MULTIANS_STATE
@@ -105,14 +109,14 @@ def get_answer(update: Update, context: CallbackContext, returning = False) -> i
         context.chat_data['current_survey']['questions'][-1]['answers'].pop()
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.ENTER_ANSWER}{len(context.chat_data['current_survey']['questions'][-1]['answers'])+1}"
+            text = _("Введите текст ответа №{num}").format(num = len(context.chat_data['current_survey']['questions'][-1]['answers'])+1)
         )
     return cc.GET_ANSWER_STATE
 
 def record_answer(update: Update, context: CallbackContext) -> int:
     context.chat_data['current_survey']['questions'][-1]['answers'].append(update.message.text)
     update.message.reply_text(update.message.text)
-    update.message.reply_text(f'{text.SAVE_ANSWER_TEXT}', reply_markup = kb.SAVE_ANSWER_KB)
+    update.message.reply_text(_("Хотите сохранить этот ответ?"), reply_markup = kb.SAVE_ANSWER_KB)
     return cc.RECORD_ANSWER_STATE
 
 def save_answer(update: Update, context: CallbackContext) -> int:
@@ -120,7 +124,7 @@ def save_answer(update: Update, context: CallbackContext) -> int:
     query.answer()
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.CHOOSE_ACTION}",
+            text = _("Выберите действие"),
             reply_markup = kb.NEXT_ANSWER_KB
         )
     return cc.SAVE_ANSWER_STATE
@@ -130,7 +134,7 @@ def review(update: Update, context: CallbackContext, returning = False) -> int:
     query.answer()
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f"{text.REVIEW_SURVEY}"
+            text = _("Проверьте, правильно ли составлен опрос")
         )
     if not returning:
         surv = context.chat_data['current_survey']
@@ -138,9 +142,9 @@ def review(update: Update, context: CallbackContext, returning = False) -> int:
         for question in surv['questions']:
             questions_out.append(question['question'])
             if question['multi']:
-                questions_out.append(f" {text.MULTI_CHOICE}")
+                questions_out.append(_(" (можно выбрать несколько вариантов)"))
             else:
-                questions_out.append(f" {text.SINGLE_CHOICE}")
+                questions_out.append(_(" (можно выбрать только один вариант)"))
             for idx, answer in enumerate(question['answers']):
                 questions_out.append(f"\n\t{idx+1}. {answer}")
             questions_out.append("\n\n")
@@ -151,7 +155,7 @@ def review(update: Update, context: CallbackContext, returning = False) -> int:
         )
     context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = f'{text.CHOOSE_ACTION}', 
+            text = _("Выберите действие"), 
             reply_markup = kb.REVIEW_KB
         )
     return cc.REVIEW_STATE

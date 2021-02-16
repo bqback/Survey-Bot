@@ -20,7 +20,6 @@ class Keyboards():
 
         global _
 
-        print(f"in kb {lang} {type(lang)}")
         locale = gettext.translation('keyboards', localedir = 'locales', languages = [lang])
         locale.install()
         _ = locale.gettext
@@ -32,7 +31,7 @@ class Keyboards():
                     InlineKeyboardButton(_("Управлениe опросами"), callback_data = cc.MANAGE_SURVEYS_CB)
                 ],
                 [
-                    InlineKeyboardButton(_("Настройки"), callback_data = cc.START_SURVEY_CB)
+                    InlineKeyboardButton(_("Настройки"), callback_data = cc.SETTINGS_CB)
                 ]
             ]
         )

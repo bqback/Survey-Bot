@@ -127,3 +127,4 @@ def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
         context.user_data['lang'] = None
         logger.error('User {} picked an invalid language?'.format(update.effective_user.id))
     root.start(update, context)
+    return cc.START_STATE

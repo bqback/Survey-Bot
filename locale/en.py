@@ -1,40 +1,3 @@
-# root.py
-WELCOME = 'Welcome'
-START_ARGLESS = 'This command is reserved for managing surveys through inline results. Use /start manage'
-SURVEYS_NONE = 'No surveys exist yet! You can start creating one using the button below'
-SURVEYS_EXIST = 'Choose a survey'
-SELECT_SURVEY_HOWTO = 'To choose a survey, send a message with its number'
-CHOOSE_ACTION = 'Choose an action'
-START_SURVEY = 'Start a survey'
-MANAGE_SURVEYS = 'Manage surveys'
-CREATE_SURVEY = 'Create a survey'
-CHOOSE_SURVEY = 'Choose a survey'
-
-# compose.py
-ENTER_TITLE = 'Enter a short title for the survey.\nThis title will be displayed in the survey list when managing surveys or starting one.'
-SAVE_TITLE_TEXT = 'Do you want to save this title?'
-SAVE_TITLE = 'Save title'
-ENTER_DESC = 'Enter a description for this survey.\nThis description will be submitted before the survey for users to get more information.'
-SAVE_DESC_TEXT = 'Do you want to save this description?'
-SAVE_DESC = 'Save description'
-ENTER_QUESTION = 'Enter question #'
-SAVE_QUESTION_TEXT = 'Do you want to save this question?'
-SAVE_QUESTION = 'Save question'
-ENTER_MULTI = 'Should this question have multiple choices?'
-MULTI_TRUE = 'Users will be able to select multiple answers'
-MULTI_FALSE = 'Users will only be able to select one answer'
-START_ANSWERS = 'Do you want to start adding answers?'
-ENTER_ANSWER = 'Enter answer #'
-SAVE_ANSWER_TEXT = 'Do you want to save this answer?'
-SAVE_ANSWER = 'Save answer'
-NEXT_ANSWER = 'Add another answer'
-NEXT_QUESTION = 'Add a question'
-FINISH_CREATING = 'Save and review the survey'
-REVIEW_SURVEY = 'Please review the survey and make sure everything is correct'
-MULTI_CHOICE = '(has multiple choices)'
-SINGLE_CHOICE = '(has a single choice)'
-CREATION_COMPLETE = 'Save and finish'
-
 # edit.py
 EDIT_SURVEY = 'Edit survey'
 START_OVER_SURVEY = 'Start over'
@@ -58,13 +21,4 @@ RETURN_START_OVER = 'Start over'
 RETURN_TO_MAIN = 'Return to main menu'
 CONFIRM_START_OVER = 'Are you sure you want to start over?\nUnsaved changes will be lost!'
 CONFIRM_RETURN_TO_MAIN = 'Are you sure you want to go back to the main menu?\nUnsaved changes will be lost!'
-YES = 'Yes'
-NO = 'No'
 LOG_ROTATE = 'Rotating log file'
-RESTARTING = 'Restarting'
-
-# commands.py
-CURRENT_SURVEY_TITLE = "Current survey's title"
-NO_TITLE = "Current survey has no title"
-CURRENT_SURVEY_DESC = "Current survey's description"
-NO_DESC = "Current survey has no description"
