@@ -6,12 +6,10 @@ from uuid import uuid4
 from telegram.ext import CallbackContext
 from telegram import Update
 
-from bot.constants import SURVEYS_KEY
-
+import bot.constants as consts
 import bot.conv_constants as cc
 import bot.keyboards as kbs
 
-_ = gettext.gettext
 kb = None
 
 logger = logging.getLogger(__name__)
@@ -43,9 +41,9 @@ def start_survey(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
     bot_data = context.bot_data
-    if len(context.bot_data[SURVEYS_KEY]) > 0:
+    if len(context.bot_data[consts.SURVEYS_KEY]) > 0:
         survey_list = ""
-        for idx, survey in enumerate(context.bot_data[SURVEYS_KEY]):
+        for idx, survey in enumerate(context.bot_data[consts.SURVEYS_KEY]):
             survey_list.append(f"{idx}. {survey['title']}\n")
         query.edit_message_text(
                 text = _("Выберите опрос из существующих\n\n"

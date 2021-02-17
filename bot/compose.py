@@ -7,8 +7,7 @@ from telegram.ext import CallbackContext
 from telegram import Update
 from functools import partial
 
-from bot.constants import SURVEYS_KEY
-
+import bot.constants as consts
 import bot.root as root
 import bot.conv_constants as cc
 import bot.keyboards as kbs
@@ -56,21 +55,27 @@ def save_desc(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(_("Хотите сохранить это описание?"), reply_markup = kb.SAVE_DESC_KB)
     return cc.SAVE_DESC_STATE
 
-def get_question(update: Update, context: CallbackContext, returning = False) -> int:
+def get_question(update: Update, context: CallbackContext, mode = 'compose', returning = False) -> int:
     query = update.callback_query
     query.answer()
-    if 'questions' not in context.chat_data['current_survey']:
-        context.chat_data['current_survey']['questions'] = []
-    if returning:
-        context.chat_data['current_survey']['questions'].pop()
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
-            text = _("Введите текст вопроса №{num}").format(num = len(context.chat_data['current_survey']['questions'])+1)
-        )
+    if mode == 'compose':
+        if 'questions' not in context.chat_data['current_survey']:
+            context.chat_data['current_survey']['questions'] = []
+        if returning:
+            context.chat_data['current_survey']['questions'].pop()
+        context.bot.send_message(
+                chat_id = update.effective_chat.id,
+                text = _("Введите текст вопроса №{num}").format(num = len(context.chat_data['current_survey']['questions'])+1)
+            )
+    else:
+        pass
     return cc.GET_QUESTION_STATE
 
-def save_question(update: Update, context: CallbackContext) -> int:
-    context.chat_data['current_survey']['questions'].append({'question': update.message.text})
+def save_question(update: Update, context: CallbackContext, mode = 'compose') -> int:
+    if mode == 'compose':
+        context.chat_data['current_survey']['questions'].append({'question': update.message.text})
+    else:
+        pass
     update.message.reply_text(update.message.text)
     update.message.reply_text(_("Хотите сохранить этот вопрос?"), reply_markup = kb.SAVE_QUESTION_KB)
     return cc.GET_MULTIANS_STATE
@@ -85,36 +90,43 @@ def get_multi(update: Update, context: CallbackContext) -> int:
         )
     return cc.RECORD_MULTIANS_STATE
 
-def save_multi(update: Update, context: CallbackContext, multi: bool) -> int:
+def save_multi(update: Update, context: CallbackContext, multi: bool, mode = 'compose') -> int:
     query = update.callback_query
     query.answer()
-    context.chat_data['current_survey']['questions'][-1]['multi'] = multi
-    if multi:
-        query.edit_message_text(_("В этом вопросе можно будет выбрать несколько вариантов ответа"))
+    if mode == 'compose':
+        context.chat_data['current_survey']['questions'][-1]['multi'] = multi
+        if multi:
+            query.edit_message_text(_("В этом вопросе можно будет выбрать несколько вариантов ответа"))
+        else:
+            query.edit_message_text(_("В этом вопросе можно будет выбрать только один вариант ответа"))
+        context.bot.send_message(
+                chat_id = update.effective_chat.id,
+                text = _("Перейти к вводу ответов?"), 
+                reply_markup = kb.SAVE_MULTI_KB
+            )
     else:
-        query.edit_message_text(_("В этом вопросе можно будет выбрать только один вариант ответа"))
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
-            text = _("Перейти к вводу ответов?"), 
-            reply_markup = kb.SAVE_MULTI_KB
-        )
+        pass
     return cc.SAVE_MULTIANS_STATE
 
-def get_answer(update: Update, context: CallbackContext, returning = False) -> int:
+def get_answer(update: Update, context: CallbackContext, mode = 'compose', returning = False) -> int:
     query = update.callback_query
     query.answer()
-    if 'answers' not in context.chat_data['current_survey']['questions'][-1]:
-        context.chat_data['current_survey']['questions'][-1]['answers'] = []
-    if returning:
-        context.chat_data['current_survey']['questions'][-1]['answers'].pop()
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
-            text = _("Введите текст ответа №{num}").format(num = len(context.chat_data['current_survey']['questions'][-1]['answers'])+1)
-        )
+    if mode == 'compose':
+        if 'answers' not in context.chat_data['current_survey']['questions'][-1]:
+            context.chat_data['current_survey']['questions'][-1]['answers'] = []
+        if returning:
+            context.chat_data['current_survey']['questions'][-1]['answers'].pop()
+        context.bot.send_message(
+                chat_id = update.effective_chat.id,
+                text = _("Введите текст ответа №{num}").format(num = len(context.chat_data['current_survey']['questions'][-1]['answers'])+1)
+            )
+    else:
+        pass
     return cc.GET_ANSWER_STATE
 
-def record_answer(update: Update, context: CallbackContext) -> int:
-    context.chat_data['current_survey']['questions'][-1]['answers'].append(update.message.text)
+def record_answer(update: Update, context: CallbackContext, mode = 'compose') -> int:
+    if mode == 'compose':
+        context.chat_data['current_survey']['questions'][-1]['answers'].append(update.message.text)
     update.message.reply_text(update.message.text)
     update.message.reply_text(_("Хотите сохранить этот ответ?"), reply_markup = kb.SAVE_ANSWER_KB)
     return cc.RECORD_ANSWER_STATE
@@ -164,8 +176,8 @@ def finish(update: Update, context: CallbackContext, returning = False) -> int:
     query = update.callback_query
     query.answer()
     surv = context.chat_data['current_survey']
-    context.bot_data[SURVEYS_KEY].append(surv)
-    context.chat_data['current_survey'] = None
-    context.chat_data['survey_out'] = None
+    context.bot_data[consts.SURVEYS_KEY].append(surv)
+    del context.chat_data['current_survey']
+    del context.chat_data['survey_out']
     root.start(update, context)
     return cc.END

@@ -1,8 +1,7 @@
 from typing import Union, List
 from functools import partial
 
-from bot.constants import (SURVEYS_KEY, ADMINS_KEY)
-
+import bot.constants as consts
 import bot.conv_constants as cc
 import bot.commands as commands
 import bot.inline as inline
@@ -79,6 +78,36 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             ],
             cc.PICK_QUESTION_STATE: [
                 MessageHandler(filters.Filters.text, edit.question)
+            ],
+            cc.PICK_QUESTION_PART_STATE: [
+                CallbackQueryHandler(edit.question_text, pattern='^{}$'.format(cc.EDIT_QUESTION_TEXT_CB)),
+                CallbackQueryHandler(edit.multi, pattern='^{}$'.format(cc.EDIT_MULTI_CB)),
+                CallbackQueryHandler(edit.answers, pattern='^{}$'.format(cc.EDIT_ANSWERS_CB)),
+                CallbackQueryHandler(edit.questions, pattern='^{}$'.format(cc.RETURN_CB)),
+            ],
+            cc.EDIT_QUESTION_TEXT_STATE: [
+                CallbackQueryHandler(partial(compose.get_question, mode = 'edit'), pattern='^{}$'.format(cc.NEW_QUESTION_TEXT_CB)),
+                CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.KEEP_CURRENT_QUESTION_TEXT_CB))
+            ],
+            cc.EDIT_MULTI_STATE: [
+                CallbackQueryHandler(partial(compose.get_multi, mode = 'edit'), pattern='^{}$'.format(cc.NEW_MULTI_CB)),
+                CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.KEEP_CURRENT_MULTI_CB))
+            ],
+            cc.EDIT_ANSWERS_STATE: [
+                CallbackQueryHandler(edit.pick_answer, pattern='^{}$'.format(cc.EDIT_EXISTING_ANSWER_CB)),
+                CallbackQueryHandler(partial(compose.get_answer, mode = 'edit'), pattern='^{}$'.format(cc.ADD_NEW_ANSWER_CB)),
+                CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.RETURN_CB))
+            ],
+            cc.PICK_ANSWER_STATE: [
+                MessageHandler(filters.Filters.text, edit.answer)
+                CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.RETURN_CB))
+            ],
+            cc.EDIT_ANSWER_STATE: [
+                CallbackQueryHandler(partial(compose.get_answer, mode = 'edit'), pattern='^{}$'.format(cc.EDIT_ANSWER_CB)),
+                CallbackQueryHandler(edit.remove_answer_confirm, pattern='^{}$'.format(cc.REMOVE_ANSWER_CB)),
+            ],
+            cc.REMOVE_ANSWER_CONFIRM_STATE: [
+                CallbackQueryHandler()
             ]
         },
         fallbacks=[
@@ -201,5 +230,5 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
     bot_data = dispatcher.bot_data
     if not bot_data.get(SURVEYS_KEY):
         bot_data[SURVEYS_KEY] = []
-    if not bot_data.get(ADMINS_KEY):
-        bot_data[ADMINS_KEY] = admins
+    if not bot_data.get(consts.ADMINS_KEY):
+        bot_data[consts.ADMINS_KEY] = admins

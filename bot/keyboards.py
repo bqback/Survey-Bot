@@ -151,13 +151,78 @@ class Keyboards():
             ]
         )
         
-        self.EDIT_TITLE_KB = InlineKeyboardMarkup(
+        self.EDIT_DESC_KB = InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(_("Ввести новое описание"), callback_data = cc.NEW_DESC_CB)
                 ],
                 [
                     InlineKeyboardButton(_("Сохранить текущее описание"), callback_data = cc.KEEP_CURRENT_DESC_CB)
+                ]
+            ]
+        )
+
+        self.EDIT_QUESTION_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Текст вопроса"), callback_data = cc.NEW_QUESTION_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Число вариантов ответа"), callback_data = cc.NEW_MULTI_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Ответы"), callback_data = cc.NEW_ANSWERS_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться назад"), callback_data = cc.RETURN_CB)
+                ]
+            ]
+        )
+
+        self.EDIT_QUESTION_TEXT_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Ввести новый текст вопроса"), callback_data = cc.NEW_QUESTION_TEXT_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Сохранить текущий текст вопроса"), callback_data = cc.KEEP_CURRENT_QUESTION_TEXT_CB)
+                ]
+            ]
+        )
+
+        self.EDIT_MULTI_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Изменить"), callback_data = cc.NEW_MULTI_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Оставить как есть"), callback_data = cc.KEEP_CURRENT_MULTI_CB)
+                ]
+            ]
+        )
+
+        self.EDIT_ANSWER_OPTIONS_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Редактировать один из ответов"), callback_data = cc.EDIT_EXISTING_ANSWER_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Добавить ещё один ответ"), callback_data = cc.ADD_NEW_ANSWER_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться назад"), callback_data = cc.RETURN_CB)
+                ]
+            ]
+        )
+
+        self.kb.EDIT_QUESTION_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Редактировать"), callback_data = cc.RETURN_CB)
+                    InlineKeyboardButton(_("Удалить"), callback_data = cc.RETURN_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться назад"), callback_data = cc.RETURN_CB)
                 ]
             ]
         )
