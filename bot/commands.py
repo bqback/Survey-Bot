@@ -79,7 +79,7 @@ def stop_and_restart(updater: Updater) -> None:
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 def rotate_log(update: Update, context: CallbackContext) -> None:
-    logger.info(f'{update.effective_user.id}: {text.LOG_ROTATE}')
+    logger.info(_("Начат новый лог-файл по запросу {id}").format(id = update.effective_user.id))
     logger.info('\n---------\nLog closed on %s.\n---------\n' % time.asctime())
     logger.handlers[0].doRollover()
 
