@@ -27,7 +27,7 @@ def pick_part(update: Update, context: CallbackContext, source: str, idx = None)
     locale = gettext.translation('edit', localedir = 'locales', languages = [context.user_data['lang']])
     locale.install()
     _ = locale.gettext
-    if idx not None:
+    if idx is not None:
         context.chat_data['s_idx'] = idx
     if source == 'compose':
         context.chat_data['edit_end'] = cc.END_COMPOSE

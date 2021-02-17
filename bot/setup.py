@@ -99,7 +99,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                 CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.RETURN_CB))
             ],
             cc.PICK_ANSWER_STATE: [
-                MessageHandler(filters.Filters.text, edit.answer)
+                MessageHandler(filters.Filters.text, edit.answer),
                 CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.RETURN_CB))
             ],
             cc.EDIT_ANSWER_STATE: [
@@ -107,7 +107,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                 CallbackQueryHandler(edit.remove_answer_confirm, pattern='^{}$'.format(cc.REMOVE_ANSWER_CB)),
             ],
             cc.REMOVE_ANSWER_CONFIRM_STATE: [
-                CallbackQueryHandler()
+                CallbackQueryHandler(edit.remove_answer, pattern = '^{}$'.format(cc.YES_CB))
             ]
         },
         fallbacks=[
@@ -228,7 +228,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
     dispatcher.bot.set_my_commands(BOT_COMMANDS)
 
     bot_data = dispatcher.bot_data
-    if not bot_data.get(SURVEYS_KEY):
-        bot_data[SURVEYS_KEY] = []
+    if not bot_data.get(consts.SURVEYS_KEY):
+        bot_data[consts.SURVEYS_KEY] = []
     if not bot_data.get(consts.ADMINS_KEY):
         bot_data[consts.ADMINS_KEY] = admins

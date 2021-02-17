@@ -165,7 +165,7 @@ class Keyboards():
         self.EDIT_QUESTION_KB = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(_("Текст вопроса"), callback_data = cc.NEW_QUESTION_CB)
+                    InlineKeyboardButton(_("Текст вопроса"), callback_data = cc.NEW_QUESTION_TEXT_CB)
                 ],
                 [
                     InlineKeyboardButton(_("Число вариантов ответа"), callback_data = cc.NEW_MULTI_CB)
@@ -215,10 +215,10 @@ class Keyboards():
             ]
         )
 
-        self.kb.EDIT_QUESTION_KB = InlineKeyboardMarkup(
+        self.EDIT_QUESTION_KB = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(_("Редактировать"), callback_data = cc.RETURN_CB)
+                    InlineKeyboardButton(_("Редактировать"), callback_data = cc.RETURN_CB),
                     InlineKeyboardButton(_("Удалить"), callback_data = cc.RETURN_CB)
                 ],
                 [
