@@ -115,10 +115,14 @@ def surv_diff(surv_old: Dict, surv_new: Dict, lang: str) -> str:
         if type(surv_new) is not dict:
             raise TypeError(_("Новый опрос передан в неправильном формате!"))
 
-def num_list(stuff: List) -> str:
+def num_list(stuff: List, key = None) -> str:
     out = ""
-    for idx, item in enumerate(stuff):
-        out.append(f'{idx+1}. {item}\n')
+    if key is None:
+        for idx, item in enumerate(stuff):
+            out += f'{idx+1}. {item}\n'
+    else:
+        for idx, item in enumerate(stuff):
+            out += f'{idx+1}. {item[key]}\n'
     return out
 
 def validate_index(index: str, stuff: Union[List, Dict]) -> int:
@@ -127,3 +131,4 @@ def validate_index(index: str, stuff: Union[List, Dict]) -> int:
         raise IndexError()
     else:
         return idx
+
