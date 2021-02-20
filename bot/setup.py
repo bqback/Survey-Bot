@@ -123,7 +123,9 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
         entry_points = [CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB))],
         states = {
             cc.GET_TITLE_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_title)
+                MessageHandler(filters.Filters.text, compose.save_title),
+                CallbackQueryHandler(compose.return_to_step, pattern='^{}$'.format(cc.YES_CB)),
+                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.NO_CB))
             ],
             cc.SAVE_TITLE_STATE: [
                 CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.SAVE_TITLE_CB)),
@@ -212,11 +214,13 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                     cc.START_SURVEY_STATE: [
                         add_survey,
                         MessageHandler(filters.Filters.text, poll.preview)
+                    ],
+                    cc.MAIN_MENU_STATE: [
+                        CallbackQueryHandler(root.start, pattern = "^{}$".format(cc.YES_CB))
                     ]
                 },
                 fallbacks = [
                     CallbackQueryHandler(root.to_prev_step, pattern='^{}$'.format(cc.RETURN_CB)),
-                    CallbackQueryHandler(root.confirm_start_over, pattern='^{}$'.format(cc.RETURN_START_OVER_CB)),
                     CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB)),
                     CommandHandler('start', root.start)
                 ]
