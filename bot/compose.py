@@ -17,7 +17,7 @@ kb = None
 
 logger = logging.getLogger(__name__)
 
-def get_title(update: Update, context: CallbackContext) -> int:
+def get_title(update: Update, context: CallbackContext, mode = 'compose') -> int:
     query = update.callback_query
     query.answer()
     global kb
@@ -26,12 +26,19 @@ def get_title(update: Update, context: CallbackContext) -> int:
     locale = gettext.translation('compose', localedir = 'locales', languages = [context.user_data['lang']])
     locale.install()
     _ = locale.gettext
-    if 'current_survey' not in context.chat_data:
-        context.chat_data['current_survey'] = {'id': str(uuid4())}
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
-            text = _("Введите краткое название опроса.\nЭто название будет отображаться в списке опросов при управлении или запуске опроса.")
-        )
+    if mode == 'compose':
+        if 'current_survey' not in context.chat_data or query.data == cc.NO_CB:
+            context.chat_data['current_survey'] = {'id': str(uuid4())}
+            context.chat_data['current_step'] = 'get_title'
+            context.chat_data['current_state'] = cc.GET_TITLE_STATE
+            query.edit_message_text(
+                    text = _("Введите краткое название опроса.\nЭто название будет отображаться в списке опросов при управлении или запуске опроса.")
+                )
+        else:
+            query.edit_message_text(
+                    text = _("Обнаружен незавершённый опрос.\nХотите продолжить его создание?"),
+                    reply_markup = kb.YES_NO_KB
+                )
     return cc.GET_TITLE_STATE
 
 def save_title(update: Update, context: CallbackContext) -> int:
@@ -40,11 +47,13 @@ def save_title(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(_("Хотите сохранить это название?"), reply_markup = kb.SAVE_TITLE_KB)
     return cc.SAVE_TITLE_STATE
 
-def get_desc(update: Update, context: CallbackContext) -> int:
+def get_desc(update: Update, context: CallbackContext, mode = 'compose') -> int:
     query = update.callback_query
     query.answer()
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
+    if mode == 'compose':
+        context.chat_data['current_step'] = 'get_desc'
+        context.chat_data['current_state'] = cc.GET_DESC_STATE
+    query.edit_message_text(
             text = _("Введите описание опроса.\nЭто описание будет отправляться перед опросом для ознакомления.")
         )
     return cc.GET_DESC_STATE
@@ -59,12 +68,13 @@ def get_question(update: Update, context: CallbackContext, mode = 'compose', ret
     query = update.callback_query
     query.answer()
     if mode == 'compose':
+        context.chat_data['current_step'] = 'get_question'
+        context.chat_data['current_state'] = cc.GET_QUESTION_STATE
         if 'questions' not in context.chat_data['current_survey']:
             context.chat_data['current_survey']['questions'] = []
         if returning:
             context.chat_data['current_survey']['questions'].pop()
-        context.bot.send_message(
-                chat_id = update.effective_chat.id,
+        query.edit_message_text(
                 text = _("Введите текст вопроса №{num}").format(num = len(context.chat_data['current_survey']['questions'])+1)
             )
     else:
@@ -83,8 +93,7 @@ def save_question(update: Update, context: CallbackContext, mode = 'compose') ->
 def get_multi(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
+    query.edit_message_text(
             text = _("У этого вопроса должно быть несколько вариантов ответа?"), 
             reply_markup = kb.YES_NO_KB
         )
@@ -96,12 +105,12 @@ def save_multi(update: Update, context: CallbackContext, multi: bool, mode = 'co
     if mode == 'compose':
         context.chat_data['current_survey']['questions'][-1]['multi'] = multi
         if multi:
-            query.edit_message_text(_("В этом вопросе можно будет выбрать несколько вариантов ответа"))
+            text = _("В этом вопросе можно будет выбрать несколько вариантов ответа")
         else:
-            query.edit_message_text(_("В этом вопросе можно будет выбрать только один вариант ответа"))
-        context.bot.send_message(
-                chat_id = update.effective_chat.id,
-                text = _("Перейти к вводу ответов?"), 
+            text = _("В этом вопросе можно будет выбрать только один вариант ответа")
+        text += _("\n\nПерейти к вводу ответов?")
+        query.edit_message_text(
+                text = text, 
                 reply_markup = kb.SAVE_MULTI_KB
             )
     else:
@@ -112,13 +121,16 @@ def get_answer(update: Update, context: CallbackContext, mode = 'compose', retur
     query = update.callback_query
     query.answer()
     if mode == 'compose':
+        context.chat_data['current_step'] = 'get_answer'
+        context.chat_data['current_state'] = cc.GET_ANSWER_STATE
         if 'answers' not in context.chat_data['current_survey']['questions'][-1]:
             context.chat_data['current_survey']['questions'][-1]['answers'] = []
         if returning:
             context.chat_data['current_survey']['questions'][-1]['answers'].pop()
-        context.bot.send_message(
-                chat_id = update.effective_chat.id,
-                text = _("Введите текст ответа №{num}").format(num = len(context.chat_data['current_survey']['questions'][-1]['answers'])+1)
+        query.edit_message_text(
+                text = _("Введите текст ответа №{a_num} к вопросу №{q_num}"
+                    ).format(a_num = len(context.chat_data['current_survey']['questions'][-1]['answers'])+1,
+                            q_num = len(context.chat_data['current_survey']['questions'])+1)
             )
     else:
         pass
@@ -134,8 +146,7 @@ def record_answer(update: Update, context: CallbackContext, mode = 'compose') ->
 def save_answer(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
+    query.edit_message_text(
             text = _("Выберите действие"),
             reply_markup = kb.NEXT_ANSWER_KB
         )
@@ -144,22 +155,23 @@ def save_answer(update: Update, context: CallbackContext) -> int:
 def review(update: Update, context: CallbackContext, returning = False) -> int:
     query = update.callback_query
     query.answer()
-    context.bot.send_message(
-            chat_id = update.effective_chat.id,
+    query.edit_message_text(
             text = _("Проверьте, правильно ли составлен опрос")
         )
+    context.chat_data['current_step'] = 'review'
+    context.chat_data['current_state'] = cc.REVIEW_STATE
     if not returning:
         surv = context.chat_data['current_survey']
         questions_out = ""
         for question in surv['questions']:
-            questions_out.append(question['question'])
+            questions_out += question['question']
             if question['multi']:
-                questions_out.append(_(" (можно выбрать несколько вариантов)"))
+                questions_out += _(" (можно выбрать несколько вариантов)")
             else:
-                questions_out.append(_(" (можно выбрать только один вариант)"))
+                questions_out += _(" (можно выбрать только один вариант)")
             for idx, answer in enumerate(question['answers']):
-                questions_out.append(f"\n\t{idx+1}. {answer}")
-            questions_out.append("\n\n")
+                questions_out += f"\n\t{idx+1}. {answer}"
+            questions_out += "\n\n"
         context.chat_data['survey_out'] = f"{surv['title']}\n{surv['desc']}\n{questions_out}"
     context.bot.send_message(
             chat_id = update.effective_chat.id,
@@ -181,3 +193,8 @@ def finish(update: Update, context: CallbackContext, returning = False) -> int:
     del context.chat_data['survey_out']
     root.start(update, context)
     return cc.END
+
+def return_to_step(update: Update, context: CallbackContext) -> int:
+    argsdict = {'update': update, 'context': context}
+    globals()[context.chat_data['current_step']](**argsdict)
+    return context.chat_data['current_state']
