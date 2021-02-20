@@ -9,6 +9,7 @@ from telegram import Update
 import bot.constants as consts
 import bot.conv_constants as cc
 import bot.keyboards as kbs
+import bot.utils as utils
 
 kb = None
 
@@ -42,12 +43,10 @@ def start_survey(update: Update, context: CallbackContext) -> int:
     query.answer()
     bot_data = context.bot_data
     if len(context.bot_data[consts.SURVEYS_KEY]) > 0:
-        survey_list = ""
-        for idx, survey in enumerate(context.bot_data[consts.SURVEYS_KEY]):
-            survey_list.append(f"{idx}. {survey['title']}\n")
+        survey_list = utils.num_list(context.bot_data[consts.SURVEYS_KEY], key = 'title')
         query.edit_message_text(
                 text = _("Выберите опрос из существующих\n\n"
-                            "{list}\n\n"
+                            "{list}\n"
                             "Для выбора опроса введите номер из списка").format(list = survey_list),
                 reply_markup = kb.MAIN_MENU_KB
             )
@@ -79,16 +78,13 @@ def to_prev_step(update: Update, context: CallbackContext) -> int:
     globals()[context.chat_data['last_handler']](**argsdict)
     return context.chat_data['last_state']
 
-def confirm_start_over(update: Update, context: CallbackContext) -> int:
-    query = update.callback_query
-    query.answer()
-    update.message.reply_text(text.CONFIRM_START_OVER, reply_markup = kb.YES_NO_KB)
-    return cc.START_OVER_STATE
-
 def confirm_return_to_main(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
-    update.message.reply_text(text.CONFIRM_RETURN_TO_MAIN, reply_markup = kb.YES_NO_KB)
+    query.edit_message_text(
+            text = _("Вы уверены, что хотите вернуться в главное меню"), 
+            reply_markup = kb.YES_NO_KB
+        )
     return cc.MAIN_MENU_STATE
 
 
