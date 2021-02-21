@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:45
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:89
+msgid "Что вы хотите отредактировать?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:54
+msgid "Текущее название: {title}"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:63
+msgid "Текущее описание: {desc}"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:75
+msgid ""
+"Список текущих вопросов: \n"
+"{list}\n"
+"\n"
+"Для выбора вопроса отправьте его номер в списке"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:95
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:166
+msgid "Введённого номера нет в списке! Попробуйте ещё раз"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:100
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:171
+msgid "Неправильно введён номер! Попробуйте ещё раз"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:113
+msgid "Текущий текст вопроса: {question}"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:122
+msgid "несколько вариантов"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:122
+msgid "один вариант"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:124
+msgid "В этом вопросе пользователи могут выбрать {multi} ответа"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:133
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:160
+msgid "Выберите действие"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:144
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:202
+msgid ""
+"Список ответов к текущему вопросу: \n"
+"{list}\n"
+"\n"
+"Для выбора ответа отправьте его номер в списке"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:183
+msgid ""
+"{answer}\n"
+"\n"
+"Вы уверены, что хотите удалить этот ответ?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:196
+msgid "Ответ был удалён"
+msgstr ""
+
+

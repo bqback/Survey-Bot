@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-15 14:50+0300\n"
+"POT-Creation-Date: 2021-02-21 08:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,35 +17,39 @@ msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:34
 msgid "Список администраторов был обновлён!"
-msgstr "Admin list was updated!"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:46
 msgid "Администратор {id} был добавлен!"
-msgstr "Admin {id} was added!"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:48
 msgid "Администратор {id} уже есть в списке!"
-msgstr "Admin {id} is already on the list!"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:52
 msgid "Для использования команды нужно указать список добавляемых администраторов!"
-msgstr "You must provide a list of IDs to add!"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:64
 msgid "Администратор {id} был удалён!"
-msgstr "Admin {id} was removed!"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:66
 msgid "Администратора {id} нет в списке!"
-msgstr "Admin {id} is not on the list!"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:70
 msgid "Для использования команды нужно указать список удаляемых администраторов!"
-msgstr "You must provide a list of IDs to remove!"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:73
 msgid "Перезапуск..."
-msgstr "Restarting..."
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:82
+msgid "Начат новый лог-файл по запросу {id}"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:92
 msgid ""
@@ -53,17 +57,12 @@ msgid ""
 "{title}\n"
 "\n"
 msgstr ""
-"Current survey's title:\n"
-"{title}\n"
-"\n"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:94
 msgid ""
 "У текущего опроса нет названия\n"
 "\n"
 msgstr ""
-"Current survey doesn't have a title\n"
-"\n"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:96
 msgid ""
@@ -71,55 +70,45 @@ msgid ""
 "{desc}\n"
 "\n"
 msgstr ""
-"Current survey's description:\n"
-"{desc}\n"
-"\n"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:98
 msgid ""
 "У текущего опроса нет описания\n"
 "\n"
 msgstr ""
-"Current survey has no description\n"
-"\n"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:100
 msgid ""
 "Вопросы:\n"
 msgstr ""
-"Questions:\n"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:102
 msgid "неск. вариантов"
-msgstr "multi-choice"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:102
 msgid "один вариант"
-msgstr "single choice"
+msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:103
 msgid ""
 "\n"
 "{question} ({multi})"
 msgstr ""
-"\n"
-"{question} ({multi})"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:108
 msgid ""
 "У этого вопроса нет ответов\n"
 msgstr ""
-"This question doesn't have answers\n"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:110
 msgid ""
 "У текущего опроса нет вопросов\n"
 "\n"
 msgstr ""
-"Current survey has no questions\n"
-"\n"
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\commands.py:112
 msgid "В настоящее время не обрабатывается опрос"
-msgstr "There's no survey that's being worked on"
+msgstr ""
+
 

@@ -15,8 +15,4 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\settings.py:26
-msgid "Выберите настройку"
-msgstr ""
-
 

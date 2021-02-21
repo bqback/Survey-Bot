@@ -1,0 +1,138 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:19
+msgid ""
+"Название\n"
+"{old} -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:25
+msgid "В старом опросе пропало название!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:27
+msgid "В новом опросе пропало название!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:30
+msgid ""
+"Описание\n"
+"{old} -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:36
+msgid "В старом опросе пропало описание!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:38
+msgid "В новом опросе пропало описание!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:45
+msgid ""
+"Вопрос №{num}\n"
+"{old} -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:51
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:52
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:94
+msgid "несколько вариантов"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:51
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:52
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:94
+msgid "один вариант"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:53
+msgid ""
+"Число возможных вариантов ответа в вопросе №{num}\n"
+"{old} -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:62
+msgid ""
+"Ответ №{a_num} в вопросе №{q_num}\n"
+"{old} -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:67
+msgid ""
+"Удалён или перемещён ответ №{a_num} в вопросе №{q_num}\n"
+"{old} ->\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:76
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:100
+msgid ""
+"К вопросу №{q_num} добавлен ответ №{a_num}\n"
+" -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:81
+msgid ""
+"Удалён или перемещён вопрос №{num}{old} ->\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:90
+msgid ""
+"Добавлен вопрос №{num}\n"
+" -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:95
+msgid ""
+"Число возможных вариантов ответа в вопросе №{num}\n"
+" -> {new}\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:106
+msgid "В старом опросе пропали вопросы!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:108
+msgid "В новом опросе пропали вопросы!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:110
+msgid ""
+"Список изменений:\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:114
+msgid "Старый опрос передан в неправильном формате!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:116
+msgid "Новый опрос передан в неправильном формате!"
+msgstr ""
+
+

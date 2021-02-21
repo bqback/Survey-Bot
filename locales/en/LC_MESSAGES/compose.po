@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-16 01:30+0300\n"
+"POT-Creation-Date: 2021-02-21 08:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,75 +15,82 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:34
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:35
 msgid ""
 "Введите краткое название опроса.\n"
 "Это название будет отображаться в списке опросов при управлении или запуске опроса."
 msgstr ""
-"Enter a short title for the survey.\n"
-"This title will be displayed in the survey list when managing surveys or starting one."
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:41
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:39
+msgid ""
+"Обнаружен незавершённый опрос.\n"
+"Хотите продолжить его создание?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:47
 msgid "Хотите сохранить это название?"
-msgstr "Do you want to save this title?"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:49
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:57
 msgid ""
 "Введите описание опроса.\n"
 "Это описание будет отправляться перед опросом для ознакомления."
 msgstr ""
-"Enter a description for this survey.\n"
-"This description will be submitted before the survey for users to get more information."
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:56
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:64
 msgid "Хотите сохранить это описание?"
-msgstr "Do you want to save this description?"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:68
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:78
 msgid "Введите текст вопроса №{num}"
-msgstr "Enter question #{num}"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:75
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:90
 msgid "Хотите сохранить этот вопрос?"
-msgstr "Do you want to save this question?"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:83
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:97
 msgid "У этого вопроса должно быть несколько вариантов ответа?"
-msgstr "Should this question have multiple choices?"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:93
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:108
 msgid "В этом вопросе можно будет выбрать несколько вариантов ответа"
-msgstr "Users will be able to select multiple answers"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:95
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:110
 msgid "В этом вопросе можно будет выбрать только один вариант ответа"
-msgstr "Users will only be able to select one answer"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:98
-msgid "Перейти к вводу ответов?"
-msgstr "Do you want to start adding answers?"
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:111
+msgid ""
+"\n"
+"\n"
+"Перейти к вводу ответов?"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:112
-msgid "Введите текст ответа №{num}"
-msgstr "Enter answer #{num}"
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:131
+msgid "Введите текст ответа №{a_num} к вопросу №{q_num}"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:119
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:143
 msgid "Хотите сохранить этот ответ?"
-msgstr "Do you want to save this answer?"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:127
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:158
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:150
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:182
 msgid "Выберите действие"
-msgstr "Choose an action"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:137
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:159
 msgid "Проверьте, правильно ли составлен опрос"
-msgstr "Please review the survey and make sure everything is correct"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:145
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:169
 msgid " (можно выбрать несколько вариантов)"
-msgstr " (has multiple choices)"
+msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:147
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:171
 msgid " (можно выбрать только один вариант)"
-msgstr " (has a single choice)"
+msgstr ""
+
+
