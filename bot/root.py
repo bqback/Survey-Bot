@@ -31,11 +31,19 @@ def start(update: Update, context: CallbackContext) -> int:
         locale = gettext.translation('root', localedir = 'locales', languages = [context.user_data['lang']])
         locale.install()
         _ = locale.gettext
-        context.bot.send_message(
-                chat_id = update.effective_chat.id,
-                text = _("Добро пожаловать, {name}!").format(name = user.first_name), 
-                reply_markup = kb.INITIAL_STATE_KB
-            )
+        if update.callback_query is None:
+            context.bot.send_message(
+                    chat_id = update.effective_chat.id,
+                    text = _("Добро пожаловать, {name}!").format(name = user.first_name), 
+                    reply_markup = kb.INITIAL_STATE_KB
+                )
+        else:
+            query = update.callback_query
+            query.answer()
+            query.edit_message_text(
+                    text = _("Добро пожаловать, {name}!").format(name = user.first_name), 
+                    reply_markup = kb.INITIAL_STATE_KB
+                )
         return cc.START_STATE
 
 def start_survey(update: Update, context: CallbackContext) -> int:
@@ -82,7 +90,7 @@ def confirm_return_to_main(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
     query.edit_message_text(
-            text = _("Вы уверены, что хотите вернуться в главное меню"), 
+            text = _("Вы уверены, что хотите вернуться в главное меню?"), 
             reply_markup = kb.YES_NO_KB
         )
     return cc.MAIN_MENU_STATE
