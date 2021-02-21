@@ -39,6 +39,10 @@ def get_title(update: Update, context: CallbackContext, mode = 'compose') -> int
                     text = _("Обнаружен незавершённый опрос.\nХотите продолжить его создание?"),
                     reply_markup = kb.YES_NO_KB
                 )
+    if mode == 'edit':
+        query.edit_message_text(
+                    text = _("Введите краткое название опроса.\nЭто название будет отображаться в списке опросов при управлении или запуске опроса.")
+                )
     return cc.GET_TITLE_STATE
 
 def save_title(update: Update, context: CallbackContext) -> int:
@@ -50,6 +54,12 @@ def save_title(update: Update, context: CallbackContext) -> int:
 def get_desc(update: Update, context: CallbackContext, mode = 'compose') -> int:
     query = update.callback_query
     query.answer()
+    global kb
+    global _
+    kb = kbs.Keyboards(context.user_data['lang'])
+    locale = gettext.translation('compose', localedir = 'locales', languages = [context.user_data['lang']])
+    locale.install()
+    _ = locale.gettext
     if mode == 'compose':
         context.chat_data['current_step'] = 'get_desc'
         context.chat_data['current_state'] = cc.GET_DESC_STATE
@@ -67,6 +77,12 @@ def save_desc(update: Update, context: CallbackContext) -> int:
 def get_question(update: Update, context: CallbackContext, mode = 'compose', returning = False) -> int:
     query = update.callback_query
     query.answer()
+    global kb
+    global _
+    kb = kbs.Keyboards(context.user_data['lang'])
+    locale = gettext.translation('compose', localedir = 'locales', languages = [context.user_data['lang']])
+    locale.install()
+    _ = locale.gettext
     if mode == 'compose':
         context.chat_data['current_step'] = 'get_question'
         context.chat_data['current_state'] = cc.GET_QUESTION_STATE
@@ -77,27 +93,36 @@ def get_question(update: Update, context: CallbackContext, mode = 'compose', ret
         query.edit_message_text(
                 text = _("Введите текст вопроса №{num}").format(num = len(context.chat_data['current_survey']['questions'])+1)
             )
-    else:
-        pass
+    elif mode == 'edit':
+        q_idx = context.chat_data['q_idx']
+        query.edit_message_text(
+                text = _("Введите текст вопроса №{num}").format(num = q_idx + 1)
+            )
     return cc.GET_QUESTION_STATE
 
 def save_question(update: Update, context: CallbackContext, mode = 'compose') -> int:
     if mode == 'compose':
-        context.chat_data['current_survey']['questions'].append({'question': update.message.text})
-    else:
-        pass
+        context.chat_data['current_survey']['questions'].append({'question': update.message.text})      
+    elif mode == 'edit':
+        context.chat_data['question'] = update.message.text
     update.message.reply_text(update.message.text)
     update.message.reply_text(_("Хотите сохранить этот вопрос?"), reply_markup = kb.SAVE_QUESTION_KB)
-    return cc.GET_MULTIANS_STATE
-
+    return cc.SAVE_QUESTION_STATE      
+    
 def get_multi(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
+    global kb
+    global _
+    kb = kbs.Keyboards(context.user_data['lang'])
+    locale = gettext.translation('compose', localedir = 'locales', languages = [context.user_data['lang']])
+    locale.install()
+    _ = locale.gettext
     query.edit_message_text(
             text = _("У этого вопроса должно быть несколько вариантов ответа?"), 
             reply_markup = kb.YES_NO_KB
         )
-    return cc.RECORD_MULTIANS_STATE
+    return cc.GET_MULTIANS_STATE
 
 def save_multi(update: Update, context: CallbackContext, multi: bool, mode = 'compose') -> int:
     query = update.callback_query
@@ -113,13 +138,28 @@ def save_multi(update: Update, context: CallbackContext, multi: bool, mode = 'co
                 text = text, 
                 reply_markup = kb.SAVE_MULTI_KB
             )
-    else:
-        pass
+    elif mode == 'edit':
+        context.chat_data['multi'] = multi
+        if multi:
+            text = _("В этом вопросе можно будет выбрать несколько вариантов ответа")
+        else:
+            text = _("В этом вопросе можно будет выбрать только один вариант ответа")
+        text += _("\n\nСохранить?")
+        query.edit_message_text(
+                text = text, 
+                reply_markup = kb.SAVE_MULTI_KB
+            )
     return cc.SAVE_MULTIANS_STATE
 
 def get_answer(update: Update, context: CallbackContext, mode = 'compose', returning = False) -> int:
     query = update.callback_query
     query.answer()
+    global kb
+    global _
+    kb = kbs.Keyboards(context.user_data['lang'])
+    locale = gettext.translation('compose', localedir = 'locales', languages = [context.user_data['lang']])
+    locale.install()
+    _ = locale.gettext
     if mode == 'compose':
         context.chat_data['current_step'] = 'get_answer'
         context.chat_data['current_state'] = cc.GET_ANSWER_STATE
@@ -130,20 +170,28 @@ def get_answer(update: Update, context: CallbackContext, mode = 'compose', retur
         query.edit_message_text(
                 text = _("Введите текст ответа №{a_num} к вопросу №{q_num}"
                     ).format(a_num = len(context.chat_data['current_survey']['questions'][-1]['answers'])+1,
-                            q_num = len(context.chat_data['current_survey']['questions'])+1)
+                            q_num = len(context.chat_data['current_survey']['questions']))
             )
-    else:
-        pass
+    elif mode == 'edit':
+        q_idx = context.chat_data['q_idx']
+        a_idx = context.chat_data['a_idx']
+        query.edit_message_text(
+                text = _("Введите текст ответа №{a_num} к вопросу №{q_num}"
+                    ).format(a_num = a_idx+1,
+                            q_num = q_idx+1)
+            )
     return cc.GET_ANSWER_STATE
 
-def record_answer(update: Update, context: CallbackContext, mode = 'compose') -> int:
+def save_answer(update: Update, context: CallbackContext, mode = 'compose') -> int:
     if mode == 'compose':
         context.chat_data['current_survey']['questions'][-1]['answers'].append(update.message.text)
+    elif mode == 'edit':
+        context.chat_data['answers'] = update.message.text
     update.message.reply_text(update.message.text)
     update.message.reply_text(_("Хотите сохранить этот ответ?"), reply_markup = kb.SAVE_ANSWER_KB)
-    return cc.RECORD_ANSWER_STATE
+    return cc.SAVE_ANSWER_STATE
 
-def save_answer(update: Update, context: CallbackContext) -> int:
+def checkpoint(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
     query.edit_message_text(
@@ -154,10 +202,16 @@ def save_answer(update: Update, context: CallbackContext) -> int:
 
 def review(update: Update, context: CallbackContext, returning = False) -> int:
     query = update.callback_query
-    query.answer()
-    query.edit_message_text(
-            text = _("Проверьте, правильно ли составлен опрос")
-        )
+    if query is not None:
+        query.answer()
+        context.bot.send_message(
+                chat_id= update.effective_chat.id,
+                text = _("Проверьте, правильно ли составлен опрос")
+            )
+    else:
+        query.edit_message_text(
+                text = _("Проверьте, правильно ли составлен опрос")
+            )
     context.chat_data['current_step'] = 'review'
     context.chat_data['current_state'] = cc.REVIEW_STATE
     if not returning:
@@ -172,7 +226,7 @@ def review(update: Update, context: CallbackContext, returning = False) -> int:
             for idx, answer in enumerate(question['answers']):
                 questions_out += f"\n\t{idx+1}. {answer}"
             questions_out += "\n\n"
-        context.chat_data['survey_out'] = f"{surv['title']}\n{surv['desc']}\n{questions_out}"
+        context.chat_data['survey_out'] = f"{surv['title']}\n\n{surv['desc']}\n\n{questions_out}"
     context.bot.send_message(
             chat_id = update.effective_chat.id,
             text = context.chat_data['survey_out']
