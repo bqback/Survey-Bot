@@ -127,12 +127,15 @@ class Keyboards():
         self.PICK_PART_KB = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(_("Редактировать название"), callback_data = cc.EDIT_TITLE_CB),
-                    InlineKeyboardButton(_("Редактировать описание"), callback_data = cc.EDIT_DESC_CB),
-                    InlineKeyboardButton(_("Редактировать вопросы"), callback_data = cc.EDIT_QUESTIONS_CB)
+                    InlineKeyboardButton(_("Название"), callback_data = cc.EDIT_TITLE_CB),
+                    InlineKeyboardButton(_("Описание"), callback_data = cc.EDIT_DESC_CB),
+                    InlineKeyboardButton(_("Вопросы"), callback_data = cc.EDIT_QUESTIONS_CB)
                 ],
                 [
                     InlineKeyboardButton(_("Сохранить изменения и выйти"), callback_data = cc.SAVE_AND_EXIT_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Выйти без сохранения"), callback_data = cc.DISCARD_AND_EXIT_CB)
                 ],
                 [
                     InlineKeyboardButton(_("Выйти в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
@@ -162,16 +165,19 @@ class Keyboards():
             ]
         )
 
-        self.EDIT_QUESTION_KB = InlineKeyboardMarkup(
+        self.EDIT_QUESTION_PART_KB = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(_("Текст вопроса"), callback_data = cc.NEW_QUESTION_TEXT_CB)
+                    InlineKeyboardButton(_("Текст вопроса"), callback_data = cc.EDIT_QUESTION_TEXT_CB)
                 ],
                 [
-                    InlineKeyboardButton(_("Число вариантов ответа"), callback_data = cc.NEW_MULTI_CB)
+                    InlineKeyboardButton(_("Число вариантов ответа"), callback_data = cc.EDIT_MULTI_CB)
                 ],
                 [
-                    InlineKeyboardButton(_("Ответы"), callback_data = cc.NEW_ANSWERS_CB)
+                    InlineKeyboardButton(_("Ответы"), callback_data = cc.EDIT_ANSWERS_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Удалить вопрос"), callback_data = cc.REMOVE_QUESTION_CB)
                 ],
                 [
                     InlineKeyboardButton(_("Вернуться назад"), callback_data = cc.RETURN_CB)
@@ -215,14 +221,22 @@ class Keyboards():
             ]
         )
 
-        self.EDIT_QUESTION_KB = InlineKeyboardMarkup(
+        self.EDIT_ANSWER_KB = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(_("Редактировать"), callback_data = cc.RETURN_CB),
-                    InlineKeyboardButton(_("Удалить"), callback_data = cc.RETURN_CB)
+                    InlineKeyboardButton(_("Редактировать"), callback_data = cc.EDIT_ANSWER_CB),
+                    InlineKeyboardButton(_("Удалить"), callback_data = cc.REMOVE_ANSWER_CB)
+                ]
+            ]
+        )
+
+        self.EDIT_AFTER_SAVE_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("К выбору части опроса"), callback_data = cc.TO_PARTS_CB)
                 ],
                 [
-                    InlineKeyboardButton(_("Вернуться назад"), callback_data = cc.RETURN_CB)
+                    InlineKeyboardButton(_("К выбору вопроса"), callback_data = cc.TO_QUESTIONS_CB)
                 ]
             ]
         )
@@ -250,6 +264,9 @@ class Keyboards():
                 [
                     InlineKeyboardButton(_("Создать новый опрос"), callback_data = cc.CREATE_SURVEY_CB),
                     InlineKeyboardButton(_("Выбрать из существующих"), callback_data = cc.CHOOSE_SURVEY_CB),
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
                 ]
             ]
         )
@@ -259,6 +276,12 @@ class Keyboards():
                 [
                     InlineKeyboardButton(_("Редактировать опрос"), callback_data = cc.EDIT_SURVEY_MANAGE_CB),
                     InlineKeyboardButton(_("Удалить опрос"), callback_data = cc.MANAGE_DELETE_SURVEY_CB),
+                ],
+                [
+                    InlineKeyboardButton(_("Показать опрос"), callback_data = cc.PRINT_SURVEY_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
                 ]
             ]
         )

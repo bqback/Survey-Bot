@@ -53,10 +53,12 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             cc.PICK_PART_STATE: [
                 CallbackQueryHandler(edit.title, pattern='^{}$'.format(cc.EDIT_TITLE_CB)),
                 CallbackQueryHandler(edit.desc, pattern='^{}$'.format(cc.EDIT_DESC_CB)),
-                CallbackQueryHandler(edit.questions, pattern='^{}$'.format(cc.EDIT_QUESTIONS_CB)),
+                CallbackQueryHandler(edit.pick_question, pattern='^{}$'.format(cc.EDIT_QUESTIONS_CB)),
+                CallbackQueryHandler(edit.save_changes, pattern='^{}$'.format(cc.SAVE_AND_EXIT_CB)),
+                CallbackQueryHandler(edit.discard_changes, pattern='^{}$'.format(cc.DISCARD_AND_EXIT_CB))
             ],
             cc.EDIT_TITLE_STATE: [
-                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.NEW_TITLE_CB)),
+                CallbackQueryHandler(partial(compose.get_title, mode = 'edit'), pattern='^{}$'.format(cc.NEW_TITLE_CB)),
                 CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.KEEP_CURRENT_TITLE_CB))
             ],
             cc.GET_TITLE_STATE: [
@@ -78,21 +80,39 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                 CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
             ],
             cc.PICK_QUESTION_STATE: [
-                MessageHandler(filters.Filters.text, edit.question)
+                MessageHandler(filters.Filters.text, edit.question),
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.RETURN_CB))
             ],
             cc.PICK_QUESTION_PART_STATE: [
                 CallbackQueryHandler(edit.question_text, pattern='^{}$'.format(cc.EDIT_QUESTION_TEXT_CB)),
                 CallbackQueryHandler(edit.multi, pattern='^{}$'.format(cc.EDIT_MULTI_CB)),
                 CallbackQueryHandler(edit.answers, pattern='^{}$'.format(cc.EDIT_ANSWERS_CB)),
-                CallbackQueryHandler(edit.questions, pattern='^{}$'.format(cc.RETURN_CB)),
+                CallbackQueryHandler(edit.remove_question_confirm, pattern='^{}$'.format(cc.REMOVE_QUESTION_CB)),
+                CallbackQueryHandler(edit.pick_question, pattern='^{}$'.format(cc.RETURN_CB))
             ],
             cc.EDIT_QUESTION_TEXT_STATE: [
                 CallbackQueryHandler(partial(compose.get_question, mode = 'edit'), pattern='^{}$'.format(cc.NEW_QUESTION_TEXT_CB)),
-                CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.KEEP_CURRENT_QUESTION_TEXT_CB))
+                CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.KEEP_CURRENT_QUESTION_TEXT_CB)),
+                CallbackQueryHandler(edit.remove_question_confirm, pattern='^{}$'.format(cc.REMOVE_QUESTION_CB))
+            ],
+            cc.GET_QUESTION_STATE: [
+                MessageHandler(filters.Filters.text, partial(compose.save_question, mode = 'edit'))
+            ],
+            cc.SAVE_QUESTION_STATE: [
+                CallbackQueryHandler(partial(edit.save_result, result = 'question'), pattern='^{}$'.format(cc.SAVE_QUESTION_CB)),
+                CallbackQueryHandler(partial(compose.get_question, mode = 'edit'), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
             ],
             cc.EDIT_MULTI_STATE: [
-                CallbackQueryHandler(partial(compose.get_multi, mode = 'edit'), pattern='^{}$'.format(cc.NEW_MULTI_CB)),
+                CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.NEW_MULTI_CB)),
                 CallbackQueryHandler(edit.question, pattern='^{}$'.format(cc.KEEP_CURRENT_MULTI_CB))
+            ],
+            cc.GET_MULTIANS_STATE: [
+                CallbackQueryHandler(partial(compose.save_multi, multi = True, mode = 'edit'), pattern='^{}$'.format(cc.YES_CB)),
+                CallbackQueryHandler(partial(compose.save_multi, multi = False, mode = 'edit'), pattern='^{}$'.format(cc.NO_CB))
+            ],
+            cc.SAVE_MULTIANS_STATE: [
+                CallbackQueryHandler(partial(edit.save_result, result = 'multi'), pattern='^{}$'.format(cc.YES_CB)),
+                CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
             ],
             cc.EDIT_ANSWERS_STATE: [
                 CallbackQueryHandler(edit.pick_answer, pattern='^{}$'.format(cc.EDIT_EXISTING_ANSWER_CB)),
@@ -105,19 +125,42 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             ],
             cc.EDIT_ANSWER_STATE: [
                 CallbackQueryHandler(partial(compose.get_answer, mode = 'edit'), pattern='^{}$'.format(cc.EDIT_ANSWER_CB)),
-                CallbackQueryHandler(edit.remove_answer_confirm, pattern='^{}$'.format(cc.REMOVE_ANSWER_CB)),
+                CallbackQueryHandler(edit.remove_answer_confirm, pattern='^{}$'.format(cc.REMOVE_ANSWER_CB))
+            ],
+            cc.GET_ANSWER_STATE: [
+                MessageHandler(filters.Filters.text, partial(compose.save_answer, mode = 'edit'))
+            ],
+            cc.SAVE_ANSWER_STATE: [
+                CallbackQueryHandler(partial(edit.save_result, result = 'answers'), pattern='^{}$'.format(cc.SAVE_ANSWER_CB)),
+                CallbackQueryHandler(partial(compose.get_question, mode = 'edit'), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
             ],
             cc.REMOVE_ANSWER_CONFIRM_STATE: [
-                CallbackQueryHandler(edit.remove_answer, pattern = '^{}$'.format(cc.YES_CB))
+                CallbackQueryHandler(edit.remove_answer, pattern = '^{}$'.format(cc.YES_CB)),
+                CallbackQueryHandler(edit.pick_answer, pattern = '^{}$'.format(cc.NO_CB))
+            ],
+            cc.REMOVE_QUESTION_CONFIRM_STATE: [
+                CallbackQueryHandler(edit.remove_question, pattern = "^{}$".format(cc.YES_CB)),
+                CallbackQueryHandler(edit.question, pattern = '^{}$'.format(cc.NO_CB))
+            ],
+            cc.EDIT_AFTER_SAVE_STATE: [
+                CallbackQueryHandler(edit.pick_part, pattern='^{}$'.format(cc.TO_PARTS_CB)),
+                CallbackQueryHandler(edit.pick_question, pattern='^{}$'.format(cc.TO_QUESTIONS_CB))
+            ],
+            cc.SAVE_CONFIRM_STATE: [
+                CallbackQueryHandler(edit.save_changes, pattern = "^{}$".format(cc.YES_CB)),
+                CallbackQueryHandler(edit.pick_part, pattern = '^{}$'.format(cc.NO_CB))
+            ],
+            cc.DISCARD_CONFIRM_STATE: [
+                CallbackQueryHandler(edit.discard_changes, pattern = "^{}$".format(cc.YES_CB)),
+                CallbackQueryHandler(edit.pick_part, pattern = '^{}$'.format(cc.NO_CB))
             ]
         },
         fallbacks=[
             CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB)),
-            CallbackQueryHandler(edit.save_changes, pattern='^{}$'.format(cc.SAVE_AND_EXIT_CB))
         ],
         map_to_parent = {
             cc.END_COMPOSE: cc.REVIEW_STATE,
-            cc.END_MANAGE: cc.PICK_SURVEY_STATE
+            cc.END_MANAGE: cc.MANAGE_SURVEYS_STATE
         })
     
     compose_conv = ConversationHandler(
@@ -147,10 +190,6 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                         CallbackQueryHandler(partial(compose.get_question, returning = True), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
                     ],
                     cc.GET_MULTIANS_STATE: [
-                        CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.SAVE_QUESTION_CB)),
-                        CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-                    ],
-                    cc.RECORD_MULTIANS_STATE: [
                         CallbackQueryHandler(partial(compose.save_multi, multi = True), pattern='^{}$'.format(cc.YES_CB)),
                         CallbackQueryHandler(partial(compose.save_multi, multi = False), pattern='^{}$'.format(cc.NO_CB))
                     ],
@@ -159,13 +198,13 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                         CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
                     ],
                     cc.GET_ANSWER_STATE: [
-                        MessageHandler(filters.Filters.text, compose.record_answer)
-                    ],
-                    cc.RECORD_ANSWER_STATE: [
-                        CallbackQueryHandler(compose.save_answer, pattern='^{}$'.format(cc.SAVE_ANSWER_CB)),
-                        CallbackQueryHandler(partial(compose.get_answer, returning = True), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                        MessageHandler(filters.Filters.text, compose.save_answer)
                     ],
                     cc.SAVE_ANSWER_STATE: [
+                        CallbackQueryHandler(compose.checkpoint, pattern='^{}$'.format(cc.SAVE_ANSWER_CB)),
+                        CallbackQueryHandler(partial(compose.get_answer, returning = True), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.CHECKPOINT_STATE: [
                         CallbackQueryHandler(compose.get_answer, pattern='^{}$'.format(cc.NEXT_ANSWER_CB)),
                         CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.NEXT_QUESTION_CB)),
                         CallbackQueryHandler(compose.review, pattern='^{}$'.format(cc.FINISH_CREATING_CB))
@@ -202,7 +241,8 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                     ],
                     cc.MANAGE_SURVEY_STATE:[
                         edit_conv,
-                        CallbackQueryHandler(manage.confirm_delete, pattern="^{}$".format(cc.MANAGE_DELETE_SURVEY_CB))
+                        CallbackQueryHandler(manage.confirm_delete, pattern="^{}$".format(cc.MANAGE_DELETE_SURVEY_CB)),
+                        CallbackQueryHandler(manage.print_survey, pattern="^{}$".format(cc.PRINT_SURVEY_CB))
                     ],
                     cc.MANAGE_DELETE_CONFIRM_STATE: [
                         CallbackQueryHandler(manage.delete, pattern="^{}$".format(cc.YES_CB)),
@@ -210,14 +250,17 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                     ],
                     cc.MANAGE_AFTER_DELETE_STATE: [
                         CallbackQueryHandler(manage.pick, pattern="^{}$".format(cc.CHOOSE_SURVEY_CB))
+                    ],
+                    cc.MAIN_MENU_STATE: [
+                        CallbackQueryHandler(root.start, pattern="^{}$".format(cc.YES_CB)),
+                        CallbackQueryHandler(manage.start, pattern="^{}$".format(cc.NO_CB))
                     ]
                 },
                 fallbacks = [
                     CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
                 ],
                 map_to_parent = {
-                    cc.START_STATE: cc.START_STATE,
-                    cc.MAIN_MENU_STATE: cc.MAIN_MENU_STATE
+                    cc.START_STATE: cc.START_STATE
                 }
         )
 
@@ -231,6 +274,19 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                 fallbacks = [],
                 map_to_parent = {
                     cc.SETTINGS_LANG_STATE: cc.LANG_STATE
+                }
+        )
+
+    poll_conv = ConversationHandler(
+                entry_points = [MessageHandler(filters.Filters.text, poll.preview)],
+                states = {
+
+                },
+                fallbacks = [
+                    CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
+                ],
+                map_to_parent = {
+                    cc.START_STATE: cc.START_STATE
                 }
         )
 
@@ -248,7 +304,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                     ],
                     cc.START_SURVEY_STATE: [
                         compose_conv,
-                        MessageHandler(filters.Filters.text, poll.preview)
+                        poll_conv
                     ],
                     cc.MAIN_MENU_STATE: [
                         CallbackQueryHandler(root.start, pattern = "^{}$".format(cc.YES_CB))
