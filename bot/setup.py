@@ -11,6 +11,7 @@ import bot.compose as compose
 import bot.edit as edit
 import bot.poll as poll
 import bot.settings as settings
+import bot.manage as manage
 
 from telegram import BotCommand, Update
 from telegram.utils.request import Request
@@ -43,7 +44,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
     dispatcher.add_handler(CommandHandler('show_id', commands.show_id))
     dispatcher.add_handler(CommandHandler('update_admins', commands.update_admins))
 
-    edit_survey = ConversationHandler(
+    edit_conv = ConversationHandler(
         entry_points = [
             CallbackQueryHandler(partial(edit.pick_part, source = 'compose'), pattern='^{}$'.format(cc.EDIT_SURVEY_COMPOSE_CB)),
             CallbackQueryHandler(partial(edit.pick_part, source = 'manage'), pattern='^{}$'.format(cc.EDIT_SURVEY_MANAGE_CB))
@@ -119,85 +120,119 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
             cc.END_MANAGE: cc.PICK_SURVEY_STATE
         })
     
-    add_survey = ConversationHandler(
-        entry_points = [CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB))],
-        states = {
-            cc.GET_TITLE_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_title),
-                CallbackQueryHandler(compose.return_to_step, pattern='^{}$'.format(cc.YES_CB)),
-                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.NO_CB))
-            ],
-            cc.SAVE_TITLE_STATE: [
-                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.SAVE_TITLE_CB)),
-                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.GET_DESC_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_desc)
-            ],
-            cc.SAVE_DESC_STATE: [
-                CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.SAVE_DESC_CB)),
-                CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.GET_QUESTION_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_question)
-            ],
-            cc.SAVE_QUESTION_STATE: [
-                CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.SAVE_QUESTION_CB)),
-                CallbackQueryHandler(partial(compose.get_question, returning = True), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.GET_MULTIANS_STATE: [
-                CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.SAVE_QUESTION_CB)),
-                CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.RECORD_MULTIANS_STATE: [
-                CallbackQueryHandler(partial(compose.save_multi, multi = True), pattern='^{}$'.format(cc.YES_CB)),
-                CallbackQueryHandler(partial(compose.save_multi, multi = False), pattern='^{}$'.format(cc.NO_CB))
-            ],
-            cc.SAVE_MULTIANS_STATE: [
-                CallbackQueryHandler(compose.get_answer, pattern='^{}$'.format(cc.YES_CB)),
-                CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.GET_ANSWER_STATE: [
-                MessageHandler(filters.Filters.text, compose.record_answer)
-            ],
-            cc.RECORD_ANSWER_STATE: [
-                CallbackQueryHandler(compose.save_answer, pattern='^{}$'.format(cc.SAVE_ANSWER_CB)),
-                CallbackQueryHandler(partial(compose.get_answer, returning = True), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
-            ],
-            cc.SAVE_ANSWER_STATE: [
-                CallbackQueryHandler(compose.get_answer, pattern='^{}$'.format(cc.NEXT_ANSWER_CB)),
-                CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.NEXT_QUESTION_CB)),
-                CallbackQueryHandler(compose.review, pattern='^{}$'.format(cc.FINISH_CREATING_CB))
-            ],
-            cc.REVIEW_STATE: [
-                CallbackQueryHandler(compose.finish, pattern='^{}$'.format(cc.CREATION_COMPLETE_CB)),
-                edit_survey
-            ],
-            cc.START_OVER_STATE: [
-                CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.YES_CB)),
-                CallbackQueryHandler(partial(compose.review, returning = True), pattern='^{}$'.format(cc.NO_CB))
-            ]
-        },
-        fallbacks=[
-            CallbackQueryHandler(root.confirm_start_over, pattern='^{}$'.format(cc.START_OVER_SURVEY_CB)),
-            CommandHandler('start', root.start)
-        ],
-        map_to_parent = {
-            cc.END: cc.START_STATE,
-            cc.START_STATE: cc.START_STATE
-        })
+    compose_conv = ConversationHandler(
+                entry_points = [CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.CREATE_SURVEY_CB))],
+                states = {
+                    cc.GET_TITLE_STATE: [
+                        MessageHandler(filters.Filters.text, compose.save_title),
+                        CallbackQueryHandler(compose.return_to_step, pattern='^{}$'.format(cc.YES_CB)),
+                        CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.NO_CB))
+                    ],
+                    cc.SAVE_TITLE_STATE: [
+                        CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.SAVE_TITLE_CB)),
+                        CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.GET_DESC_STATE: [
+                        MessageHandler(filters.Filters.text, compose.save_desc)
+                    ],
+                    cc.SAVE_DESC_STATE: [
+                        CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.SAVE_DESC_CB)),
+                        CallbackQueryHandler(compose.get_desc, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.GET_QUESTION_STATE: [
+                        MessageHandler(filters.Filters.text, compose.save_question)
+                    ],
+                    cc.SAVE_QUESTION_STATE: [
+                        CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.SAVE_QUESTION_CB)),
+                        CallbackQueryHandler(partial(compose.get_question, returning = True), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.GET_MULTIANS_STATE: [
+                        CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.SAVE_QUESTION_CB)),
+                        CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.RECORD_MULTIANS_STATE: [
+                        CallbackQueryHandler(partial(compose.save_multi, multi = True), pattern='^{}$'.format(cc.YES_CB)),
+                        CallbackQueryHandler(partial(compose.save_multi, multi = False), pattern='^{}$'.format(cc.NO_CB))
+                    ],
+                    cc.SAVE_MULTIANS_STATE: [
+                        CallbackQueryHandler(compose.get_answer, pattern='^{}$'.format(cc.YES_CB)),
+                        CallbackQueryHandler(compose.get_multi, pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.GET_ANSWER_STATE: [
+                        MessageHandler(filters.Filters.text, compose.record_answer)
+                    ],
+                    cc.RECORD_ANSWER_STATE: [
+                        CallbackQueryHandler(compose.save_answer, pattern='^{}$'.format(cc.SAVE_ANSWER_CB)),
+                        CallbackQueryHandler(partial(compose.get_answer, returning = True), pattern='^{}$'.format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.SAVE_ANSWER_STATE: [
+                        CallbackQueryHandler(compose.get_answer, pattern='^{}$'.format(cc.NEXT_ANSWER_CB)),
+                        CallbackQueryHandler(compose.get_question, pattern='^{}$'.format(cc.NEXT_QUESTION_CB)),
+                        CallbackQueryHandler(compose.review, pattern='^{}$'.format(cc.FINISH_CREATING_CB))
+                    ],
+                    cc.REVIEW_STATE: [
+                        CallbackQueryHandler(compose.finish, pattern='^{}$'.format(cc.CREATION_COMPLETE_CB)),
+                        edit_conv
+                    ],
+                    cc.START_OVER_STATE: [
+                        CallbackQueryHandler(compose.get_title, pattern='^{}$'.format(cc.YES_CB)),
+                        CallbackQueryHandler(partial(compose.review, returning = True), pattern='^{}$'.format(cc.NO_CB))
+                    ]
+                },
+                fallbacks=[
+                    CommandHandler('start', root.start)
+                ],
+                map_to_parent = {
+                    cc.END: cc.START_STATE,
+                    cc.START_STATE: cc.START_STATE,
+                    cc.MAIN_MENU_STATE: cc.MAIN_MENU_STATE
+                }
+        )
+
+    manage_conv = ConversationHandler(
+                entry_points = [CallbackQueryHandler(manage.start, pattern="^{}$".format(cc.MANAGE_SURVEYS_CB))],
+                states = {
+                    cc.MANAGE_SURVEYS_STATE: [
+                        compose_conv,
+                        CallbackQueryHandler(manage.pick, pattern="^{}$".format(cc.CHOOSE_SURVEY_CB))
+                    ],
+                    cc.MANAGE_PICK_SURVEY_STATE: [
+                        MessageHandler(filters.Filters.text, manage.survey),
+                        compose_conv
+                    ],
+                    cc.MANAGE_SURVEY_STATE:[
+                        edit_conv,
+                        CallbackQueryHandler(manage.confirm_delete, pattern="^{}$".format(cc.MANAGE_DELETE_SURVEY_CB))
+                    ],
+                    cc.MANAGE_DELETE_CONFIRM_STATE: [
+                        CallbackQueryHandler(manage.delete, pattern="^{}$".format(cc.YES_CB)),
+                        CallbackQueryHandler(manage.survey, pattern="^{}$".format(cc.NO_CB))
+                    ],
+                    cc.MANAGE_AFTER_DELETE_STATE: [
+                        CallbackQueryHandler(manage.pick, pattern="^{}$".format(cc.CHOOSE_SURVEY_CB))
+                    ]
+                },
+                fallbacks = [
+                    CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
+                ],
+                map_to_parent = {
+                    cc.START_STATE: cc.START_STATE,
+                    cc.MAIN_MENU_STATE: cc.MAIN_MENU_STATE
+                }
+        )
 
     settings_conv = ConversationHandler(
-        entry_points = [CallbackQueryHandler(settings.pick, pattern='^{}$'.format(cc.SETTINGS_CB))],
-        states = {
-            cc.PICK_SETTING_STATE: [
-                CallbackQueryHandler(settings.lang, pattern="^{}$".format(cc.SETTINGS_LANG_CB))
-            ]
-        },
-        fallbacks = [],
-        map_to_parent = {
-            cc.SETTINGS_LANG_STATE: cc.LANG_STATE
-        })
+                entry_points = [CallbackQueryHandler(settings.pick, pattern='^{}$'.format(cc.SETTINGS_CB))],
+                states = {
+                    cc.PICK_SETTING_STATE: [
+                        CallbackQueryHandler(settings.lang, pattern="^{}$".format(cc.SETTINGS_LANG_CB))
+                    ]
+                },
+                fallbacks = [],
+                map_to_parent = {
+                    cc.SETTINGS_LANG_STATE: cc.LANG_STATE
+                }
+        )
 
     main_conv = ConversationHandler(
                 entry_points = [CommandHandler('start', root.start)],
@@ -208,11 +243,11 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                     ],
                     cc.START_STATE: [
                         CallbackQueryHandler(root.start_survey, pattern="^{}$".format(cc.START_SURVEY_CB)),
-                        CallbackQueryHandler(root.manage_surveys, pattern="^{}$".format(cc.MANAGE_SURVEYS_CB)),
+                        manage_conv,
                         settings_conv
                     ],
                     cc.START_SURVEY_STATE: [
-                        add_survey,
+                        compose_conv,
                         MessageHandler(filters.Filters.text, poll.preview)
                     ],
                     cc.MAIN_MENU_STATE: [

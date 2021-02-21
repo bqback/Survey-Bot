@@ -253,6 +253,24 @@ class Keyboards():
                 ]
             ]
         )
+
+        self.MANAGE_SURVEY_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Редактировать опрос"), callback_data = cc.EDIT_SURVEY_MANAGE_CB),
+                    InlineKeyboardButton(_("Удалить опрос"), callback_data = cc.MANAGE_DELETE_SURVEY_CB),
+                ]
+            ]
+        )
+
+        self.MANAGE_AFTER_DELETE_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Вернуться к выбору опроса"), callback_data = cc.CHOOSE_SURVEY_CB),
+                    InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB),
+                ]
+            ]
+        )
         
         self.YES_NO_KB = InlineKeyboardMarkup(
             [
