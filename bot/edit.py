@@ -27,7 +27,7 @@ def pick_part(update: Update, context: CallbackContext, source: str, idx = None)
     locale = gettext.translation('edit', localedir = 'locales', languages = [context.user_data['lang']])
     locale.install()
     _ = locale.gettext
-    if idx is not None:
+    if 'idx' is not None:
         context.chat_data['s_idx'] = idx
     if source == 'compose':
         context.chat_data['edit_end'] = cc.END_COMPOSE
@@ -85,6 +85,11 @@ def question(update: Update, context: CallbackContext) -> int:
             idx = utils.validate_index(update.message.text, questions)
             context.chat_data['q_idx'] = idx
             context.chat_data['current_question'] = questions['q_idx']
+            update.message.reply_text(
+                    text = _("Что вы хотите отредактировать?"),
+                    reply_markup = kb.EDIT_QUESTION_KB
+                )
+            return cc.PICK_QUESTION_PART_STATE
         except IndexError:
             update.message.reply_text(
                         text = _("Введённого номера нет в списке! Попробуйте ещё раз"),
@@ -95,15 +100,10 @@ def question(update: Update, context: CallbackContext) -> int:
                         text = _("Неправильно введён номер! Попробуйте ещё раз"),
                     )
             return cc.PICK_QUESTION_STATE
-    update.message.reply_text(
-            text = _("Что вы хотите отредактировать?"),
-            reply_markup = kb.EDIT_QUESTION_KB
-        )
     # query.edit_message_text(
     #         text = _("Что вы хотите отредактировать?"),
     #         reply_markup = kb.EDIT_QUESTION_KB
     #     )
-    return cc.PICK_QUESTION_PART_STATE
 
 def question_text(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
@@ -156,6 +156,11 @@ def answer(update: Update, context: CallbackContext) -> int:
             idx = utils.validate_index(update.message.text, answers)
             context.chat_data['a_idx'] = idx
             context.chat_data['current_answer'] = answers[idx]
+            update.message.reply_text(
+                    text = _("Выберите действие"),
+                    reply_markup = kb.EDIT_ANSWER_KB
+                )
+            return cc.EDIT_ANSWER_STATE
         except IndexError:
             update.message.reply_text(
                         text = _("Введённого номера нет в списке! Попробуйте ещё раз"),
@@ -166,15 +171,10 @@ def answer(update: Update, context: CallbackContext) -> int:
                         text = _("Неправильно введён номер! Попробуйте ещё раз"),
                     )
             return cc.PICK_ANSWER_STATE
-    update.message.reply_text(
-            text = _("Выберите действие"),
-            reply_markup = kb.EDIT_ANSWER_KB
-        )
     # query.edit_message_text(
     #         text = _("Что вы хотите отредактировать?"),
     #         reply_markup = kb.EDIT_QUESTION_KB
     #     )
-    return cc.EDIT_ANSWER_STATE
 
 def remove_answer_confirm(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
