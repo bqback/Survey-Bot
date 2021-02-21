@@ -76,6 +76,22 @@ def survey(update: Update, context: CallbackContext) -> int:
             )
         return cc.MANAGE_SURVEY_STATE
 
+def print_survey(update: Update, context: CallbackContext) -> int:
+    query = update.callback_query
+    query.answer()
+    idx = context.chat_data['s_idx']
+    survey = utils.print_survey(context.bot_data[consts.SURVEYS_KEY][idx])
+    context.bot.send_message(
+            chat_id = update.effective_chat.id,
+            text = survey
+        )
+    context.bot.send_message(
+            chat_id = update.effective_chat.id,
+            text = _("Что вы хотите сделать?"),
+            reply_markup = kb.MANAGE_SURVEY_KB
+        )
+    return cc.MANAGE_SURVEY_STATE
+
 def confirm_delete(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
@@ -86,9 +102,11 @@ def confirm_delete(update: Update, context: CallbackContext) -> int:
     return cc.MANAGE_DELETE_CONFIRM_STATE
 
 def delete(update: Update, context: CallbackContext) -> int:
+    query = update.callback_query
+    query.answer()
     idx = context.chat_data['s_idx']
     del context.chat_data['s_idx']
-    del context.bot_data[SURVEYS_KEY][idx]
+    del context.bot_data[consts.SURVEYS_KEY][idx]
     query.edit_message_text(
             text = _("Выберите действие"),
             reply_markup = kb.MANAGE_AFTER_DELETE_KB
