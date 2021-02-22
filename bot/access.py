@@ -3,10 +3,10 @@ import logging
 from re import match
 from typing import List
 
+import bot.constants as consts
+
 from telegram import Update
 from telegram.ext import CallbackContext, DispatcherHandlerStop
-
-from bot.constants import ADMINS_KEY
 
 def check(update: Update, context: CallbackContext) -> None:
 
@@ -26,7 +26,7 @@ def check(update: Update, context: CallbackContext) -> None:
         else:
             if match('^\/.*', text):
                 if not match('^\/show_id$', text):
-                    if user_id in bot_data[ADMINS_KEY]:
+                    if user_id in bot_data[consts.ADMINS_KEY]:
                         logger.info('Admin {} used command {}'.format(user_id, text))
                         return
                     else:
