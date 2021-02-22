@@ -358,6 +358,6 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], chats: 
     if not bot_data.get(consts.ADMINS_KEY):
         bot_data[consts.ADMINS_KEY] = admins
     if not bot_data.get(consts.SHEETS_KEY):
-        bot_data[consts.ADMINS_KEY] = gsheets
+        bot_data[consts.SHEETS_KEY] = gsheets
     if not bot_data.get(consts.CHATS_KEY):
         bot_data[consts.CHATS_KEY] = chats
