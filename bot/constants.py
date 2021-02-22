@@ -1,6 +1,4 @@
 SURVEYS_KEY = 'surveys'
 ADMINS_KEY = 'admins'
-SURVEY_TITLE_KEY = 'survey_title'
-SURVEY_DESCRIPTION_KEY = 'survey_description'
-SURVEYS_MANAGE_BUTTON = 'Управление опросами'
-SURVEYS_MANAGE_ARG = 'manage'
+CHATS_KEY = 'chats'
+SHEETS_KEY = 'sheets'

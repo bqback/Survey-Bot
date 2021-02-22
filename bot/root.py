@@ -46,25 +46,6 @@ def start(update: Update, context: CallbackContext) -> int:
                 )
         return cc.START_STATE
 
-def start_survey(update: Update, context: CallbackContext) -> int:
-    query = update.callback_query
-    query.answer()
-    bot_data = context.bot_data
-    if len(context.bot_data[consts.SURVEYS_KEY]) > 0:
-        survey_list = utils.num_list(context.bot_data[consts.SURVEYS_KEY], key = 'title')
-        query.edit_message_text(
-                text = _("Выберите опрос из существующих\n\n"
-                            "{list}\n"
-                            "Для выбора опроса введите номер из списка").format(list = survey_list),
-                reply_markup = kb.MAIN_MENU_KB
-            )
-    else:
-        query.edit_message_text(
-                text = _("Опросов пока что нет! Создайте новый опрос, нажав на кнопку"), 
-                reply_markup = kb.START_SURVEY_NONE_KB
-            )
-    return cc.START_SURVEY_STATE
-
 def manage_surveys(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     user = update.effective_user

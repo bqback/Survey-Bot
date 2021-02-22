@@ -34,6 +34,8 @@ def main():
     log_size = int(config['log']['log_size']) * 1024
     log_backups = int(config['log']['log_backups'])
 
+    sheets_file = config['sheets']['file']
+
     logger = logging.getLogger()
 
     logger.setLevel(logging.INFO)
@@ -55,7 +57,7 @@ def main():
     
     upd = build(token = token, use_context = True, persistence = persistence, defaults = defaults)
 
-    register_dispatcher(upd, admins = admins)
+    register_dispatcher(upd, admins = admins, gsheets = )
 
     upd.start_polling()
     logger.info('\n---------\nLog started on %s.\n---------\n' % time.asctime())

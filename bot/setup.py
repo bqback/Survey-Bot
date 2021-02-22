@@ -29,20 +29,25 @@ BOT_COMMANDS: List[BotCommand] = [
     BotCommand('update_admins', '[ADMIN] Updates the list of admin ids')
 ]
 
-def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None:
+def register_dispatcher(updater: Updater, admins: Union[int, List[int]], gsheets: str) -> None:
 
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(TypeHandler(Update, access.check), group = -2)
 
+    dispatcher.add_handler(PollAnswerHandler(poll.collect_answer), group = -1)
+
     dispatcher.add_handler(InlineQueryHandler(inline.surveys))
     dispatcher.add_handler(CommandHandler('add_admin', commands.add_admin))
+    dispatcher.add_handler(CommandHandler('add_chat', commands.add_chat))
     dispatcher.add_handler(CommandHandler('restart', partial(commands.restart, updater = updater)))
     dispatcher.add_handler(CommandHandler('remove_admin', commands.remove_admin))
+    dispatcher.add_handler(CommandHandler('remove_chat', commands.remove_chat))
     dispatcher.add_handler(CommandHandler('rotate_log', commands.rotate_log))
     dispatcher.add_handler(CommandHandler('show_current_survey', commands.show_current_survey))
     dispatcher.add_handler(CommandHandler('show_id', commands.show_id))
     dispatcher.add_handler(CommandHandler('update_admins', commands.update_admins))
+    dispatcher.add_handler(CommandHandler('update_chats', commands.update_chats))
 
     edit_conv = ConversationHandler(
         entry_points = [
@@ -278,15 +283,44 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
         )
 
     poll_conv = ConversationHandler(
-                entry_points = [MessageHandler(filters.Filters.text, poll.preview)],
+                entry_points = [CallbackQueryHandler(poll.pick_survey, pattern="^{}$".format(cc.START_SURVEY_CB))],
                 states = {
-
+                    cc.POLL_PICK_STATE: [
+                        MessageHandler(filters.Filters.text, poll.preview),
+                        compose_conv
+                    ],
+                    cc.POLL_PREVIEW_STATE: [
+                        CallbackQueryHandler(poll.pick_chat, pattern="^{}$".format(cc.PICK_CHAT_CB)),
+                        CallbackQueryHandler(poll.pick_survey, pattern="^{}$".format(cc.CHOOSE_SURVEY_CB))
+                    ],
+                    cc.PICK_CHAT_STATE: [
+                        MessageHandler(filters.Filters.text, poll.set_cap)
+                    ],
+                    cc.SET_CAP_STATE: [
+                        CallbackQueryHandler(poll.confirm, pattern="^{}$".format(cc.USE_RECOMMENDED_CB)),
+                        CallbackQueryHandler(poll.get_cap, pattern="^{}$".format(cc.SET_OWN_CAP_CB))
+                    ],
+                    cc.GET_CAP_STATE: [
+                        MessageHandler(filters.Filters.text, poll.validate_cap)
+                    ],
+                    cc.VALIDATE_CAP_STATE:[
+                        CallbackQueryHandler(poll.confirm, pattern="^{}$".format(cc.USE_RECOMMENDED_CB)),
+                        CallbackQueryHandler(poll.confirm, pattern="^{}$".format(cc.USE_CUSTOM_CB)),
+                        CallbackQueryHandler(poll.get_cap, pattern="^{}$".format(cc.ENTER_AGAIN_CB))
+                    ],
+                    cc.POLL_CONFIRM_STATE:[
+                        CallbackQueryHandler(poll.launch, pattern="^{}$".format(cc.START_SURVEY_CB))
+                        CallbackQueryHandler(poll.pick_survey, pattern="^{}$".format(cc.CHANGE_SURVEY_CB)),
+                        CallbackQueryHandler(poll.pick_chat, pattern="^{}$".format(cc.CHANGE_CHAT_CB)),
+                        CallbackQueryHandler(poll.set_cap, pattern="^{}$".format(cc.CHANGE_CAP_CB))
+                    ]
                 },
                 fallbacks = [
                     CallbackQueryHandler(root.confirm_return_to_main, pattern='^{}$'.format(cc.RETURN_TO_MAIN_CB))
                 ],
                 map_to_parent = {
-                    cc.START_STATE: cc.START_STATE
+                    cc.START_STATE: cc.START_STATE,
+                    cc.START_SURVEY_STATE: cc.START_SURVEY_STATE
                 }
         )
 
@@ -298,13 +332,9 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
                         CallbackQueryHandler(partial(commands.set_lang, lang = "en"), pattern="^{}$".format(cc.EN_CB)),
                     ],
                     cc.START_STATE: [
-                        CallbackQueryHandler(root.start_survey, pattern="^{}$".format(cc.START_SURVEY_CB)),
+                        poll_conv
                         manage_conv,
                         settings_conv
-                    ],
-                    cc.START_SURVEY_STATE: [
-                        compose_conv,
-                        poll_conv
                     ],
                     cc.MAIN_MENU_STATE: [
                         CallbackQueryHandler(root.start, pattern = "^{}$".format(cc.YES_CB))
@@ -327,3 +357,5 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]]) -> None
         bot_data[consts.SURVEYS_KEY] = []
     if not bot_data.get(consts.ADMINS_KEY):
         bot_data[consts.ADMINS_KEY] = admins
+    if not bot_data.get(consts.SHEETS_KEY):
+        bot_data[consts.ADMINS_KEY] = gsheets

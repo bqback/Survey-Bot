@@ -1,6 +1,8 @@
 import gettext
 import logging
 
+import bot.autofit as autofit
+
 from typing import Dict, List, Union
 
 _ = gettext.gettext
@@ -132,3 +134,24 @@ def print_survey(survey: Dict) -> str:
         for idx, answer in enumerate(question['answers']):
             out += f"\n\t{idx+1}. {answer}"
     return out
+
+def submit_data(answers, questions, flag, file):
+    logger.info(_("Отправляю данные"))
+    client = service_account(filename = file)
+    logger.info(_("Установлено соединение с Google Sheets"))
+    spreadsheet = client.open('Опросы ГКБ в Телеграме')
+    logger.info(_("Открыта книга"))
+    time = datetime.now().strftime('%Y/%m/%d %H.%M.%S')
+    spreadsheet.add_worksheet(time, 1, len(questions) + 1, index = 0)
+    logger.info(_("Создана таблица"))
+    sh = spreadsheet.get_worksheet(0)
+    logger.info(_("Выбрана таблица"))
+    sh.update([['Имя'] + questions])
+    logger.info(_("Расставлены названия для столбцов"))
+    for uid, values in answers.items():
+        logger.info(_("Записываются данные для пользователя {} ({})").format(uid, values['name']))
+        sh.append_row([values.get(key) for key in values.keys()])
+        logger.info(_("Данные записаны"))
+    autofit.columns(spreadsheet)
+    logger.info(_("Столбцы отрегулированы"))
+    flag = False

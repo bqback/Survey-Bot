@@ -311,3 +311,58 @@ class Keyboards():
                 ]
             ]
         )
+
+        self.POLL_PREVIEW_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Выбрать чат для проведения опроса"), callback_data = cc.PICK_CHAT_CB),
+                    InlineKeyboardButton(_("Выбрать другой опрос"), callback_data = cc.CHOOSE_SURVEY_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
+                ]
+            ]
+        )
+
+        self.SET_CAP_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Использовать рекомендованное"), callback_data = cc.USE_RECOMMENDED_CB),
+                    InlineKeyboardButton(_("Установить своё"), callback_data = cc.SET_OWN_CAP_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
+                ]
+            ]
+        )
+
+        self.CUSTOM_CAP_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Использовать"), callback_data = cc.USE_CUSTOM_CB),
+                    InlineKeyboardButton(_("Ввести заново"), callback_data = cc.ENTER_AGAIN_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Использовать рекомендованное"), callback_data = cc.USE_RECOMMENDED_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
+                ]
+            ]
+        )
+
+        self.POLL_CONFIRM_KB = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(_("Начать опрос"), callback_data = cc.START_SURVEY_CB)
+                ],
+                [
+                    InlineKeyboardButton(_("Выбрать другой опрос"), callback_data = cc.CHANGE_SURVEY_CB),
+                    InlineKeyboardButton(_("Выбрать другой чат"), callback_data = cc.CHANGE_CHAT_CB),
+                    InlineKeyboardButton(_("Изменить значение"), callback_data = cc.CHANGE_CAP_CB),
+                ],
+                [
+                    InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
+                ]
+            ]
+        )
