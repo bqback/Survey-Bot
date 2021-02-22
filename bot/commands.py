@@ -179,3 +179,6 @@ def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
         logger.error('User {} picked an invalid language?'.format(update.effective_user.id))
     root.start(update, context)
     return cc.START_STATE
+
+def reset_ongoing(update: Update, context: CallbackContext) -> None:
+    context.chat_data['poll_ongoing'] = False
