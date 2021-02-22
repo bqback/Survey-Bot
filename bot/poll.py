@@ -23,10 +23,11 @@ def pick_survey(update: Update, context: CallbackContext) -> int:
     locale = gettext.translation('poll', localedir = 'locales', languages = [context.user_data['lang']])
     locale.install()
     _ = locale.gettext
-    bot_data = context.bot_data
+    if 'poll_ongoing' not in context.bot_data:
+        context.bot_data['poll_ongoing'] = False
     if not context.bot_data['poll_ongoing']:
-        if len(bot_data[consts.SURVEYS_KEY]) > 0:
-            survey_list = utils.num_list(bot_data[consts.SURVEYS_KEY], key = 'title')
+        if len(context.bot_data[consts.SURVEYS_KEY]) > 0:
+            survey_list = utils.num_list(context.bot_data[consts.SURVEYS_KEY], key = 'title')
             query.edit_message_text(
                     text = _("Выберите опрос из существующих\n\n"
                                 "{list}\n"
@@ -46,9 +47,9 @@ def pick_survey(update: Update, context: CallbackContext) -> int:
             )
 
 def preview(update: Update, context: CallbackContext) -> int:
-	try:
-        idx = utils.validate_index(update.message.text, context.bot_data[consts.SURVEY_KEY])
-        context.chat_data['current_survey'] = context.bot_data[consts.SURVEY_KEY][idx]
+    try:
+        idx = utils.validate_index(update.message.text, context.bot_data[consts.SURVEYS_KEY])
+        context.chat_data['current_survey'] = context.bot_data[consts.SURVEYS_KEY][idx]
         survey = utils.print_survey(context.chat_data['current_survey'])
         update.message.reply_text(
                 text = _("Выбранный опрос:\n\n") +
@@ -211,7 +212,7 @@ def launch(update: Update, context: CallbackContext) -> int:
             text = desc
         )
     context.job_queue.run_once(step2, delay, context = context, name = context.chat_data['current_survey']['id'] + '_step2')
-    return
+    return cc.START_STATE
 
 def step2(context):
     job = context.job

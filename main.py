@@ -22,12 +22,24 @@ def main():
 
     token = config['bot']['token']
     pickle = config['bot']['pickle']
+    chat_list = config['bot']['chats']
+    if match(' ', chat_list):
+        chat_list.replace(' ', '')
+        config['bot']['chats'] = chat_list
+        config.write(open('bot.ini', 'w'))
+    try:
+        chats = [int(chat_id) for chat_id in config['bot']['chats'].split(',')]
+    except ValueError:
+        raise ValueError("Chat list contains invalid data! Make sure it's either an int or a list of ints")
     admin_list = config['bot']['admins']
     if match(' ', admin_list):
         admin_list.replace(' ', '')
         config['bot']['admins'] = admin_list
         config.write(open('bot.ini', 'w'))
-    admins = [int(admin_id) for admin_id in config['bot']['admins'].split(',')]
+    try:
+        admins = [int(admin_id) for admin_id in config['bot']['admins'].split(',')]
+    except ValueError:
+        raise ValueError("Admin list contains invalid data! Make sure it's either an int or a list of ints")
     defaults = dict(config.items('defaults'))
 
     log_file = config['log']['filename']
@@ -57,7 +69,7 @@ def main():
     
     upd = build(token = token, use_context = True, persistence = persistence, defaults = defaults)
 
-    register_dispatcher(upd, admins = admins, gsheets = )
+    register_dispatcher(upd, admins = admins, chats = chats, gsheets = sheets_file)
 
     upd.start_polling()
     logger.info('\n---------\nLog started on %s.\n---------\n' % time.asctime())

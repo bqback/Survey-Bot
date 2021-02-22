@@ -327,7 +327,9 @@ class Keyboards():
         self.SET_CAP_KB = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(_("Использовать рекомендованное"), callback_data = cc.USE_RECOMMENDED_CB),
+                    InlineKeyboardButton(_("Использовать рекомендованное"), callback_data = cc.USE_RECOMMENDED_CB)
+                ],
+                [
                     InlineKeyboardButton(_("Установить своё"), callback_data = cc.SET_OWN_CAP_CB)
                 ],
                 [

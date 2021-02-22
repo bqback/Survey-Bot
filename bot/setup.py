@@ -4,7 +4,7 @@ from functools import partial
 import bot.constants as consts
 import bot.conv_constants as cc
 import bot.commands as commands
-import bot.inline as inline
+# import bot.inline as inline
 import bot.access as access
 import bot.root as root
 import bot.compose as compose
@@ -14,9 +14,9 @@ import bot.settings as settings
 import bot.manage as manage
 
 from telegram import BotCommand, Update
-from telegram.utils.request import Request
 from telegram.ext import (Updater, CommandHandler, InlineQueryHandler, ConversationHandler, 
-                          TypeHandler, CallbackQueryHandler, MessageHandler, filters)
+                          TypeHandler, CallbackQueryHandler, MessageHandler, filters,
+                          PollAnswerHandler)
 
 BOT_COMMANDS: List[BotCommand] = [
     BotCommand('add_admin', '[ADMIN] Adds an admin or a list of admins,\nseparated by a space, comma or semicolon'),
@@ -29,7 +29,7 @@ BOT_COMMANDS: List[BotCommand] = [
     BotCommand('update_admins', '[ADMIN] Updates the list of admin ids')
 ]
 
-def register_dispatcher(updater: Updater, admins: Union[int, List[int]], gsheets: str) -> None:
+def register_dispatcher(updater: Updater, admins: Union[int, List[int]], chats: Union[int, List[int]], gsheets: str) -> None:
 
     dispatcher = updater.dispatcher
 
@@ -37,13 +37,14 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], gsheets
 
     dispatcher.add_handler(PollAnswerHandler(poll.collect_answer), group = -1)
 
-    dispatcher.add_handler(InlineQueryHandler(inline.surveys))
+    # dispatcher.add_handler(InlineQueryHandler(inline.surveys))
     dispatcher.add_handler(CommandHandler('add_admin', commands.add_admin))
     dispatcher.add_handler(CommandHandler('add_chat', commands.add_chat))
     dispatcher.add_handler(CommandHandler('restart', partial(commands.restart, updater = updater)))
     dispatcher.add_handler(CommandHandler('remove_admin', commands.remove_admin))
     dispatcher.add_handler(CommandHandler('remove_chat', commands.remove_chat))
     dispatcher.add_handler(CommandHandler('rotate_log', commands.rotate_log))
+    dispatcher.add_handler(CommandHandler('show_chat_id', commands.show_chat_id))
     dispatcher.add_handler(CommandHandler('show_current_survey', commands.show_current_survey))
     dispatcher.add_handler(CommandHandler('show_id', commands.show_id))
     dispatcher.add_handler(CommandHandler('update_admins', commands.update_admins))
@@ -309,7 +310,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], gsheets
                         CallbackQueryHandler(poll.get_cap, pattern="^{}$".format(cc.ENTER_AGAIN_CB))
                     ],
                     cc.POLL_CONFIRM_STATE:[
-                        CallbackQueryHandler(poll.launch, pattern="^{}$".format(cc.START_SURVEY_CB))
+                        CallbackQueryHandler(poll.launch, pattern="^{}$".format(cc.START_SURVEY_CB)),
                         CallbackQueryHandler(poll.pick_survey, pattern="^{}$".format(cc.CHANGE_SURVEY_CB)),
                         CallbackQueryHandler(poll.pick_chat, pattern="^{}$".format(cc.CHANGE_CHAT_CB)),
                         CallbackQueryHandler(poll.set_cap, pattern="^{}$".format(cc.CHANGE_CAP_CB))
@@ -320,7 +321,6 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], gsheets
                 ],
                 map_to_parent = {
                     cc.START_STATE: cc.START_STATE,
-                    cc.START_SURVEY_STATE: cc.START_SURVEY_STATE
                 }
         )
 
@@ -329,10 +329,10 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], gsheets
                 states = {
                     cc.LANG_STATE: [
                         CallbackQueryHandler(partial(commands.set_lang, lang = "ru"), pattern="^{}$".format(cc.RU_CB)),
-                        CallbackQueryHandler(partial(commands.set_lang, lang = "en"), pattern="^{}$".format(cc.EN_CB)),
+                        CallbackQueryHandler(partial(commands.set_lang, lang = "en"), pattern="^{}$".format(cc.EN_CB))
                     ],
                     cc.START_STATE: [
-                        poll_conv
+                        poll_conv,
                         manage_conv,
                         settings_conv
                     ],
@@ -359,3 +359,5 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], gsheets
         bot_data[consts.ADMINS_KEY] = admins
     if not bot_data.get(consts.SHEETS_KEY):
         bot_data[consts.ADMINS_KEY] = gsheets
+    if not bot_data.get(consts.CHATS_KEY):
+        bot_data[consts.CHATS_KEY] = chats

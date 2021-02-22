@@ -11,13 +11,12 @@ from configparser import ConfigParser
 
 from telegram import Update
 from telegram.ext import CallbackContext, Updater
+from telegram.error import BadRequest
 
 import bot.constants as consts
 import bot.conv_constants as cc
 import bot.root as root
 import bot.keyboards as kbs
-
-from bot.constants import ADMINS_KEY, SURVEYS_MANAGE_ARG
 
 _ = gettext.gettext
 kb = None
@@ -28,12 +27,13 @@ def show_id(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.from_user.id)
 
 def show_chat_id(update: Update, context: CallbackContext) -> None:
+    print(update.effective_chat)
     update.message.reply_text(update.effective_chat.id)
 
 def update_chats(update: Update, context: CallbackContext) -> None:
     config = ConfigParser()
     config.read('bot.ini')
-    chats = [int(admin_id) for chat_id in config.get('bot', 'chats').split(',')]
+    chats = [int(chat_id) for chat_id in config['bot']['chats'].split(',')]
     context.bot_data[consts.CHATS_KEY] = chats
     update.message.reply_text(_('Список чатов был обновлён!'))
 
@@ -44,17 +44,17 @@ def add_chat(update: Update, context: CallbackContext) -> None:
         chats = config['bot']['chats']
         chat_list = chats.split(',')
         for chat in context.args:
-            chat = re.sub('[^0-9 ]+', '', chat)
+            chat = re.sub('[^-0-9 ]+', '', chat)
             if chat not in chat_list:
                 try:
                     context.bot.get_chat(int(chat))
                     chats += ',{}'.format(chat)
                     update.message.reply_text(_('Чат {id} был добавлен!').format(id = chat))
-                except TelegramError:
+                except BadRequest:
                     update.message.reply_text(_('Бота нет в чате {id}! Добавьте его в этот чат, затем попробуйте снова').format(id = chat))
             else:
                 update.message.reply_text(_('Чат {id} уже есть в списке!').format(id = chat))
-        config['bot']['chats'] = chats
+        config['bot']['chats'] = chats.strip(',')
         config.write(open('bot.ini', 'w'))
     else:
         update.message.reply_text(_('Для использования команды нужно указать список добавляемых чатов!'))
@@ -80,7 +80,7 @@ def remove_chat(update: Update, context: CallbackContext) -> None:
 def update_admins(update: Update, context: CallbackContext) -> None:
     config = ConfigParser()
     config.read('bot.ini')
-    admins = [int(admin_id) for admin_id in config.get('bot', 'admins').split(',')]
+    admins = [int(admin_id) for admin_id in config['bot']['admins'].split(',')]
     context.bot_data[consts.ADMINS_KEY] = admins
     update.message.reply_text(_('Список администраторов был обновлён!'))
 
@@ -97,7 +97,7 @@ def add_admin(update: Update, context: CallbackContext) -> None:
                 update.message.reply_text(_('Администратор {id} был добавлен!').format(id = admin))
             else:
                 update.message.reply_text(_('Администратор {id} уже есть в списке!').format(id = admin))
-        config['bot']['admins'] = admins
+        config['bot']['admins'] = admins.strip(',')
         config.write(open('bot.ini', 'w'))
     else:
         update.message.reply_text(_('Для использования команды нужно указать список добавляемых администраторов!'))
