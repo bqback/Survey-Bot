@@ -359,8 +359,8 @@ class Keyboards():
                     InlineKeyboardButton(_("Начать опрос"), callback_data = cc.START_SURVEY_CB)
                 ],
                 [
-                    InlineKeyboardButton(_("Выбрать другой опрос"), callback_data = cc.CHANGE_SURVEY_CB),
-                    InlineKeyboardButton(_("Выбрать другой чат"), callback_data = cc.CHANGE_CHAT_CB),
+                    InlineKeyboardButton(_("Другой опрос"), callback_data = cc.CHANGE_SURVEY_CB),
+                    InlineKeyboardButton(_("Другой чат"), callback_data = cc.CHANGE_CHAT_CB),
                     InlineKeyboardButton(_("Изменить значение"), callback_data = cc.CHANGE_CAP_CB),
                 ],
                 [
