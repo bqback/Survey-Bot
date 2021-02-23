@@ -193,7 +193,7 @@ def confirm(update: Update, context: CallbackContext) -> int:
     query.edit_message_text(
             text = _("Вы собираетесь провести опрос\n\n"
                     "{survey}\n\n"
-                    "в чате {title}\n"
+                    "в чате {title}\n\n"
                     "Для перехода к следующему вопросу должно ответить {cap} пользователей\n\n"
                     "Выберите действие"
                     ).format(survey = survey, title = chat_title, cap = context.chat_data['cap']),
@@ -204,51 +204,65 @@ def confirm(update: Update, context: CallbackContext) -> int:
 def launch(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
-    chat_id = context.chat_data['chat_id']
-    desc = context.chat_data['current_survey']['desc']
+    query.edit_message_text(
+            text = _("Опрос запущен!"),
+            reply_markup = kb.MAIN_MENU_KB
+        )
+    context.bot_data['poll_ongoing'] = True
+    context.bot_data['ongoing'] = {
+            'chat_id': context.chat_data['chat_id'],
+            'survey': context.chat_data['current_survey'],
+            'cap': context.chat_data['cap'],
+            'current_question': 0,
+            'answers': {}
+        }
+    del context.chat_data['chat_id']
+    del context.chat_data['current_survey']
+    del context.chat_data['cap']
+    desc = context.bot_data['ongoing']['survey']['desc']
+    chat_id = context.bot_data['ongoing']['chat_id']
     delay = round(len(desc.split())*60/140)
+    logger.info(_("Время на чтение описания: {delay} секунд").format(delay = delay))
     context.bot.send_message(
             chat_id = chat_id,
             text = desc
         )
-    context.job_queue.run_once(step2, delay, context = context, name = context.chat_data['current_survey']['id'] + '_step2')
+    context.job_queue.run_once(step2, delay, context = context, name = context.bot_data['ongoing']['survey']['id'] + '_step2')
     return cc.START_STATE
 
 def step2(context):
-    job = context.job
-    context = job.context
+    context = context.job.context
     context.bot.send_message(
-            chat_id = job.context['chat_id'],
+            chat_id = context.bot_data['ongoing']['chat_id'],
             text = _("Опрос начнётся через 5 секунд")
         )
-    context.chat_data['current_question'] = 0
-    context.chat_data['answers'] = {}
-    context.job_queue.run_once(post_question, 5, context = context, name = context['current_survey']['id'] + '_post_question_1')
+    context.job_queue.run_once(post_question, 5, context = context, name = context.bot_data['ongoing']['survey']['id'] + '_post_questions')
 
 def post_question(context):
-    if 'job' in context:
-        job = context.job
-        context = job.context
-    if not context.chat_data['poll_ongoing']:
-        context.chat_data['poll_ongoing'] = True
-    current = context.chat_data['current_question']
-    chat_id = context.chat_data['chat_id']
-    if current < len(context.chat_data['current_survey']['questions']):
-        question = context.chat_data['current_survey']['questions'][current]
+    context = context.job.context
+    ongoing = context.bot_data['ongoing']
+    current = ongoing['current_question']
+    chat_id = ongoing['chat_id']
+    if current < len(ongoing['survey']['questions']):
+        question = ongoing['survey']['questions'][current]
         q = question['question']
         a = question['answers']
         multi = question['multi']
-        logger.info(_("Публикуется вопрос №{num}").format(current+1))
+        logger.info(_("Публикуется вопрос №{num}").format(num = current+1))
         message = context.bot.send_poll(
                             chat_id = chat_id, 
                             question = q, 
                             options = a, 
                             is_anonymous = False, 
-                            allows_multiple_answers = multi)
-        logger.info(_("Публикуется счётчик к вопросу").format(current+1))
+                            allows_multiple_answers = multi
+            )
+        logger.info(_("Публикуется счётчик к вопросу №{num}").format(num = current+1))
         promise = context.bot.send_message(
                             chat_id = chat_id, 
-                            text = _("Ответили 0 из {} участников. Следующий вопрос появится, когда ответят все!").format(context.chat_data['cap']), timeout = 500)
+                            text = _("Ответили 0 из {cap} участников. Следующий вопрос появится, когда ответят все!"
+                                ).format(cap = ongoing['cap']), 
+                            timeout = 500
+            )
         counter = promise.result()
         payload = {
                         message.poll.id: {
@@ -259,38 +273,39 @@ def post_question(context):
                             'answered': 0
                         }
                 }
-        context.chat_data.update(payload)
+        context.bot_data['ongoing'].update(payload)
 
 def collect_answer(update, context):
-    poll_answers = update.poll_answer.option_ids
-    name = update.poll_answer.user.full_name
-    uid = update.poll_answer.user.id
-    poll_id = update.poll_answer.poll_id
-    chat_id = context.chat_data[poll_id]['chat_id']
-    current = context.chat_data['current_question']
-    answers = context.chat_data['current_survey']['questions'][current]['answers']
+    answer_upd = update.poll_answer
+    poll_answers = answer_upd.option_ids
+    name = answer_upd.user.full_name
+    uid = answer_upd.user.id
+    poll_id = answer_upd.poll_id
+    ongoing = context.bot_data['ongoing']
+    chat_id = ongoing[poll_id]['chat_id']
+    current = ongoing['current_question']
+    answers = ongoing['survey']['questions'][current]['answers']
     answerstr = ', '.join([answers[i] for i in poll_answers])
-    logger.info(_("Пользователь {name} ответил на вопрос №%d:\n\t%s.").format(name, current+1, answerstr))
-    context.chat_data[poll_id]['answered'] += 1
+    logger.info(_("Пользователь {name} ответил на вопрос №{num}:\n\t{answer}."
+                ).format(name = name, num = current+1, answers = answerstr))
+    context.bot_data['ongoing'][poll_id]['answered'] += 1
     if current == 0:
-        context.chat_data['answers'].setdefault(uid, {'name': name})
-    context.chat_data['answers'][uid].setdefault(current, answerstr)
+        context.bot_data['ongoing']['answers'].setdefault(uid, {'name': name})
+    context.bot_data['ongoing']['answers'][uid].setdefault(current, answerstr)
     context.bot.edit_message_text(
-            text = _("Ответили {} из {} участников. Следующий вопрос появится, когда ответят все!"
-                    ).format(context.chat_data[poll_id]['answered'], context.chat_data['cap']),
+            text = _("Ответили {curr} из {cap} участников. Следующий вопрос появится, когда ответят все!"
+                    ).format(curr = context.bot_data['ongoing'][poll_id]['answered'], 
+                            cap = ongoing['cap']),
             chat_id = chat_id, 
-            message_id = context.chat_data[poll_id]['counter_id']
+            message_id = ongoing[poll_id]['counter_id']
         )
-    if context.chat_data[poll_id]['answered'] == context.chat_data['cap']:
-        context.bot.edit_message_text(
-                text = _("Ответили {} из {} участников."
-                        ).format(context.chat_data[poll_id]['answered'], context.chat_data['cap']),
-                chat_id = chat_id, 
-                message_id = context.chat_data[poll_id]['counter_id']
+    if context.bot_data['ongoing'][poll_id]['answered'] == ongoing['cap']:
+        context.bot.stop_poll(
+                    chat_id = chat_id, 
+                    message_id = context.bot_data['ongoing'][poll_id]['message_id']
             )
-        context.bot.stop_poll(chat_id, context.chat_data[poll_id]['message_id'])
-        context.chat_data['current_question'] += 1
-        if context.chat_data['currentq'] < len(context.chat_data['current_survey']['questions']):
+        context.bot_data['ongoing']['current_question'] += 1
+        if context.bot_data['ongoing']['current_question'] < len(ongoing['survey']['questions']):
             post_question(context)
         else:
             logger.info(_("Опрос завершён"))
@@ -298,14 +313,11 @@ def collect_answer(update, context):
                     chat_id = chat_id, 
                     text = _("Опрос окончен! Всем спасибо за участие.")
                 )
-            questions = [question['question'] for question in context.chat_data['current_survey']['questions']]
+            questions = [question['question'] for question in context.bot_data['ongoing']['survey']['questions']]
             utils.submit_data(
-                    answers = context.chat_data['answers'],
+                    answers = context.bot_data['ongoing']['answers'],
                     questions = questions, 
-                    flag = context.chat_data['poll_ongoing'], 
+                    flag = context.bot_data['ongoing']['poll_ongoing'], 
                     file = context.bot_data[consts.SHEETS_KEY]
                 )
-            del context.chat_data['answers']
-            del context.chat_data['current_survey']
-            del context.chat_data['current_question']
-            del context.chat_data[poll_id]
+            del context.bot_data['ongoing']
