@@ -361,7 +361,7 @@ class Keyboards():
                 [
                     InlineKeyboardButton(_("Другой опрос"), callback_data = cc.CHANGE_SURVEY_CB),
                     InlineKeyboardButton(_("Другой чат"), callback_data = cc.CHANGE_CHAT_CB),
-                    InlineKeyboardButton(_("Изменить значение"), callback_data = cc.CHANGE_CAP_CB),
+                    InlineKeyboardButton(_("Другое значение"), callback_data = cc.CHANGE_CAP_CB),
                 ],
                 [
                     InlineKeyboardButton(_("Вернуться в главное меню"), callback_data = cc.RETURN_TO_MAIN_CB)
