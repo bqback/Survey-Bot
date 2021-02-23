@@ -3,7 +3,7 @@ from telegram.ext import messagequeue, Updater
 
 class MQBot(Bot):
     def __init__(self, *args, is_queued_def = True, mqueue = None, **kwargs):
-        super(MQBot, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._is_messages_queued_default = is_queued_def
         self._msg_queue = mqueue or messagequeue.MessageQueue()
