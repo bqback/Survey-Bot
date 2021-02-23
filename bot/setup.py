@@ -18,17 +18,6 @@ from telegram.ext import (Updater, CommandHandler, InlineQueryHandler, Conversat
                           TypeHandler, CallbackQueryHandler, MessageHandler, filters,
                           PollAnswerHandler)
 
-BOT_COMMANDS: List[BotCommand] = [
-    BotCommand('add_admin', '[ADMIN] Adds an admin or a list of admins,\nseparated by a space, comma or semicolon'),
-    BotCommand('restart', '[ADMIN] Restarts the bot'),
-    BotCommand('remove_admin', '[ADMIN] Removes an admin or a list of admins. separated by a space, comma or semicolon'),
-    BotCommand('rotate_log', '[ADMIN] Backs up current log and starts a new one'),
-    BotCommand('show_current_survey', 'Displays everything contained in the current survey'),
-    BotCommand('show_id', 'Replies with id of the user'),
-    # BotCommand('start', 'Reserved for managing surveys'),
-    BotCommand('update_admins', '[ADMIN] Updates the list of admin ids')
-]
-
 def register_dispatcher(updater: Updater, admins: Union[int, List[int]], chats: Union[int, List[int]], gsheets: str) -> None:
 
     dispatcher = updater.dispatcher
@@ -40,9 +29,11 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], chats: 
     # dispatcher.add_handler(InlineQueryHandler(inline.surveys))
     dispatcher.add_handler(CommandHandler('add_admin', commands.add_admin))
     dispatcher.add_handler(CommandHandler('add_chat', commands.add_chat))
+    dispatcher.add_handler(CommandHandler('help', commands.help))
     dispatcher.add_handler(CommandHandler('restart', partial(commands.restart, updater = updater)))
     dispatcher.add_handler(CommandHandler('remove_admin', commands.remove_admin))
     dispatcher.add_handler(CommandHandler('remove_chat', commands.remove_chat))
+    dispatcher.add_handler(CommandHandler('reset_ongoing', commands.reset_ongoing))
     dispatcher.add_handler(CommandHandler('rotate_log', commands.rotate_log))
     dispatcher.add_handler(CommandHandler('show_chat_id', commands.show_chat_id))
     dispatcher.add_handler(CommandHandler('show_current_survey', commands.show_current_survey))
@@ -347,10 +338,7 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], chats: 
                 ]
         )
 
-    dispatcher.add_handler(main_conv)
-
-    # Set commands
-    dispatcher.bot.set_my_commands(BOT_COMMANDS)
+    dispatcher.add_handler(main_conv)  
 
     bot_data = dispatcher.bot_data
     if not bot_data.get(consts.SURVEYS_KEY):
