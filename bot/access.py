@@ -37,7 +37,7 @@ def check(update: Update, context: CallbackContext) -> None:
                     return
 
     if update.inline_query:
-        if user_id in bot_data[ADMINS_KEY]:
+        if user_id in bot_data[consts.ADMINS_KEY]:
             return
         else:
             raise DispatcherHandlerStop()
