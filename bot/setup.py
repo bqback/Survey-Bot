@@ -13,7 +13,7 @@ import bot.poll as poll
 import bot.settings as settings
 import bot.manage as manage
 
-from telegram import BotCommand, Update
+from telegram import Update
 from telegram.ext import (Updater, CommandHandler, InlineQueryHandler, ConversationHandler, 
                           TypeHandler, CallbackQueryHandler, MessageHandler, filters,
                           PollAnswerHandler)
@@ -38,8 +38,6 @@ def register_dispatcher(updater: Updater, admins: Union[int, List[int]], chats: 
     dispatcher.add_handler(CommandHandler('show_chat_id', commands.show_chat_id))
     dispatcher.add_handler(CommandHandler('show_current_survey', commands.show_current_survey))
     dispatcher.add_handler(CommandHandler('show_id', commands.show_id))
-    dispatcher.add_handler(CommandHandler('update_admins', commands.update_admins))
-    dispatcher.add_handler(CommandHandler('update_chats', commands.update_chats))
 
     edit_conv = ConversationHandler(
         entry_points = [
