@@ -33,14 +33,6 @@ def show_chat_id(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.effective_chat.id)
 
 
-def update_chats(update: Update, context: CallbackContext) -> None:
-    config = ConfigParser()
-    config.read("bot.ini")
-    chats = [int(chat_id) for chat_id in config["bot"]["chats"].split(",")]
-    context.bot_data[consts.CHATS_KEY] = chats
-    update.message.reply_text(_("Список чатов был обновлён!"))
-
-
 def add_chat(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
@@ -68,6 +60,9 @@ def add_chat(update: Update, context: CallbackContext) -> None:
                 )
         config["bot"]["chats"] = chats.strip(",")
         config.write(open("bot.ini", "w"))
+        chats = [int(chat_id) for chat_id in config["bot"]["chats"].split(",")]
+        context.bot_data[consts.CHATS_KEY] = chats
+        update.message.reply_text(_("Список чатов был обновлён!"))
     else:
         update.message.reply_text(
             _("Для использования команды нужно указать список добавляемых чатов!")
@@ -89,19 +84,13 @@ def remove_chat(update: Update, context: CallbackContext) -> None:
                 update.message.reply_text(_("Чата {id} нет в списке!").format(id=chat))
         config["bot"]["chats"] = ",".join(chat_list)
         config.write(open("bot.ini", "w"))
+        chats = [int(chat_id) for chat_id in config["bot"]["chats"].split(",")]
+        context.bot_data[consts.CHATS_KEY] = chats
+        update.message.reply_text(_("Список чатов был обновлён!"))
     else:
         update.message.reply_text(
             _("Для использования команды нужно указать список удаляемых чатов!")
         )
-
-
-def update_admins(update: Update, context: CallbackContext) -> None:
-    config = ConfigParser()
-    config.read("bot.ini")
-    admins = [int(admin_id) for admin_id in config["bot"]["admins"].split(",")]
-    context.bot_data[consts.ADMINS_KEY] = admins
-    update.message.reply_text(_("Список администраторов был обновлён!"))
-
 
 def add_admin(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
@@ -112,7 +101,7 @@ def add_admin(update: Update, context: CallbackContext) -> None:
         for admin in context.args:
             admin = re.sub("[^0-9 ]+", "", admin)
             if admin not in admin_list:
-                admins += ",{}".format(admin)
+                admins += ",{id}".format(id=admin)
                 update.message.reply_text(
                     _("Администратор {id} был добавлен!").format(id=admin)
                 )
@@ -122,6 +111,9 @@ def add_admin(update: Update, context: CallbackContext) -> None:
                 )
         config["bot"]["admins"] = admins.strip(",")
         config.write(open("bot.ini", "w"))
+        admins = [int(admin_id) for admin_id in config["bot"]["admins"].split(",")]
+        context.bot_data[consts.ADMINS_KEY] = admins
+        update.message.reply_text(_("Список администраторов был обновлён!"))
     else:
         update.message.reply_text(
             _(
@@ -147,8 +139,12 @@ def remove_admin(update: Update, context: CallbackContext) -> None:
                 update.message.reply_text(
                     _("Администратора {id} нет в списке!").format(id=admin)
                 )
+                admins = 
         config["bot"]["admins"] = ",".join(admin_list)
         config.write(open("bot.ini", "w"))
+        admins = [int(admin_id) for admin_id in config["bot"]["admins"].split(",")]
+        context.bot_data[consts.ADMINS_KEY] = admins
+        update.message.reply_text(_("Список администраторов был обновлён!"))
     else:
         update.message.reply_text(
             _(
