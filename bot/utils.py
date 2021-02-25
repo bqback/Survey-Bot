@@ -1,9 +1,11 @@
 import gettext
 import logging
+import configparser
+import re
 
 import bot.autofit as autofit
 
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 
 _ = gettext.gettext
 
@@ -134,6 +136,47 @@ def print_survey(survey: Dict) -> str:
         for idx, answer in enumerate(question['answers']):
             out += f"\n\t{idx+1}. {answer}"
     return out
+
+def parse_cfg(filename: str) -> Tuple[str]:
+    config = configparser.ConfigParser(comment_prefixes = '/', allow_no_value = True)
+    config.read_file(open(filename))
+
+    token = config['bot']['token']
+    pickle = config['bot']['pickle']
+    chat_list = config['bot']['chats']
+    if re.match(' ', chat_list):
+        chat_list.replace(' ', '')
+        config['bot']['chats'] = chat_list
+        config.write(open('bot.ini', 'w'))
+    try:
+        chats = [int(chat_id) for chat_id in config['bot']['chats'].split(',')]
+    except ValueError:
+        raise ValueError("Chat list contains invalid data! Make sure it's either an int or a list of ints")
+    admin_list = config['bot']['admins']
+    if re.match(' ', admin_list):
+        admin_list.replace(' ', '')
+        config['bot']['admins'] = admin_list
+        config.write(open('bot.ini', 'w'))
+    try:
+        admins = [int(admin_id) for admin_id in config['bot']['admins'].split(',')]
+    except ValueError:
+        raise ValueError("Admin list contains invalid data! Make sure it's either an int or a list of ints")
+    
+    defaults = dict(filter(lambda entry: not re.match('^#.+$', entry[0]), config.items('defaults')))
+
+    for key, value in defaults.items():
+        if key == 'timeout':
+            defaults[key] = float(defaults[key])
+
+    log_file = config['log']['filename']
+    log_size = int(config['log']['log_size']) * 1024
+    log_backups = int(config['log']['log_backups'])
+
+    sheets_file = config['sheets']['file']
+
+    return (token, pickle, chats, admins,
+            defaults, log_file, log_size, log_backups,
+            sheets_file)
 
 def submit_data(answers, questions, flag, file):
     logger.info(_("Отправляю данные"))
