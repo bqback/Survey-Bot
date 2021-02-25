@@ -16,7 +16,7 @@ def main():
 
     (token, pickle, chats, admins, 
         defaults, log_file, log_size, log_backups, 
-        sheets_file) = utils.parse_cfg('bot.ini')
+        sheets_file, sheets_email) = utils.parse_cfg('bot.ini')
 
     logger = logging.getLogger()
 
@@ -39,7 +39,7 @@ def main():
     
     upd = Updater(token = token, use_context = True, persistence = persistence, defaults = Defaults(**defaults))
 
-    setup.register_dispatcher(upd, admins = admins, chats = chats, gsheets = sheets_file)
+    setup.register_dispatcher(upd, admins = admins, chats = chats, gsheets_file = sheets_file, gsheets_email = sheets_email)
 
     upd.start_polling()
     logger.info('\n---------\nLog started on %s.\n---------\n' % time.asctime())

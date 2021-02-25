@@ -32,7 +32,8 @@ def register_dispatcher(
     updater: Updater,
     admins: Union[int, List[int]],
     chats: Union[int, List[int]],
-    gsheets: str,
+    gsheets_file: str,
+    gsheets_email: str,
 ) -> None:
 
     dispatcher = updater.dispatcher
@@ -569,6 +570,7 @@ def register_dispatcher(
     if not bot_data.get(consts.ADMINS_KEY):
         bot_data[consts.ADMINS_KEY] = admins
     if not bot_data.get(consts.SHEETS_KEY):
-        bot_data[consts.SHEETS_KEY] = gsheets
+        bot_data[consts.SHEETS_KEY]['file'] = gsheets_file
+        bot_data[consts.SHEETS_KEY]['email'] = gsheets_email
     if not bot_data.get(consts.CHATS_KEY):
         bot_data[consts.CHATS_KEY] = chats
