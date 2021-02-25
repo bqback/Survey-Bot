@@ -239,7 +239,8 @@ def step2(context):
     context.job_queue.run_once(post_question, 5, context = context, name = context.bot_data['ongoing']['survey']['id'] + '_post_questions')
 
 def post_question(context):
-    context = context.job.context
+    if context.job is not None:
+        context = context.job.context
     ongoing = context.bot_data['ongoing']
     current = ongoing['current_question']
     chat_id = ongoing['chat_id']
@@ -257,13 +258,12 @@ def post_question(context):
                             allows_multiple_answers = multi
             )
         logger.info(_("Публикуется счётчик к вопросу №{num}").format(num = current+1))
-        promise = context.bot.send_message(
+        counter = context.bot.send_message(
                             chat_id = chat_id, 
                             text = _("Ответили 0 из {cap} участников. Следующий вопрос появится, когда ответят все!"
                                 ).format(cap = ongoing['cap']), 
                             timeout = 500
             )
-        counter = promise.result()
         payload = {
                         message.poll.id: {
                             'question': q, 
@@ -286,7 +286,7 @@ def collect_answer(update, context):
     current = ongoing['current_question']
     answers = ongoing['survey']['questions'][current]['answers']
     answerstr = ', '.join([answers[i] for i in poll_answers])
-    logger.info(_("Пользователь {name} ответил на вопрос №{num}:\n\t{answer}."
+    logger.info(_("Пользователь {name} ответил на вопрос №{num}:\n\t{answers}."
                 ).format(name = name, num = current+1, answers = answerstr))
     context.bot_data['ongoing'][poll_id]['answered'] += 1
     if current == 0:
@@ -304,6 +304,12 @@ def collect_answer(update, context):
                     chat_id = chat_id, 
                     message_id = context.bot_data['ongoing'][poll_id]['message_id']
             )
+        context.bot.edit_message_text(
+            text = _("Ответили {cap} из {cap} участников."
+                    ).format(cap = ongoing['cap']),
+            chat_id = chat_id, 
+            message_id = ongoing[poll_id]['counter_id']
+        )
         context.bot_data['ongoing']['current_question'] += 1
         if context.bot_data['ongoing']['current_question'] < len(ongoing['survey']['questions']):
             post_question(context)
@@ -316,8 +322,10 @@ def collect_answer(update, context):
             questions = [question['question'] for question in context.bot_data['ongoing']['survey']['questions']]
             utils.submit_data(
                     answers = context.bot_data['ongoing']['answers'],
-                    questions = questions, 
-                    flag = context.bot_data['ongoing']['poll_ongoing'], 
-                    file = context.bot_data[consts.SHEETS_KEY]
+                    questions = questions,
+                    title = ongoing['survey']['title'], 
+                    file = context.bot_data[consts.SHEETS_KEY]['file'],
+                    email = context.bot_data[consts.SHEETS_KEY]['email'],
                 )
             del context.bot_data['ongoing']
+            context.bot_data['poll_ongoing'] = False
