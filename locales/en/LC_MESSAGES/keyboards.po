@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"POT-Creation-Date: 2021-02-24 23:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:30
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:359
 msgid "Начать опрос"
 msgstr ""
 
@@ -28,7 +29,13 @@ msgid "Настройки"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:42
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:270
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:269
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:284
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:293
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:322
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:336
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:351
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:367
 msgid "Вернуться в главное меню"
 msgstr ""
 
@@ -37,10 +44,9 @@ msgid "Создать опрос"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:51
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:177
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:213
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:225
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:233
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:183
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:219
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:247
 msgid "Вернуться назад"
 msgstr ""
 
@@ -69,7 +75,7 @@ msgid "Ввести вопрос заново"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:86
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:278
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:301
 msgid "Да"
 msgstr ""
 
@@ -86,7 +92,7 @@ msgid "Ввести ответ заново"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:104
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:210
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:216
 msgid "Добавить ещё один ответ"
 msgstr ""
 
@@ -107,20 +113,20 @@ msgid "Отредактировать опрос"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:122
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:242
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:256
 msgid "Начать заново"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:130
-msgid "Редактировать название"
+msgid "Название"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:131
-msgid "Редактировать описание"
+msgid "Описание"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:132
-msgid "Редактировать вопросы"
+msgid "Вопросы"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:135
@@ -128,96 +134,153 @@ msgid "Сохранить изменения и выйти"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:138
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:243
+msgid "Выйти без сохранения"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:141
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:257
 msgid "Выйти в главное меню"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:146
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:149
 msgid "Ввести новое название"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:149
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:152
 msgid "Сохранить текущее название"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:157
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:160
 msgid "Ввести новое описание"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:160
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:163
 msgid "Сохранить текущее описание"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:168
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:171
 msgid "Текст вопроса"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:171
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:174
 msgid "Число вариантов ответа"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:174
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:177
 msgid "Ответы"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:185
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:180
+msgid "Удалить вопрос"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:191
 msgid "Ввести новый текст вопроса"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:188
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:194
 msgid "Сохранить текущий текст вопроса"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:196
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:202
 msgid "Изменить"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:199
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:205
 msgid "Оставить как есть"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:207
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:213
 msgid "Редактировать один из ответов"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:221
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:227
 msgid "Редактировать"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:222
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:228
 msgid "Удалить"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:241
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:236
+msgid "К выбору части опроса"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:239
+msgid "К выбору вопроса"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:255
 msgid "Вернуться на предыдущий шаг"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:251
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:265
 msgid "Создать новый опрос"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:252
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:266
 msgid "Выбрать из существующих"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:260
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:277
 msgid "Редактировать опрос"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:261
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:278
 msgid "Удалить опрос"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:269
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:281
+msgid "Показать опрос"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:292
 msgid "Вернуться к выбору опроса"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:279
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:302
 msgid "Нет"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:287
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:310
 msgid "Язык"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:318
+msgid "Выбрать чат для проведения опроса"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:319
+msgid "Выбрать другой опрос"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:330
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:348
+msgid "Использовать рекомендованное"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:333
+msgid "Установить своё"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:344
+msgid "Использовать"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:345
+msgid "Ввести заново"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:362
+msgid "Другой опрос"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:363
+msgid "Другой чат"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\keyboards.py:364
+msgid "Другое значение"
 msgstr ""
 
 

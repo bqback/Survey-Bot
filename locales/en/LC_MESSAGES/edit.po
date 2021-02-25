@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"POT-Creation-Date: 2021-02-24 23:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,60 +15,93 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:45
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:89
-msgid "Что вы хотите отредактировать?"
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:44
+msgid ""
+"Выбран опрос '{title}'\n"
+"\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:54
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:46
+msgid ""
+"\n"
+"Что вы хотите отредактировать?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:55
 msgid "Текущее название: {title}"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:63
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:64
 msgid "Текущее описание: {desc}"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:75
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:76
 msgid ""
-"Список текущих вопросов: \n"
-"{list}\n"
+"Список вопросов: \n"
 "\n"
+"{list}\n"
 "Для выбора вопроса отправьте его номер в списке"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:95
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:166
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:92
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:109
+msgid "Что вы хотите отредактировать?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:98
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:201
 msgid "Введённого номера нет в списке! Попробуйте ещё раз"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:100
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:171
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:103
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:206
 msgid "Неправильно введён номер! Попробуйте ещё раз"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:113
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:119
 msgid "Текущий текст вопроса: {question}"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:122
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:128
+msgid ""
+"{question}\n"
+"\n"
+"Вы уверены, что хотите удалить этот вопрос?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:141
+msgid "Вопрос был удалён"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:147
+msgid ""
+"Список вопросов: \n"
+"{list}\n"
+"\n"
+"Для выбора ответа отправьте его номер в списке"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:157
 msgid "несколько вариантов"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:122
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:157
 msgid "один вариант"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:124
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:159
 msgid "В этом вопросе пользователи могут выбрать {multi} ответа"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:133
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:160
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:168
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:195
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:211
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:218
 msgid "Выберите действие"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:144
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:202
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:179
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:246
 msgid ""
 "Список ответов к текущему вопросу: \n"
 "{list}\n"
@@ -76,15 +109,72 @@ msgid ""
 "Для выбора ответа отправьте его номер в списке"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:183
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:227
 msgid ""
 "{answer}\n"
 "\n"
 "Вы уверены, что хотите удалить этот ответ?"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:196
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:240
 msgid "Ответ был удалён"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:261
+msgid ""
+"Новый текст вопроса сохранён\n"
+"\n"
+"Куда вы хотите перейти?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:268
+msgid ""
+"Новое число вариантов ответа сохранено\n"
+"\n"
+"Куда вы хотите перейти?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:276
+msgid ""
+"Новый ответ сохранён\n"
+"\n"
+"Куда вы хотите перейти?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:286
+msgid ""
+"\n"
+"\n"
+"Вы уверены, что хотите сохранить эти изменения?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:296
+msgid ""
+"\n"
+"\n"
+"Вы уверены, что хотите избавиться от этих изменений?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:310
+msgid ""
+"Изменения удалены!\n"
+"\n"
+"Выберите действие"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:315
+msgid "Изменения удалены!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:335
+msgid ""
+"Изменения сохранены!\n"
+"\n"
+"Выберите действие"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\edit.py:341
+msgid "Изменения сохранены!"
 msgstr ""
 
 

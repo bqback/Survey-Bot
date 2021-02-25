@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"POT-Creation-Date: 2021-02-24 23:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:27
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:93
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:111
 msgid "Выберите действие"
 msgstr ""
 
@@ -34,6 +34,7 @@ msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:56
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:74
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:90
 msgid "Что вы хотите сделать?"
 msgstr ""
 
@@ -45,7 +46,7 @@ msgstr ""
 msgid "Неправильно введён номер! Попробуйте ещё раз"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:83
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\manage.py:99
 msgid "Вы уверены, что хотите удалить этот опрос?"
 msgstr ""
 

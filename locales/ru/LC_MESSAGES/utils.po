@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"POT-Creation-Date: 2021-02-24 23:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,56 +15,56 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:19
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:23
 msgid ""
 "Название\n"
 "{old} -> {new}\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:25
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:28
 msgid "В старом опросе пропало название!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:27
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:30
 msgid "В новом опросе пропало название!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:30
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:33
 msgid ""
 "Описание\n"
 "{old} -> {new}\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:36
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:38
 msgid "В старом опросе пропало описание!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:38
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:40
 msgid "В новом опросе пропало описание!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:45
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:47
 msgid ""
 "Вопрос №{num}\n"
 "{old} -> {new}\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:51
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:52
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:94
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:53
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:89
 msgid "несколько вариантов"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:51
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:52
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:94
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:53
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:89
 msgid "один вариант"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:53
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:54
 msgid ""
 "Число возможных вариантов ответа в вопросе №{num}\n"
 "{old} -> {new}\n"
@@ -78,61 +78,105 @@ msgid ""
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:67
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:66
 msgid ""
 "Удалён или перемещён ответ №{a_num} в вопросе №{q_num}\n"
 "{old} ->\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:76
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:100
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:74
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:94
 msgid ""
 "К вопросу №{q_num} добавлен ответ №{a_num}\n"
 " -> {new}\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:81
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:78
 msgid ""
 "Удалён или перемещён вопрос №{num}{old} ->\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:90
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:86
 msgid ""
 "Добавлен вопрос №{num}\n"
 " -> {new}\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:95
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:90
 msgid ""
 "Число возможных вариантов ответа в вопросе №{num}\n"
 " -> {new}\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:106
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:99
 msgid "В старом опросе пропали вопросы!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:108
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:101
 msgid "В новом опросе пропали вопросы!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:110
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:103
 msgid ""
 "Список изменений:\n"
 "\n"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:114
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:107
 msgid "Старый опрос передан в неправильном формате!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:116
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:109
 msgid "Новый опрос передан в неправильном формате!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:133
+msgid " (можно выбрать несколько вариантов)"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:135
+msgid " (можно выбрать только один вариант)"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:177
+msgid "Отправляю данные"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:179
+msgid "Установлено соединение с Google Sheets"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:181
+msgid "Открыта книга"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:184
+msgid "Создана таблица"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:186
+msgid "Выбрана таблица"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:188
+msgid "Расставлены названия для столбцов"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:190
+msgid "Записываются данные для пользователя {} ({})"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:192
+msgid "Данные записаны"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\utils.py:194
+msgid "Столбцы отрегулированы"
 msgstr ""
 
 

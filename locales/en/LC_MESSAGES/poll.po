@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"POT-Creation-Date: 2021-02-24 23:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,5 +14,144 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:32
+msgid ""
+"Выберите опрос из существующих\n"
+"\n"
+"{list}\n"
+"Для выбора опроса введите номер из списка"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:39
+msgid "Опросов пока что нет! Создайте новый опрос, нажав на кнопку"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:45
+msgid "В текущее время идёт опрос, подождите его завершения"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:55
+msgid ""
+"Выбранный опрос:\n"
+"\n"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:57
+msgid "Выберите действие"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:62
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:116
+msgid "Введённого номера нет в списке! Попробуйте ещё раз"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:67
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:121
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:173
+msgid "Неправильно введён номер! Попробуйте ещё раз"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:79
+msgid ""
+"Выберите чат из существующих\n"
+"\n"
+"{list}\n"
+"Для выбора чата введите номер из списка"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:87
+msgid ""
+"Пока что не был добавлен ни один чат!\n"
+"Используйте команду /show_chat_id в нужном чате, затем /add_chat id с полученным числом вместо idБот обязательно должен присутствовать в этом чате!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:104
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:127
+msgid ""
+"Выбранный чат:\n"
+"{title}\n"
+"\n"
+"В чате обнаружено {total} участников, из них {admins} администраторов\n"
+"Для того, чтобы появился следующий вопрос, необходимо, чтобы проголосовало определённое число человек\n"
+"По умолчанию должно проголосовать {rec} человек (все, кроме администраторов и этого бота)\n"
+"Вы можете выбрать рекомендованное значение или установить своё"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:142
+msgid ""
+"Введите требуемое число людей для перехода к следующему вопросу\n"
+"Число не может быть меньше 1 и больше {max} (все участники, кроме этого бота)\n"
+"Учтите, что другие боты (если таковые имеются в чате) не смогут голосовать, и голосование останется на первом вопросе при слишком большом значении"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:155
+msgid ""
+"Для перехода к следующему вопросу должно проголосовать {cap} человек\n"
+"Использовать это значение?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:163
+msgid "Выбрано слишком маленькое значение! Попробуйте ещё раз"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:168
+msgid "Выбрано слишком большое значение! Попробуйте ещё раз"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:194
+msgid ""
+"Вы собираетесь провести опрос\n"
+"\n"
+"{survey}\n"
+"\n"
+"в чате {title}\n"
+"\n"
+"Для перехода к следующему вопросу должно ответить {cap} пользователей\n"
+"\n"
+"Выберите действие"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:208
+msgid "Опрос запущен!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:225
+msgid "Время на чтение описания: {delay} секунд"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:237
+msgid "Опрос начнётся через 5 секунд"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:251
+msgid "Публикуется вопрос №{num}"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:259
+msgid "Публикуется счётчик к вопросу №{num}"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:262
+msgid "Ответили 0 из {cap} участников. Следующий вопрос появится, когда ответят все!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:289
+msgid ""
+"Пользователь {name} ответил на вопрос №{num}:\n"
+"\t{answer}."
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:296
+msgid "Ответили {curr} из {cap} участников. Следующий вопрос появится, когда ответят все!"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:311
+msgid "Опрос завершён"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\poll.py:314
+msgid "Опрос окончен! Всем спасибо за участие."
+msgstr ""
 
 

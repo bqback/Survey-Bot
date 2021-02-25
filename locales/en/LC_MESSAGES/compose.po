@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"POT-Creation-Date: 2021-02-24 23:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:35
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:44
 msgid ""
 "Введите краткое название опроса.\n"
 "Это название будет отображаться в списке опросов при управлении или запуске опроса."
@@ -27,69 +28,81 @@ msgid ""
 "Хотите продолжить его создание?"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:47
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:51
 msgid "Хотите сохранить это название?"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:57
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:67
 msgid ""
 "Введите описание опроса.\n"
 "Это описание будет отправляться перед опросом для ознакомления."
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:64
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:74
 msgid "Хотите сохранить это описание?"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:78
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:94
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:99
 msgid "Введите текст вопроса №{num}"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:90
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:109
 msgid "Хотите сохранить этот вопрос?"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:97
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:122
 msgid "У этого вопроса должно быть несколько вариантов ответа?"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:108
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:133
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:144
 msgid "В этом вопросе можно будет выбрать несколько вариантов ответа"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:110
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:135
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:146
 msgid "В этом вопросе можно будет выбрать только один вариант ответа"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:111
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:136
 msgid ""
 "\n"
 "\n"
 "Перейти к вводу ответов?"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:131
-msgid "Введите текст ответа №{a_num} к вопросу №{q_num}"
-msgstr ""
-
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:143
-msgid "Хотите сохранить этот ответ?"
-msgstr ""
-
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:150
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:182
-msgid "Выберите действие"
-msgstr ""
-
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:159
-msgid "Проверьте, правильно ли составлен опрос"
-msgstr ""
-
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:169
-msgid " (можно выбрать несколько вариантов)"
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:147
+msgid ""
+"\n"
+"\n"
+"Сохранить?"
 msgstr ""
 
 #: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:171
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:179
+msgid "Введите текст ответа №{a_num} к вопросу №{q_num}"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:191
+msgid "Хотите сохранить этот ответ?"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:198
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:236
+msgid "Выберите действие"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:209
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:213
+msgid "Проверьте, правильно ли составлен опрос"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:223
+msgid " (можно выбрать несколько вариантов)"
+msgstr ""
+
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\compose.py:225
 msgid " (можно выбрать только один вариант)"
 msgstr ""
 

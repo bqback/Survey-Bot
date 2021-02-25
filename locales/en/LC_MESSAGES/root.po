@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-02-21 08:50+0300\n"
+"POT-Creation-Date: 2021-02-24 23:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,28 +15,16 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:37
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:44
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:43
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:50
 msgid "Добро пожаловать, {name}!"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:56
-msgid ""
-"Выберите опрос из существующих\n"
-"\n"
-"{list}\n"
-"Для выбора опроса введите номер из списка"
-msgstr ""
-
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:63
-msgid "Опросов пока что нет! Создайте новый опрос, нажав на кнопку"
-msgstr ""
-
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:73
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:61
 msgid "Выберите действие"
 msgstr ""
 
-#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:93
+#: D:\Работа\ГКБ\GKB64 Survey Bot\bot\root.py:84
 msgid "Вы уверены, что хотите вернуться в главное меню?"
 msgstr ""
 
