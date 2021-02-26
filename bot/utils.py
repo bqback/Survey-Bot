@@ -241,10 +241,10 @@ def submit_data(answers: Dict, questions: List[str], title: str, file: str, emai
     logger.info(_("Установлено соединение с Google Sheets"))
     try:
         spreadsheet = client.open(title)
-    except NameError:
+    except (NameError, gspread.exceptions.SpreadsheetNotFound):
         spreadsheet = client.create(title)
         spreadsheet.share(
-            email=email,
+            value=email,
             perm_type="user",
             role="owner",
             notify=True,
