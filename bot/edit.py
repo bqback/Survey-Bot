@@ -1,3 +1,4 @@
+import copy
 import gettext
 import logging
 
@@ -18,7 +19,7 @@ kb = None
 
 logger = logging.getLogger(__name__)
 
-def pick_part(update: Update, context: CallbackContext, source = None, idx = None) -> int:
+def pick_part(update: Update, context: CallbackContext, source = None) -> int:
     query = update.callback_query
     query.answer()
     global _
@@ -27,15 +28,14 @@ def pick_part(update: Update, context: CallbackContext, source = None, idx = Non
     locale = gettext.translation('edit', localedir = 'locales', languages = [context.user_data['lang']])
     locale.install()
     _ = locale.gettext
-    if idx is None:
+    if 's_idx' in context.chat_data and 'base_ver' not in context.chat_data:
         idx = context.chat_data['s_idx']
-        context.chat_data['current_survey'] = context.bot_data[consts.SURVEYS_KEY][idx]
+        context.chat_data['current_survey'] = copy.deepcopy(context.bot_data[consts.SURVEYS_KEY][idx])
+        context.chat_data['base_ver'] = copy.deepcopy(context.chat_data['current_survey'])
     if source == 'compose':
         context.chat_data['edit_end'] = cc.END_COMPOSE
     elif source == 'manage':
         context.chat_data['edit_end'] = cc.END_MANAGE
-    if 'base_ver' not in context.chat_data:
-        context.chat_data['base_ver'] = context.chat_data['current_survey']
     if context.chat_data['base_ver'] != context.chat_data['current_survey']:
         changes = utils.surv_diff(context.chat_data['base_ver'], context.chat_data['current_survey'], context.user_data['lang'])
     else:
@@ -283,7 +283,7 @@ def save_confirm(update: Update, context: CallbackContext) -> int:
     query.answer()
     changes = utils.surv_diff(context.chat_data['base_ver'], context.chat_data['current_survey'], context.user_data['lang'])
     query.edit_message_text(
-            text = changes + _("\n\nВы уверены, что хотите сохранить эти изменения?"),
+            text = changes + _("Вы уверены, что хотите сохранить эти изменения?"),
             reply_markup = kb.YES_NO_KB
         )
     return cc.SAVE_CONFIRM_STATE
@@ -293,7 +293,7 @@ def discard_confirm(update: Update, context: CallbackContext) -> int:
     query.answer()
     changes = utils.surv_diff(context.chat_data['base_ver'], context.chat_data['current_survey'], context.user_data['lang'])
     query.edit_message_text(
-            text = changes + _("\n\nВы уверены, что хотите избавиться от этих изменений?"),
+            text = changes + _("Вы уверены, что хотите избавиться от этих изменений?"),
             reply_markup = kb.YES_NO_KB
         )
     return cc.DISCARD_CONFIRM_STATE
