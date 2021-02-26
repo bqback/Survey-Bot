@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def start(update: Update, context: CallbackContext) -> int:
     user = update.effective_user
-    if "lang" not in context.user_data or context.user_data["lang"] == None:
+    if "lang" not in context.user_data or context.user_data["settings"]["lang"] == None:
         context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=f"{cc.CHOOSE_LANG}",
@@ -29,10 +29,10 @@ def start(update: Update, context: CallbackContext) -> int:
     else:
         global _
         global kb
-        kb = kbs.Keyboards(context.user_data["lang"])
-        bcmd = bcmds.BotCommands(context.user_data["lang"])
+        kb = kbs.Keyboards(context.user_data["settings"]["lang"])
+        bcmd = bcmds.BotCommands(context.user_data["settings"]["lang"])
         locale = gettext.translation(
-            "root", localedir="locales", languages=[context.user_data["lang"]]
+            "root", localedir="locales", languages=[context.user_data["settings"]["lang"]]
         )
         locale.install()
         _ = locale.gettext

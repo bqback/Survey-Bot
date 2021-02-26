@@ -7,7 +7,7 @@ import gspread
 
 import bot.autofit as autofit
 
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union, Tuple, Any
 
 _ = gettext.gettext
 
@@ -145,7 +145,7 @@ def surv_diff(surv_old: Dict, surv_new: Dict, lang: str) -> str:
             raise TypeError(_("Новый опрос передан в неправильном формате!"))
 
 
-def num_list(stuff: List, key=None) -> str:
+def num_list(stuff: List[Any], key=None) -> str:
     out = ""
     if key is None:
         for idx, item in enumerate(stuff):
@@ -214,6 +214,13 @@ def parse_cfg(filename: str) -> Tuple[str]:
         if key == "timeout":
             defaults[key] = float(defaults[key])
 
+    default_settings = {
+        'page_len': config["settings"]["page_len"]
+        'row_len': config["settings"]["row_len"]
+    }
+    settings_page_len = config["settings"]["page_len"]
+    settings_row_len = config["settings"]["row_len"]
+
     log_file = config["log"]["filename"]
     log_size = int(config["log"]["log_size"]) * 1024
     log_backups = int(config["log"]["log_backups"])
@@ -227,6 +234,7 @@ def parse_cfg(filename: str) -> Tuple[str]:
         chats,
         admins,
         defaults,
+        default_settings,
         log_file,
         log_size,
         log_backups,
@@ -270,3 +278,94 @@ def submit_data(answers: Dict, questions: List[str], title: str, file: str, emai
         logger.info(_("Данные записаны"))
     autofit.columns(spreadsheet)
     logger.info(_("Столбцы отрегулированы"))
+
+
+def iter_baskets_contiguous(
+    items: List[Any], per_row: int, maxbaskets: int = 3, item_count=None
+) -> Iterable[List[Any]]:
+    """
+    generates balanced baskets from iterable, contiguous contents
+    provide item_count if providing a iterator that doesn't support len()
+    """
+    item_count = item_count or len(items)
+    if item_count < per_row:
+        yield items
+    else:
+        baskets = min(item_count, maxbaskets)
+        items = iter(items)
+        floor = item_count // baskets
+        ceiling = floor + 1
+        stepdown = item_count % baskets
+        for x_i in range(baskets):
+            length = ceiling if x_i < stepdown else floor
+            yield [next(items) for _ in range(length)]
+
+
+def populate_keyboard(
+    page_len: int,
+    per_row: int,
+    length: int,
+    multipage: bool = False,
+    page: int = None,
+    labels: List[Union[str, int]] = None,
+    labels_as_data: bool = False,
+) -> InlineKeyboardMarkup:
+    maxrows = math.ceil(page_len / per_row)
+    if not multipage:
+        if labels is not None:
+            if labels_as_data:
+                buttons = [
+                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(labels[i]))
+                    for i in range(length)
+                ]
+            else:
+                buttons = [
+                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(i))
+                    for i in range(length)
+                ]
+        else:
+            buttons = [
+                InlineKeyboardButton(f"{i+1}", callback_data=str(i))
+                for i in range(length)
+            ]
+        keyboard = list(
+            iter_baskets_contiguous(items=buttons, per_row=per_row, maxbaskets=maxrows)
+        )
+        keyboard = InlineKeyboardMarkup(keyboard)
+    else:
+        if page is None:
+            raise ValueError("page can't be None if multipage is True!")
+        if page < 1:
+            raise ValueError("page can't be less than 1!")
+        if page > math.ceil(length / page_len):
+            raise ValueError(
+                f"With given data length and page length there can only be {math.ceil(length / page_len)} ({page} received instead)!"
+            )
+        irange = range(length)[(page - 1) * page_len : page * page_len]
+        if labels is not None:
+            if labels_as_data:
+                buttons = [
+                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(labels[i]))
+                    for i in irange
+                ]
+            else:
+                buttons = [
+                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(i))
+                    for i in irange
+                ]
+        else:
+            buttons = [
+                InlineKeyboardButton(f"{i+1}", callback_data=str(i)) for i in irange
+            ]
+        keyboard = list(
+            iter_baskets_contiguous(items=buttons, per_row=per_row, maxbaskets=maxrows)
+        )
+        nav_row = []
+        if page > 1:
+            nav_row.append(InlineKeyboardButton("<--", callback_data="prev page"))
+        nav_row.append(InlineKeyboardButton(f"{page}", callback_data="PAGENUM"))
+        if page < math.ceil(length / page_len):
+            nav_row.append(InlineKeyboardButton("-->", callback_data="next page"))
+        keyboard.append(nav_row)
+        keyboard = InlineKeyboardMarkup(keyboard)
+    return keyboard

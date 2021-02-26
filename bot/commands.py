@@ -4,6 +4,7 @@ import re
 import logging
 import gettext
 import email_validator
+import copy
 
 from functools import partial
 from threading import Thread
@@ -156,8 +157,8 @@ def remove_admin(update: Update, context: CallbackContext) -> None:
 
 def restart(update: Update, context: CallbackContext, updater: Updater) -> None:
     update.message.reply_text(_("Перезапуск..."))
-    if 'base_ver' in context.chat_data:
-        del context.chat_data['base_ver']
+    if "base_ver" in context.chat_data:
+        del context.chat_data["base_ver"]
     Thread(target=partial(stop_and_restart, updater=updater)).start()
 
 
@@ -213,18 +214,22 @@ def show_current_survey(update: Update, context: CallbackContext) -> None:
 def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
     query = update.callback_query
     query.answer()
-    context.user_data["lang"] = lang
+    if "settings" not in context.user_data:
+        context.user_data["settings"] = copy.deepcopy(
+            context.bot_data[consts.DEFAULTS_KEY]
+        )
+    context.user_data["settings"]["lang"] = lang
     try:
         global _
         global kb
-        kb = kbs.Keyboards(context.user_data["lang"])
+        kb = kbs.Keyboards(context.user_data["settings"]["lang"])
         locale = gettext.translation(
-            "commands", localedir="locales", languages=[context.user_data["lang"]]
+            "commands", localedir="locales", languages=[context.user_data["settings"]["lang"]]
         )
         locale.install()
         _ = locale.gettext
     except ModuleNotFoundError:
-        context.user_data["lang"] = None
+        context.user_data["settings"]["lang"] = None
         logger.error(
             "User {} picked an invalid language?".format(update.effective_user.id)
         )
@@ -284,7 +289,7 @@ def set_gsheets_owner(update: Update, context: CallbackContext) -> None:
         try:
             valid = email_validator.validate_email(email)
             email = valid.email
-            context.bot_data[consts.SHEETS_KEY]['email'] = email
+            context.bot_data[consts.SHEETS_KEY]["email"] = email
             update.message.reply_text(_("Адрес почты изменён"))
         except email_validator.EmailNotValidError as e:
             update.message.reply_text(str(e))
