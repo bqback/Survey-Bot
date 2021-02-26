@@ -3,6 +3,7 @@ import sys
 import re
 import logging
 import gettext
+import email_validator
 
 from functools import partial
 from threading import Thread
@@ -13,6 +14,7 @@ from telegram import Update
 from telegram.ext import CallbackContext, Updater
 from telegram.error import BadRequest
 
+import bot.botcommands as bcmds
 import bot.constants as consts
 import bot.conv_constants as cc
 import bot.root as root
@@ -29,7 +31,6 @@ def show_id(update: Update, context: CallbackContext) -> None:
 
 
 def show_chat_id(update: Update, context: CallbackContext) -> None:
-    print(update.effective_chat)
     update.message.reply_text(update.effective_chat.id)
 
 
@@ -92,6 +93,7 @@ def remove_chat(update: Update, context: CallbackContext) -> None:
             _("Для использования команды нужно указать список удаляемых чатов!")
         )
 
+
 def add_admin(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
@@ -139,7 +141,6 @@ def remove_admin(update: Update, context: CallbackContext) -> None:
                 update.message.reply_text(
                     _("Администратора {id} нет в списке!").format(id=admin)
                 )
-                admins = 
         config["bot"]["admins"] = ",".join(admin_list)
         config.write(open("bot.ini", "w"))
         admins = [int(admin_id) for admin_id in config["bot"]["admins"].split(",")]
@@ -155,6 +156,8 @@ def remove_admin(update: Update, context: CallbackContext) -> None:
 
 def restart(update: Update, context: CallbackContext, updater: Updater) -> None:
     update.message.reply_text(_("Перезапуск..."))
+    if 'base_ver' in context.chat_data:
+        del context.chat_data['base_ver']
     Thread(target=partial(stop_and_restart, updater=updater)).start()
 
 
@@ -175,7 +178,6 @@ def rotate_log(update: Update, context: CallbackContext) -> None:
 def show_current_survey(update: Update, context: CallbackContext) -> None:
     try:
         current = context.chat_data["current_survey"]
-        print(current)
         out = ""
         try:
             out += _("Название текущего опроса:\n{title}\n\n").format(
@@ -233,25 +235,63 @@ def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
 def reset_ongoing(update: Update, context: CallbackContext) -> None:
     context.bot_data["poll_ongoing"] = False
     del context.bot_data["ongoing"]
+    update.message.reply_text(_("Флаг сброшен"))
 
 
 def help(update: Update, context: CallbackContext) -> None:
-    #         BotCommand("restart", _("[Адм.] Restarts the bot")),
-    #         BotCommand("remove_admin", _("[ADMIN] Removes an admin or a list of admins. separated by a space, comma or semicolon")),
-    #         BotCommand("rotate_log", _("[ADMIN] Backs up current log and starts a new one")),
-    #         BotCommand("show_current_survey", _("Displays everything contained in the current survey")),
-    #         BotCommand("show_id", _("Replies with id of the user")),
-    #         BotCommand("update_admins", _("[ADMIN] Updates the list of admin ids"))
-    # if len(context.args) > 0:
-    #     commands = context.bot.commands
-    #     target = context.args[0]
-    #     update.message.reply_text('/{command}\n\n{desc}'.format())
-    # else:
-    #     update.message.reply_text(_("Для использования команды нужно указать команду, о которой Вы хотите узнать больше\n"
-    #                                 "Например /help show_id"))
-    for command in context.bot.commands:
+    if len(context.args) > 0:
+        try:
+            if context.args[0] != "all":
+                commands = context.bot.commands
+                target = context.args[0]
+                command = list(
+                    filter(lambda command: command.command == target, commands)
+                )
+                if len(command) > 0:
+                    update.message.reply_text(
+                        "/{command}\n\n{desc}".format(
+                            command=command[0].command, desc=command[0].long_description
+                        )
+                    )
+                else:
+                    update.message.reply_text(
+                        _("Команда не найдена! Попробуйте ещё раз")
+                    )
+            else:
+                for command in context.bot.commands:
+                    update.message.reply_text(
+                        "/{command}\n\n{desc}".format(
+                            command=command.command, desc=command.long_description
+                        )
+                    )
+        except AttributeError:
+            bcmd = bcmds.BotCommands(context.user_data["lang"])
+            context.bot.set_my_commands(bcmd.bot_commands)
+
+    else:
         update.message.reply_text(
-            "/{command}\n\n{desc}".format(
-                command=command.command, desc=command.long_description
+            _(
+                "Для использования команды нужно указать команду, о которой Вы хотите узнать больше\n"
+                "Например /help show_id\n\n"
+                "Для вывода всех доступных команд используйте /help all"
+            )
+        )
+
+
+def set_gsheets_owner(update: Update, context: CallbackContext) -> None:
+    if len(context.args) > 0:
+        email = context.args[0]
+        try:
+            valid = email_validator.validate_email(email)
+            email = valid.email
+            context.bot_data[consts.SHEETS_KEY]['email'] = email
+            update.message.reply_text(_("Адрес почты изменён"))
+        except email_validator.EmailNotValidError as e:
+            update.message.reply_text(str(e))
+    else:
+        update.message.reply_text(
+            _(
+                "Для использования команды нужно указать почтовый ящик\n"
+                "Например /set_gsheets_owner test@example.com"
             )
         )
