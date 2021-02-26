@@ -53,6 +53,7 @@ def register_dispatcher(
     dispatcher.add_handler(CommandHandler("remove_chat", commands.remove_chat))
     dispatcher.add_handler(CommandHandler("reset_ongoing", commands.reset_ongoing))
     dispatcher.add_handler(CommandHandler("rotate_log", commands.rotate_log))
+    dispatcher.add_handler(CommandHandler("sheets_key_stuff", commands.sheets_key_stuff))
     dispatcher.add_handler(CommandHandler("show_chat_id", commands.show_chat_id))
     dispatcher.add_handler(
         CommandHandler("show_current_survey", commands.show_current_survey)
@@ -80,10 +81,10 @@ def register_dispatcher(
                     edit.pick_question, pattern="^{}$".format(cc.EDIT_QUESTIONS_CB)
                 ),
                 CallbackQueryHandler(
-                    edit.save_changes, pattern="^{}$".format(cc.SAVE_AND_EXIT_CB)
+                    edit.save_confirm, pattern="^{}$".format(cc.SAVE_AND_EXIT_CB)
                 ),
                 CallbackQueryHandler(
-                    edit.discard_changes, pattern="^{}$".format(cc.DISCARD_AND_EXIT_CB)
+                    edit.discard_confirm, pattern="^{}$".format(cc.DISCARD_AND_EXIT_CB)
                 ),
             ],
             cc.EDIT_TITLE_STATE: [
@@ -570,7 +571,9 @@ def register_dispatcher(
     if not bot_data.get(consts.ADMINS_KEY):
         bot_data[consts.ADMINS_KEY] = admins
     if not bot_data.get(consts.SHEETS_KEY):
-        bot_data[consts.SHEETS_KEY]['file'] = gsheets_file
-        bot_data[consts.SHEETS_KEY]['email'] = gsheets_email
+        bot_data[consts.SHEETS_KEY] = {
+            'file': gsheets_file,
+            'email': gsheets_email
+        }
     if not bot_data.get(consts.CHATS_KEY):
         bot_data[consts.CHATS_KEY] = chats
