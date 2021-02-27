@@ -20,154 +20,142 @@ def pick_survey(update: Update, context: CallbackContext) -> int:
     query.answer()
     global _
     global kb
-    kb = kbs.Keyboards(context.user_data["lang"])
+    kb = kbs.Keyboards(context.user_data["settings"]["lang"])
     locale = gettext.translation(
-        "poll", localedir="locales", languages=[context.user_data["lang"]]
+        "poll", localedir="locales", languages=[context.user_data["settings"]["lang"]]
     )
     locale.install()
     _ = locale.gettext
     if "poll_ongoing" not in context.bot_data:
         context.bot_data["poll_ongoing"] = False
     if not context.bot_data["poll_ongoing"]:
-        if len(context.bot_data[consts.SURVEYS_KEY]) > 0:
-            survey_list = utils.num_list(
-                context.bot_data[consts.SURVEYS_KEY], key="title"
-            )
-            query.edit_message_text(
-                text=_(
-                    "Выберите опрос из существующих\n\n"
-                    "{list}\n"
-                    "Для выбора опроса введите номер из списка"
-                ).format(list=survey_list),
-                reply_markup=kb.MAIN_MENU_KB,
-            )
-        else:
-            query.edit_message_text(
-                text=_("Опросов пока что нет! Создайте новый опрос, нажав на кнопку"),
-                reply_markup=kb.START_SURVEY_NONE_KB,
-            )
-        return cc.POLL_PICK_STATE
-    else:
-        query.edit_message_text(
-            text=_("В текущее время идёт опрос, подождите его завершения"),
-            reply_markup=kb.MAIN_MENU_KB,
-        )
+        if query.data != "PAGENUM":
+            if len(context.bot_data[consts.SURVEYS_KEY]) > 0:
+                survey_list = utils.num_list(
+                    context.bot_data[consts.SURVEYS_KEY], key="title"
+                )
+                multipage = context.user_data["settings"]["page_len"] < len(
+                    context.bot_data[consts.SURVEYS_KEY]
+                )
+                if multipage:
+                    if "page" not in context.chat_data:
+                        context.chat_data["page"] = 1
+                    elif query.data == "prev page":
+                        context.chat_data["page"] -= 1
+                    elif query.data == "next page":
+                        context.chat_data["page"] += 1
+                else:
+                    context.chat_data["page"] = None
+                keyboard = kb.populate_keyboard(
+                    page_len=context.user_data["settings"]["page_len"],
+                    per_row=context.user_data["settings"]["row_len"],
+                    length=len(context.bot_data[consts.SURVEYS_KEY]),
+                    multipage=multipage,
+                    page=context.chat_data["page"],
+                )
+                query.edit_message_text(
+                    text=_("Выберите опрос из существующих\n\n" "{list}").format(
+                        list=survey_list
+                    ),
+                    reply_markup=keyboard,
+                )
+                return cc.POLL_PICK_STATE
+            else:
+                query.edit_message_text(
+                    text=_("В текущее время идёт опрос, подождите его завершения"),
+                    reply_markup=kb.MAIN_MENU_KB,
+                )
 
 
 def preview(update: Update, context: CallbackContext) -> int:
-    try:
-        idx = utils.validate_index(
-            update.message.text, context.bot_data[consts.SURVEYS_KEY]
-        )
-        context.chat_data["current_survey"] = context.bot_data[consts.SURVEYS_KEY][idx]
-        survey = utils.print_survey(context.chat_data["current_survey"])
-        update.message.reply_text(
-            text=_("Выбранный опрос:\n\n") + survey + _("Выберите действие"),
-            reply_markup=kb.POLL_PREVIEW_KB,
-        )
-        return cc.POLL_PREVIEW_STATE
-    except IndexError:
-        update.message.reply_text(
-            text=_("Введённого номера нет в списке! Попробуйте ещё раз"),
-        )
-        return cc.POLL_PICK_STATE
-    except ValueError:
-        update.message.reply_text(
-            text=_("Неправильно введён номер! Попробуйте ещё раз"),
-        )
-        return cc.POLL_PICK_STATE
+    query = update.callback_query
+    data = query.data
+    idx = int(data)
+    context.chat_data["current_survey"] = context.bot_data[consts.SURVEYS_KEY][idx]
+    survey = utils.print_survey(context.chat_data["current_survey"])
+    query.edit_message_text(
+        text=_("Выбранный опрос:\n\n") + survey + _("Выберите действие"),
+        reply_markup=kb.POLL_PREVIEW_KB,
+    )
+    return cc.POLL_PREVIEW_STATE
 
 
 def pick_chat(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
     bot_data = context.bot_data
-    if len(bot_data[consts.CHATS_KEY]) > 0:
-        chat_names = [
-            context.bot.get_chat(chat_id).title
-            for chat_id in bot_data[consts.CHATS_KEY]
-        ]
-        chat_list = utils.num_list(chat_names)
-        query.edit_message_text(
-            text=_(
-                "Выберите чат из существующих\n\n"
-                "{list}\n"
-                "Для выбора чата введите номер из списка"
-            ).format(list=chat_list),
-            reply_markup=kb.MAIN_MENU_KB,
-        )
-        return cc.PICK_CHAT_STATE
-    else:
-        query.edit_message_text(
-            text=_(
-                "Пока что не был добавлен ни один чат!\n"
-                "Используйте команду /show_chat_id в нужном чате, затем /add_chat id с полученным числом вместо id"
-                "Бот обязательно должен присутствовать в этом чате!"
-            ),
-            reply_markup=kb.MAIN_MENU_KB,
-        )
+    if query.data != "PAGENUM":
+        if len(bot_data[consts.CHATS_KEY]) > 0:
+            chat_names = [
+                context.bot.get_chat(chat_id).title
+                for chat_id in bot_data[consts.CHATS_KEY]
+            ]
+            chat_list = utils.num_list(chat_names)
+            multipage = context.user_data["settings"]["page_len"] < len(
+                context.bot_data[consts.CHATS_KEY]
+            )
+            if multipage:
+                if "page" not in context.chat_data:
+                    context.chat_data["page"] = 1
+                elif query.data == "prev page":
+                    context.chat_data["page"] -= 1
+                elif query.data == "next page":
+                    context.chat_data["page"] += 1
+            else:
+                context.chat_data["page"] = None
+            keyboard = kb.populate_keyboard(
+                page_len=context.user_data["settings"]["page_len"],
+                per_row=context.user_data["settings"]["row_len"],
+                length=len(context.bot_data[consts.CHATS_KEY]),
+                multipage=multipage,
+                page=context.chat_data["page"],
+            )
+            query.edit_message_text(
+                text=_("Выберите чат из существующих\n\n" "{list}").format(
+                    list=chat_list
+                ),
+                reply_markup=keyboard,
+            )
+            return cc.PICK_CHAT_STATE
+        else:
+            query.edit_message_text(
+                text=_(
+                    "Пока что не был добавлен ни один чат!\n"
+                    "Используйте команду /show_chat_id в нужном чате, затем /add_chat id с полученным числом вместо id"
+                    "Бот обязательно должен присутствовать в этом чате!"
+                ),
+                reply_markup=kb.MAIN_MENU_KB,
+            )
 
 
 def set_cap(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
-    if query is None:
-        try:
-            idx = utils.validate_index(
-                update.message.text, context.bot_data[consts.CHATS_KEY]
-            )
-            context.chat_data["chat_id"] = context.bot_data[consts.CHATS_KEY][idx]
-            target_chat = context.bot.get_chat(context.chat_data["chat_id"])
-            context.chat_data["admins"] = len(target_chat.get_administrators())
-            context.chat_data["total"] = target_chat.get_members_count()
-            context.chat_data["recommended"] = (
-                context.chat_data["total"] - context.chat_data["admins"] - 1
-            )
-            update.message.reply_text(
-                text=_(
-                    "Выбранный чат:\n"
-                    "{title}\n\n"
-                    "В чате обнаружено {total} участников, из них {admins} администраторов\n"
-                    "Для того, чтобы появился следующий вопрос, необходимо, чтобы проголосовало определённое число человек\n"
-                    "По умолчанию должно проголосовать {rec} человек (все, кроме администраторов и этого бота)\n"
-                    "Вы можете выбрать рекомендованное значение или установить своё"
-                ).format(
-                    title=target_chat.title,
-                    total=context.chat_data["total"],
-                    admins=context.chat_data["admins"],
-                    rec=context.chat_data["recommended"],
-                ),
-                reply_markup=kb.SET_CAP_KB,
-            )
-            return cc.SET_CAP_STATE
-        except IndexError:
-            update.message.reply_text(
-                text=_("Введённого номера нет в списке! Попробуйте ещё раз"),
-            )
-            return cc.PICK_CHAT_STATE
-        except ValueError:
-            update.message.reply_text(
-                text=_("Неправильно введён номер! Попробуйте ещё раз"),
-            )
-            return cc.PICK_CHAT_STATE
-    else:
-        query.answer()
-        query.edit_message_text(
-            text=_(
-                "Выбранный чат:\n"
-                "{title}\n\n"
-                "В чате обнаружено {total} участников, из них {admins} администраторов\n"
-                "Для того, чтобы появился следующий вопрос, необходимо, чтобы проголосовало определённое число человек\n"
-                "По умолчанию должно проголосовать {rec} человек (все, кроме администраторов и этого бота)\n"
-                "Вы можете выбрать рекомендованное значение или установить своё"
-            ).format(
-                title=target_chat.title,
-                total=context.chat_data["total"],
-                admins=context.chat_data["admins"],
-                rec=context.chat_data["recommended"],
-            ),
-            reply_markup=kb.SET_CAP_KB,
-        )
-        return cc.SET_CAP_STATE
+    query.answer()
+    idx = int(query.data)
+    context.chat_data["chat_id"] = context.bot_data[consts.CHATS_KEY][idx]
+    target_chat = context.bot.get_chat(context.chat_data["chat_id"])
+    context.chat_data["admins"] = len(target_chat.get_administrators())
+    context.chat_data["total"] = target_chat.get_members_count()
+    context.chat_data["recommended"] = (
+        context.chat_data["total"] - context.chat_data["admins"] - 1
+    )
+    query.edit_message_text(
+        text=_(
+            "Выбранный чат:\n"
+            "{title}\n\n"
+            "В чате обнаружено {total} участников, из них {admins} администраторов\n"
+            "Для того, чтобы появился следующий вопрос, необходимо, чтобы проголосовало определённое число человек\n"
+            "По умолчанию должно проголосовать {rec} человек (все, кроме администраторов и этого бота)\n"
+            "Вы можете выбрать рекомендованное значение или установить своё"
+        ).format(
+            title=target_chat.title,
+            total=context.chat_data["total"],
+            admins=context.chat_data["admins"],
+            rec=context.chat_data["recommended"],
+        ),
+        reply_markup=kb.SET_CAP_KB,
+    )
+    return cc.SET_CAP_STATE
 
 
 def get_cap(update: Update, context: CallbackContext) -> int:
@@ -257,6 +245,7 @@ def launch(update: Update, context: CallbackContext) -> int:
     del context.chat_data["chat_id"]
     del context.chat_data["current_survey"]
     del context.chat_data["cap"]
+    del context.chat_data["page"]
     desc = context.bot_data["ongoing"]["survey"]["desc"]
     chat_id = context.bot_data["ongoing"]["chat_id"]
     delay = round(len(desc.split()) * 60 / 140)

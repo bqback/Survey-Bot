@@ -6,7 +6,7 @@ import gettext
 import email_validator
 import copy
 
-from functools import partial
+from functools import partial, wraps
 from threading import Thread
 from typing import Union, List
 from configparser import ConfigParser
@@ -27,6 +27,26 @@ kb = None
 logger = logging.getLogger(__name__)
 
 
+def restricted(func):
+    @wraps(func)
+    def wrapped(update, context, *args, **kwargs):
+        user_id = update.effective_user.id
+        if user_id not in context.bot_data[consts.ADMINS_KEY]:
+            logger.warning(
+                _(
+                    "Пользователь {id} хотел использовать администраторскую команду {command}"
+                ).format(id=user_id, command=update.message.text)
+            )
+            context.bot.send_message(
+                chat_id = update.effective_chat.id,
+                text = _("Команда доступна только администраторам!\nСвяжитесь с администратором для получения доступа")
+            )
+            return
+        return func(update, context, *args, **kwargs)
+
+    return wrapped
+
+
 def show_id(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.from_user.id)
 
@@ -35,6 +55,106 @@ def show_chat_id(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.effective_chat.id)
 
 
+def show_current_survey(update: Update, context: CallbackContext) -> None:
+    try:
+        current = context.chat_data["current_survey"]
+        out = ""
+        try:
+            out += _("Название текущего опроса:\n{title}\n\n").format(
+                title=current["title"]
+            )
+        except KeyError:
+            out += _("У текущего опроса нет названия\n\n")
+        try:
+            out += _("Описание текущего опроса:\n{desc}\n\n").format(
+                desc=current["desc"]
+            )
+        except KeyError:
+            out += _("У текущего опроса нет описания\n\n")
+        try:
+            out += _("Вопросы:\n")
+            for question in current["questions"]:
+                multi = _("неск. вариантов") if question["multi"] else _("один вариант")
+                out += _("\n{question} ({multi})").format(
+                    question=question["question"], multi=multi
+                )
+                try:
+                    for answer in question["answers"]:
+                        out += "\n\t{answer}".format(answer=answer)
+                except KeyError:
+                    out += _("У этого вопроса нет ответов\n")
+        except KeyError:
+            out += _("У текущего опроса нет вопросов\n\n")
+    except KeyError:
+        out = _("В настоящее время не обрабатывается опрос")
+    update.message.reply_text(out)
+
+
+def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
+    query = update.callback_query
+    query.answer()
+    if "settings" not in context.user_data:
+        context.user_data["settings"] = copy.deepcopy(
+            context.bot_data[consts.DEFAULTS_KEY]
+        )
+    context.user_data["settings"]["lang"] = lang
+    try:
+        global _
+        global kb
+        kb = kbs.Keyboards(context.user_data["settings"]["lang"])
+        locale = gettext.translation(
+            "commands",
+            localedir="locales",
+            languages=[context.user_data["settings"]["lang"]],
+        )
+        locale.install()
+        _ = locale.gettext
+    except ModuleNotFoundError:
+        context.user_data["settings"]["lang"] = None
+        logger.error(
+            "User {} picked an invalid language?".format(update.effective_user.id)
+        )
+    root.start(update, context)
+    return cc.START_STATE
+
+
+def help(update: Update, context: CallbackContext) -> None:
+    if len(context.args) > 0:
+        try:
+            test = context.bot.commands[0].long_description
+        except AttributeError:
+            bcmd = bcmds.BotCommands(context.user_data["settings"]["lang"])
+            context.bot.set_my_commands(bcmd.bot_commands)
+        if context.args[0] != "all":
+            commands = context.bot.commands
+            target = context.args[0]
+            command = list(filter(lambda command: command.command == target, commands))
+            if len(command) > 0:
+                update.message.reply_text(
+                    "/{command}\n\n{desc}".format(
+                        command=command[0].command, desc=command[0].long_description
+                    )
+                )
+            else:
+                update.message.reply_text(_("Команда не найдена! Попробуйте ещё раз"))
+        else:
+            for command in context.bot.commands:
+                update.message.reply_text(
+                    "/{command}\n\n{desc}".format(
+                        command=command.command, desc=command.long_description
+                    )
+                )
+    else:
+        update.message.reply_text(
+            _(
+                "Для использования команды нужно указать команду, о которой Вы хотите узнать больше\n"
+                "Например /help show_id\n\n"
+                "Для вывода всех доступных команд используйте /help all"
+            )
+        )
+
+
+@restricted
 def add_chat(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
@@ -71,6 +191,7 @@ def add_chat(update: Update, context: CallbackContext) -> None:
         )
 
 
+@restricted
 def remove_chat(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
@@ -95,6 +216,7 @@ def remove_chat(update: Update, context: CallbackContext) -> None:
         )
 
 
+@restricted
 def add_admin(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
@@ -125,6 +247,7 @@ def add_admin(update: Update, context: CallbackContext) -> None:
         )
 
 
+@restricted
 def remove_admin(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
@@ -155,19 +278,19 @@ def remove_admin(update: Update, context: CallbackContext) -> None:
         )
 
 
-def restart(update: Update, context: CallbackContext, updater: Updater) -> None:
-    update.message.reply_text(_("Перезапуск..."))
-    if "base_ver" in context.chat_data:
-        del context.chat_data["base_ver"]
-    Thread(target=partial(stop_and_restart, updater=updater)).start()
-
-
 def stop_and_restart(updater: Updater) -> None:
     updater.stop()
     sys.argv[0] = '"' + sys.argv[0] + '"'
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
+@restricted
+def restart(update: Update, context: CallbackContext, updater: Updater) -> None:
+    update.message.reply_text(_("Перезапуск..."))
+    Thread(target=partial(stop_and_restart, updater=updater)).start()
+
+
+@restricted
 def rotate_log(update: Update, context: CallbackContext) -> None:
     logger.info(
         _("Начат новый лог-файл по запросу {id}").format(id=update.effective_user.id)
@@ -176,113 +299,14 @@ def rotate_log(update: Update, context: CallbackContext) -> None:
     logger.handlers[0].doRollover()
 
 
-def show_current_survey(update: Update, context: CallbackContext) -> None:
-    try:
-        current = context.chat_data["current_survey"]
-        out = ""
-        try:
-            out += _("Название текущего опроса:\n{title}\n\n").format(
-                title=current["title"]
-            )
-        except KeyError:
-            out += _("У текущего опроса нет названия\n\n")
-        try:
-            out += _("Описание текущего опроса:\n{desc}\n\n").format(
-                desc=current["desc"]
-            )
-        except KeyError:
-            out += _("У текущего опроса нет описания\n\n")
-        try:
-            out += _("Вопросы:\n")
-            for question in current["questions"]:
-                multi = _("неск. вариантов") if question["multi"] else _("один вариант")
-                out += _("\n{question} ({multi})").format(
-                    question=question["question"], multi=multi
-                )
-                try:
-                    for answer in question["answers"]:
-                        out += "\n\t{answer}".format(answer=answer)
-                except KeyError:
-                    out += _("У этого вопроса нет ответов\n")
-        except KeyError:
-            out += _("У текущего опроса нет вопросов\n\n")
-    except KeyError:
-        out += _("В настоящее время не обрабатывается опрос")
-    update.message.reply_text(out)
-
-
-def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
-    query = update.callback_query
-    query.answer()
-    if "settings" not in context.user_data:
-        context.user_data["settings"] = copy.deepcopy(
-            context.bot_data[consts.DEFAULTS_KEY]
-        )
-    context.user_data["settings"]["lang"] = lang
-    try:
-        global _
-        global kb
-        kb = kbs.Keyboards(context.user_data["settings"]["lang"])
-        locale = gettext.translation(
-            "commands", localedir="locales", languages=[context.user_data["settings"]["lang"]]
-        )
-        locale.install()
-        _ = locale.gettext
-    except ModuleNotFoundError:
-        context.user_data["settings"]["lang"] = None
-        logger.error(
-            "User {} picked an invalid language?".format(update.effective_user.id)
-        )
-    root.start(update, context)
-    return cc.START_STATE
-
-
+@restricted
 def reset_ongoing(update: Update, context: CallbackContext) -> None:
     context.bot_data["poll_ongoing"] = False
     del context.bot_data["ongoing"]
     update.message.reply_text(_("Флаг сброшен"))
 
 
-def help(update: Update, context: CallbackContext) -> None:
-    if len(context.args) > 0:
-        try:
-            if context.args[0] != "all":
-                commands = context.bot.commands
-                target = context.args[0]
-                command = list(
-                    filter(lambda command: command.command == target, commands)
-                )
-                if len(command) > 0:
-                    update.message.reply_text(
-                        "/{command}\n\n{desc}".format(
-                            command=command[0].command, desc=command[0].long_description
-                        )
-                    )
-                else:
-                    update.message.reply_text(
-                        _("Команда не найдена! Попробуйте ещё раз")
-                    )
-            else:
-                for command in context.bot.commands:
-                    update.message.reply_text(
-                        "/{command}\n\n{desc}".format(
-                            command=command.command, desc=command.long_description
-                        )
-                    )
-        except AttributeError:
-            bcmd = bcmds.BotCommands(context.user_data["lang"])
-            context.bot.set_my_commands(bcmd.bot_commands)
-
-    else:
-        update.message.reply_text(
-            _(
-                "Для использования команды нужно указать команду, о которой Вы хотите узнать больше\n"
-                "Например /help show_id\n\n"
-                "Для вывода всех доступных команд используйте /help all"
-            )
-        )
-
-
+@restricted
 def set_gsheets_owner(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         email = context.args[0]

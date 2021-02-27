@@ -7,7 +7,7 @@ import gspread
 
 import bot.autofit as autofit
 
-from typing import Dict, List, Union, Tuple, Any
+from typing import Dict, List, Union, Tuple, Any, Iterable
 
 _ = gettext.gettext
 
@@ -106,7 +106,7 @@ def surv_diff(surv_old: Dict, surv_new: Dict, lang: str) -> str:
                                 )
                 except IndexError:
                     diff_list += _(
-                        "Удалён или перемещён вопрос №{num}" "{old} ->\n\n"
+                        "Удалён или перемещён вопрос №{q_num}" "{old} ->\n\n"
                     ).format(q_num=q_idx + 1, old=old_question["question"])
             if len(surv_old["questions"]) < len(surv_new["questions"]):
                 old_len = len(surv_old["questions"])
@@ -164,16 +164,21 @@ def validate_index(index: str, stuff: Union[List, Dict]) -> int:
         return idx
 
 
+def print_question(question: Dict) -> str:
+    out = f"\n\n{question['question']}"
+    if question["multi"]:
+        out += _(" (можно выбрать несколько вариантов)")
+    else:
+        out += _(" (можно выбрать только один вариант)")
+    for idx, answer in enumerate(question["answers"]):
+        out += f"\n\t{idx+1}. {answer}"
+    return out
+
+
 def print_survey(survey: Dict) -> str:
     out = f"{survey['title']}\n\n{survey['desc']}"
     for question in survey["questions"]:
-        out += f"\n\n{question['question']}"
-        if question["multi"]:
-            out += _(" (можно выбрать несколько вариантов)")
-        else:
-            out += _(" (можно выбрать только один вариант)")
-        for idx, answer in enumerate(question["answers"]):
-            out += f"\n\t{idx+1}. {answer}"
+        out += print_question(question)
     return out
 
 
@@ -210,16 +215,17 @@ def parse_cfg(filename: str) -> Tuple[str]:
         filter(lambda entry: not re.match("^#.+$", entry[0]), config.items("defaults"))
     )
 
-    for key, value in defaults.items():
+    for key in defaults:
         if key == "timeout":
             defaults[key] = float(defaults[key])
 
-    default_settings = {
-        'page_len': config["settings"]["page_len"]
-        'row_len': config["settings"]["row_len"]
-    }
-    settings_page_len = config["settings"]["page_len"]
-    settings_row_len = config["settings"]["row_len"]
+    default_settings = dict(
+        filter(lambda entry: not re.match("^#.+$", entry[0]), config.items("settings"))
+    )
+
+    for key in default_settings:
+        if key in ("page_len", "row_len"):
+            default_settings[key] = int(default_settings[key])
 
     log_file = config["log"]["filename"]
     log_size = int(config["log"]["log_size"]) * 1024
@@ -299,73 +305,3 @@ def iter_baskets_contiguous(
         for x_i in range(baskets):
             length = ceiling if x_i < stepdown else floor
             yield [next(items) for _ in range(length)]
-
-
-def populate_keyboard(
-    page_len: int,
-    per_row: int,
-    length: int,
-    multipage: bool = False,
-    page: int = None,
-    labels: List[Union[str, int]] = None,
-    labels_as_data: bool = False,
-) -> InlineKeyboardMarkup:
-    maxrows = math.ceil(page_len / per_row)
-    if not multipage:
-        if labels is not None:
-            if labels_as_data:
-                buttons = [
-                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(labels[i]))
-                    for i in range(length)
-                ]
-            else:
-                buttons = [
-                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(i))
-                    for i in range(length)
-                ]
-        else:
-            buttons = [
-                InlineKeyboardButton(f"{i+1}", callback_data=str(i))
-                for i in range(length)
-            ]
-        keyboard = list(
-            iter_baskets_contiguous(items=buttons, per_row=per_row, maxbaskets=maxrows)
-        )
-        keyboard = InlineKeyboardMarkup(keyboard)
-    else:
-        if page is None:
-            raise ValueError("page can't be None if multipage is True!")
-        if page < 1:
-            raise ValueError("page can't be less than 1!")
-        if page > math.ceil(length / page_len):
-            raise ValueError(
-                f"With given data length and page length there can only be {math.ceil(length / page_len)} ({page} received instead)!"
-            )
-        irange = range(length)[(page - 1) * page_len : page * page_len]
-        if labels is not None:
-            if labels_as_data:
-                buttons = [
-                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(labels[i]))
-                    for i in irange
-                ]
-            else:
-                buttons = [
-                    InlineKeyboardButton(f"{labels[i]}", callback_data=str(i))
-                    for i in irange
-                ]
-        else:
-            buttons = [
-                InlineKeyboardButton(f"{i+1}", callback_data=str(i)) for i in irange
-            ]
-        keyboard = list(
-            iter_baskets_contiguous(items=buttons, per_row=per_row, maxbaskets=maxrows)
-        )
-        nav_row = []
-        if page > 1:
-            nav_row.append(InlineKeyboardButton("<--", callback_data="prev page"))
-        nav_row.append(InlineKeyboardButton(f"{page}", callback_data="PAGENUM"))
-        if page < math.ceil(length / page_len):
-            nav_row.append(InlineKeyboardButton("-->", callback_data="next page"))
-        keyboard.append(nav_row)
-        keyboard = InlineKeyboardMarkup(keyboard)
-    return keyboard

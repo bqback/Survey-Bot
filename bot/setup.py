@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Dict
 from functools import partial
 
 import bot.constants as consts
@@ -54,9 +54,6 @@ def register_dispatcher(
     dispatcher.add_handler(CommandHandler("remove_chat", commands.remove_chat))
     dispatcher.add_handler(CommandHandler("reset_ongoing", commands.reset_ongoing))
     dispatcher.add_handler(CommandHandler("rotate_log", commands.rotate_log))
-    dispatcher.add_handler(
-        CommandHandler("sheets_key_stuff", commands.sheets_key_stuff)
-    )
     dispatcher.add_handler(CommandHandler("show_chat_id", commands.show_chat_id))
     dispatcher.add_handler(
         CommandHandler("show_current_survey", commands.show_current_survey)
@@ -130,7 +127,10 @@ def register_dispatcher(
                 ),
             ],
             cc.PICK_QUESTION_STATE: [
-                MessageHandler(filters.Filters.text, edit.question),
+                CallbackQueryHandler(edit.question, pattern="^\d+$"),
+                CallbackQueryHandler(
+                    edit.pick_question, pattern="^(prev page|next page|PAGENUM)$"
+                ),
                 CallbackQueryHandler(
                     edit.pick_part, pattern="^{}$".format(cc.RETURN_CB)
                 ),
@@ -422,7 +422,10 @@ def register_dispatcher(
                 ),
             ],
             cc.MANAGE_PICK_SURVEY_STATE: [
-                MessageHandler(filters.Filters.text, manage.survey),
+                CallbackQueryHandler(manage.survey, pattern="^\d+$"),
+                CallbackQueryHandler(
+                    manage.pick, pattern="^(prev page|next page|PAGENUM)$"
+                ),
                 compose_conv,
             ],
             cc.MANAGE_SURVEY_STATE: [
@@ -465,7 +468,29 @@ def register_dispatcher(
             cc.PICK_SETTING_STATE: [
                 CallbackQueryHandler(
                     settings.lang, pattern="^{}$".format(cc.SETTINGS_LANG_CB)
-                )
+                ),
+                CallbackQueryHandler(
+                    settings.page_len, pattern="^{}$".format(cc.SETTINGS_PAGE_LEN_CB)
+                ),
+                CallbackQueryHandler(
+                    settings.row_len, pattern="^{}$".format(cc.SETTINGS_ROW_LEN_CB)
+                ),
+            ],
+            cc.SETTINGS_PAGE_LEN_STATE: [
+                CallbackQueryHandler(
+                    partial(settings.change_setting, setting = "page_len"), pattern="^\d+$"
+                ),
+                CallbackQueryHandler(
+                    settings.pick, pattern="^{}$".format(cc.RETURN_CB)
+                ),
+            ],
+            cc.SETTINGS_ROW_LEN_STATE: [
+                CallbackQueryHandler(
+                    partial(settings.change_setting, setting = "row_len"), pattern="^\d+$"
+                ),
+                CallbackQueryHandler(
+                    settings.pick, pattern="^{}$".format(cc.RETURN_CB)
+                ),
             ]
         },
         fallbacks=[],
@@ -480,7 +505,10 @@ def register_dispatcher(
         ],
         states={
             cc.POLL_PICK_STATE: [
-                MessageHandler(filters.Filters.text, poll.preview),
+                CallbackQueryHandler(poll.preview, pattern="^\d+$"),
+                CallbackQueryHandler(
+                    poll.pick_survey, pattern="^(prev page|next page|PAGENUM)$"
+                ),
                 compose_conv,
             ],
             cc.POLL_PREVIEW_STATE: [
@@ -491,7 +519,10 @@ def register_dispatcher(
                     poll.pick_survey, pattern="^{}$".format(cc.CHOOSE_SURVEY_CB)
                 ),
             ],
-            cc.PICK_CHAT_STATE: [MessageHandler(filters.Filters.text, poll.set_cap)],
+            cc.PICK_CHAT_STATE: [CallbackQueryHandler(poll.set_cap, pattern="^\d+$"),
+                CallbackQueryHandler(
+                    poll.pick_chat, pattern="^(prev page|next page|PAGENUM)$"
+                ),],
             cc.SET_CAP_STATE: [
                 CallbackQueryHandler(
                     poll.confirm, pattern="^{}$".format(cc.USE_RECOMMENDED_CB)
