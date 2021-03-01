@@ -184,7 +184,8 @@ def register_dispatcher(
             ],
             cc.EDIT_MULTI_STATE: [
                 CallbackQueryHandler(
-                    compose.get_multi, pattern="^{}$".format(cc.NEW_MULTI_CB)
+                    partial(compose.get_multi, mode="edit"),
+                    pattern="^{}$".format(cc.NEW_MULTI_CB),
                 ),
                 CallbackQueryHandler(
                     edit.question, pattern="^{}$".format(cc.KEEP_CURRENT_MULTI_CB)
@@ -293,6 +294,7 @@ def register_dispatcher(
         map_to_parent={
             cc.END_COMPOSE: cc.REVIEW_STATE,
             cc.END_MANAGE: cc.MANAGE_SURVEYS_STATE,
+            cc.MAIN_MENU_STATE: cc.MAIN_MENU_STATE
         },
     )
 
@@ -457,7 +459,10 @@ def register_dispatcher(
                 root.confirm_return_to_main, pattern="^{}$".format(cc.RETURN_TO_MAIN_CB)
             )
         ],
-        map_to_parent={cc.START_STATE: cc.START_STATE},
+        map_to_parent={
+            cc.START_STATE: cc.START_STATE,
+            cc.MAIN_MENU_STATE: cc.MAIN_MENU_STATE,
+        },
     )
 
     settings_conv = ConversationHandler(
@@ -478,7 +483,8 @@ def register_dispatcher(
             ],
             cc.SETTINGS_PAGE_LEN_STATE: [
                 CallbackQueryHandler(
-                    partial(settings.change_setting, setting = "page_len"), pattern="^\d+$"
+                    partial(settings.change_setting, setting="page_len"),
+                    pattern="^\d+$",
                 ),
                 CallbackQueryHandler(
                     settings.pick, pattern="^{}$".format(cc.RETURN_CB)
@@ -486,15 +492,18 @@ def register_dispatcher(
             ],
             cc.SETTINGS_ROW_LEN_STATE: [
                 CallbackQueryHandler(
-                    partial(settings.change_setting, setting = "row_len"), pattern="^\d+$"
+                    partial(settings.change_setting, setting="row_len"), pattern="^\d+$"
                 ),
                 CallbackQueryHandler(
                     settings.pick, pattern="^{}$".format(cc.RETURN_CB)
                 ),
-            ]
+            ],
         },
         fallbacks=[],
-        map_to_parent={cc.SETTINGS_LANG_STATE: cc.LANG_STATE},
+        map_to_parent={
+            cc.SETTINGS_LANG_STATE: cc.LANG_STATE,
+            cc.MAIN_MENU_STATE: cc.MAIN_MENU_STATE,
+        },
     )
 
     poll_conv = ConversationHandler(
@@ -519,10 +528,12 @@ def register_dispatcher(
                     poll.pick_survey, pattern="^{}$".format(cc.CHOOSE_SURVEY_CB)
                 ),
             ],
-            cc.PICK_CHAT_STATE: [CallbackQueryHandler(poll.set_cap, pattern="^\d+$"),
+            cc.PICK_CHAT_STATE: [
+                CallbackQueryHandler(poll.set_cap, pattern="^\d+$"),
                 CallbackQueryHandler(
                     poll.pick_chat, pattern="^(prev page|next page|PAGENUM)$"
-                ),],
+                ),
+            ],
             cc.SET_CAP_STATE: [
                 CallbackQueryHandler(
                     poll.confirm, pattern="^{}$".format(cc.USE_RECOMMENDED_CB)
@@ -565,6 +576,7 @@ def register_dispatcher(
         ],
         map_to_parent={
             cc.START_STATE: cc.START_STATE,
+            cc.MAIN_MENU_STATE: cc.MAIN_MENU_STATE,
         },
     )
 

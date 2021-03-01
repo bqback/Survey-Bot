@@ -32,11 +32,12 @@ def pick_part(update: Update, context: CallbackContext, source=None) -> int:
     locale.install()
     _ = locale.gettext
     context.chat_data.pop("page", None)
-    if "s_idx" in context.chat_data and "base_ver" not in context.chat_data:
+    if "s_idx" in context.chat_data:
         idx = context.chat_data["s_idx"]
         context.chat_data["current_survey"] = copy.deepcopy(
             context.bot_data[consts.SURVEYS_KEY][idx]
         )
+    if "base_ver" not in context.chat_data:   
         context.chat_data["base_ver"] = copy.deepcopy(
             context.chat_data["current_survey"]
         )
@@ -44,12 +45,13 @@ def pick_part(update: Update, context: CallbackContext, source=None) -> int:
         context.chat_data["edit_end"] = cc.END_COMPOSE
     elif source == "manage":
         context.chat_data["edit_end"] = cc.END_MANAGE
-    if context.chat_data["base_ver"] != context.chat_data["current_survey"]:
-        changes = utils.surv_diff(
-            context.chat_data["base_ver"],
-            context.chat_data["current_survey"],
-            context.user_data["settings"]["lang"],
-        )
+    if "base_ver" in context.chat_data:
+        if context.chat_data["base_ver"] != context.chat_data["current_survey"]:
+            changes = utils.surv_diff(
+                context.chat_data["base_ver"],
+                context.chat_data["current_survey"],
+                context.user_data["settings"]["lang"],
+            )
     else:
         changes = ""
     query.edit_message_text(
