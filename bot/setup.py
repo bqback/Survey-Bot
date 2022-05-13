@@ -5,7 +5,7 @@ import bot.constants as consts
 import bot.conv_constants as cc
 import bot.commands as commands
 
-# import bot.inline as inline
+
 import bot.access as access
 import bot.root as root
 import bot.compose as compose
@@ -16,9 +16,8 @@ import bot.manage as manage
 
 from telegram import Update
 from telegram.ext import (
-    Updater,
+    Application,
     CommandHandler,
-    InlineQueryHandler,
     ConversationHandler,
     TypeHandler,
     CallbackQueryHandler,
@@ -28,8 +27,8 @@ from telegram.ext import (
 )
 
 
-def register_dispatcher(
-    updater: Updater,
+def register_application(
+    application: Application,
     admins: Union[int, List[int]],
     chats: Union[int, List[int]],
     default_settings: Dict,
@@ -37,30 +36,28 @@ def register_dispatcher(
     gsheets_email: str,
 ) -> None:
 
-    dispatcher = updater.dispatcher
+    application.add_handler(TypeHandler(Update, access.check), group=-2)
 
-    dispatcher.add_handler(TypeHandler(Update, access.check), group=-2)
+    application.add_handler(PollAnswerHandler(poll.collect_answer), group=-1)
 
-    dispatcher.add_handler(PollAnswerHandler(poll.collect_answer), group=-1)
-
-    # dispatcher.add_handler(InlineQueryHandler(inline.surveys))
-    dispatcher.add_handler(CommandHandler("add_admin", commands.add_admin))
-    dispatcher.add_handler(CommandHandler("add_chat", commands.add_chat))
-    dispatcher.add_handler(CommandHandler("help", commands.help))
-    dispatcher.add_handler(
-        CommandHandler("restart", partial(commands.restart, updater=updater))
+    # application.add_handler(InlineQueryHandler(inline.surveys))
+    application.add_handler(CommandHandler("add_admin", commands.add_admin))
+    application.add_handler(CommandHandler("add_chat", commands.add_chat))
+    application.add_handler(CommandHandler("help", commands.help))
+    application.add_handler(
+        CommandHandler("restart", partial(commands.restart, application=application))
     )
-    dispatcher.add_handler(CommandHandler("remove_admin", commands.remove_admin))
-    dispatcher.add_handler(CommandHandler("remove_chat", commands.remove_chat))
-    dispatcher.add_handler(CommandHandler("reset_ongoing", commands.reset_ongoing))
-    dispatcher.add_handler(CommandHandler("rotate_log", commands.rotate_log))
-    dispatcher.add_handler(CommandHandler("show_chat_id", commands.show_chat_id))
-    dispatcher.add_handler(
+    application.add_handler(CommandHandler("remove_admin", commands.remove_admin))
+    application.add_handler(CommandHandler("remove_chat", commands.remove_chat))
+    application.add_handler(CommandHandler("reset_ongoing", commands.reset_ongoing))
+    application.add_handler(CommandHandler("rotate_log", commands.rotate_log))
+    application.add_handler(CommandHandler("show_chat_id", commands.show_chat_id))
+    application.add_handler(
         CommandHandler("show_current_survey", commands.show_current_survey)
     )
-    dispatcher.add_handler(CommandHandler("show_id", commands.show_id))
+    application.add_handler(CommandHandler("show_id", commands.show_id))
 
-    edit_conv = ConversationHandler(
+    edit_conversation = ConversationHandler(
         entry_points=[
             CallbackQueryHandler(
                 partial(edit.pick_part, source="compose"),
@@ -97,7 +94,7 @@ def register_dispatcher(
                 ),
             ],
             cc.GET_TITLE_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_title)
+                MessageHandler(filters.TEXT, compose.save_title)
             ],
             cc.SAVE_TITLE_STATE: [
                 CallbackQueryHandler(
@@ -116,7 +113,7 @@ def register_dispatcher(
                 ),
             ],
             cc.GET_DESC_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_desc)
+                MessageHandler(filters.TEXT, compose.save_desc)
             ],
             cc.SAVE_DESC_STATE: [
                 CallbackQueryHandler(
@@ -169,7 +166,7 @@ def register_dispatcher(
             ],
             cc.GET_QUESTION_STATE: [
                 MessageHandler(
-                    filters.Filters.text, partial(compose.save_question, mode="edit")
+                    filters.TEXT, partial(compose.save_question, mode="edit")
                 )
             ],
             cc.SAVE_QUESTION_STATE: [
@@ -223,7 +220,7 @@ def register_dispatcher(
                 ),
             ],
             cc.PICK_ANSWER_STATE: [
-                MessageHandler(filters.Filters.text, edit.answer),
+                MessageHandler(filters.TEXT, edit.answer),
                 CallbackQueryHandler(
                     edit.question, pattern="^{}$".format(cc.RETURN_CB)
                 ),
@@ -240,7 +237,7 @@ def register_dispatcher(
             ],
             cc.GET_ANSWER_STATE: [
                 MessageHandler(
-                    filters.Filters.text, partial(compose.save_answer, mode="edit")
+                    filters.TEXT, partial(compose.save_answer, mode="edit")
                 )
             ],
             cc.SAVE_ANSWER_STATE: [
@@ -298,7 +295,7 @@ def register_dispatcher(
         },
     )
 
-    compose_conv = ConversationHandler(
+    compose_conversation = ConversationHandler(
         entry_points=[
             CallbackQueryHandler(
                 compose.get_title, pattern="^{}$".format(cc.CREATE_SURVEY_CB)
@@ -306,7 +303,7 @@ def register_dispatcher(
         ],
         states={
             cc.GET_TITLE_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_title),
+                MessageHandler(filters.TEXT, compose.save_title),
                 CallbackQueryHandler(
                     compose.return_to_step, pattern="^{}$".format(cc.YES_CB)
                 ),
@@ -323,7 +320,7 @@ def register_dispatcher(
                 ),
             ],
             cc.GET_DESC_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_desc)
+                MessageHandler(filters.TEXT, compose.save_desc)
             ],
             cc.SAVE_DESC_STATE: [
                 CallbackQueryHandler(
@@ -334,7 +331,7 @@ def register_dispatcher(
                 ),
             ],
             cc.GET_QUESTION_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_question)
+                MessageHandler(filters.TEXT, compose.save_question)
             ],
             cc.SAVE_QUESTION_STATE: [
                 CallbackQueryHandler(
@@ -364,7 +361,7 @@ def register_dispatcher(
                 ),
             ],
             cc.GET_ANSWER_STATE: [
-                MessageHandler(filters.Filters.text, compose.save_answer)
+                MessageHandler(filters.TEXT, compose.save_answer)
             ],
             cc.SAVE_ANSWER_STATE: [
                 CallbackQueryHandler(
@@ -390,7 +387,7 @@ def register_dispatcher(
                 CallbackQueryHandler(
                     compose.finish, pattern="^{}$".format(cc.CREATION_COMPLETE_CB)
                 ),
-                edit_conv,
+                edit_conversation,
             ],
             cc.START_OVER_STATE: [
                 CallbackQueryHandler(
@@ -410,7 +407,7 @@ def register_dispatcher(
         },
     )
 
-    manage_conv = ConversationHandler(
+    manage_conversation = ConversationHandler(
         entry_points=[
             CallbackQueryHandler(
                 manage.start, pattern="^{}$".format(cc.MANAGE_SURVEYS_CB)
@@ -418,7 +415,7 @@ def register_dispatcher(
         ],
         states={
             cc.MANAGE_SURVEYS_STATE: [
-                compose_conv,
+                compose_conversation,
                 CallbackQueryHandler(
                     manage.pick, pattern="^{}$".format(cc.CHOOSE_SURVEY_CB)
                 ),
@@ -428,10 +425,10 @@ def register_dispatcher(
                 CallbackQueryHandler(
                     manage.pick, pattern="^(prev page|next page|PAGENUM)$"
                 ),
-                compose_conv,
+                compose_conversation,
             ],
             cc.MANAGE_SURVEY_STATE: [
-                edit_conv,
+                edit_conversation,
                 CallbackQueryHandler(
                     manage.confirm_delete,
                     pattern="^{}$".format(cc.MANAGE_DELETE_SURVEY_CB),
@@ -465,7 +462,7 @@ def register_dispatcher(
         },
     )
 
-    settings_conv = ConversationHandler(
+    settings_conversation = ConversationHandler(
         entry_points=[
             CallbackQueryHandler(settings.pick, pattern="^{}$".format(cc.SETTINGS_CB))
         ],
@@ -506,7 +503,7 @@ def register_dispatcher(
         },
     )
 
-    poll_conv = ConversationHandler(
+    poll_conversation = ConversationHandler(
         entry_points=[
             CallbackQueryHandler(
                 poll.pick_survey, pattern="^{}$".format(cc.START_SURVEY_CB)
@@ -518,7 +515,7 @@ def register_dispatcher(
                 CallbackQueryHandler(
                     poll.pick_survey, pattern="^(prev page|next page|PAGENUM)$"
                 ),
-                compose_conv,
+                compose_conversation,
             ],
             cc.POLL_PREVIEW_STATE: [
                 CallbackQueryHandler(
@@ -542,7 +539,7 @@ def register_dispatcher(
                     poll.get_cap, pattern="^{}$".format(cc.SET_OWN_CAP_CB)
                 ),
             ],
-            cc.GET_CAP_STATE: [MessageHandler(filters.Filters.text, poll.validate_cap)],
+            cc.GET_CAP_STATE: [MessageHandler(filters.TEXT, poll.validate_cap)],
             cc.VALIDATE_CAP_STATE: [
                 CallbackQueryHandler(
                     poll.confirm, pattern="^{}$".format(cc.USE_RECOMMENDED_CB)
@@ -580,7 +577,7 @@ def register_dispatcher(
         },
     )
 
-    main_conv = ConversationHandler(
+    main_conversation = ConversationHandler(
         entry_points=[CommandHandler("start", root.start)],
         states={
             cc.LANG_STATE: [
@@ -593,7 +590,7 @@ def register_dispatcher(
                     pattern="^{}$".format(cc.EN_CB),
                 ),
             ],
-            cc.START_STATE: [poll_conv, manage_conv, settings_conv],
+            cc.START_STATE: [poll_conversation, manage_conversation, settings_conversation],
             cc.MAIN_MENU_STATE: [
                 CallbackQueryHandler(root.start, pattern="^{}$".format(cc.YES_CB))
             ],
@@ -609,9 +606,9 @@ def register_dispatcher(
         ],
     )
 
-    dispatcher.add_handler(main_conv)
+    application.add_handler(main_conversation)
 
-    bot_data = dispatcher.bot_data
+    bot_data = application.bot_data
     if not bot_data.get(consts.SURVEYS_KEY):
         bot_data[consts.SURVEYS_KEY] = []
     if not bot_data.get(consts.ADMINS_KEY):

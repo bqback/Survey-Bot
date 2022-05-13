@@ -5,7 +5,7 @@ import logging.handlers
 import os
 import time
 
-from telegram.ext import PicklePersistence, Updater, Defaults
+from telegram.ext import PicklePersistence, Application, Defaults
 
 import bot.utils as utils
 import bot.setup as setup
@@ -42,39 +42,38 @@ def main():
     )
     rfh.setFormatter(formatter)
 
-    needRoll = os.path.isfile(log_file)
+    need_roll = os.path.isfile(log_file)
 
     logger.addHandler(rfh)
 
-    if needRoll:
+    if need_roll:
         logger.info("\n---------\nLog closed on %s.\n---------\n" % time.asctime())
         logger.handlers[0].doRollover()
 
     persistence = PicklePersistence(pickle, single_file=False)
 
-    upd = Updater(
-        token=token,
-        use_context=True,
-        persistence=persistence,
-        defaults=Defaults(**defaults),
-    )
+    builder = Application.builder()
+    builder.token(token)
+    builder.persistence(persistence)
+    builder.defaults(Defaults(**defaults))
+    application = builder.build()
 
     setup.register_dispatcher(
-        upd,
+        application,
         admins=admins,
         chats=chats,
-        default_settings = default_settings,
+        default_settings=default_settings,
         gsheets_file=sheets_file,
         gsheets_email=sheets_email,
     )
 
-    upd.start_polling()
+    application.start_polling()
     logger.info("\n---------\nLog started on %s.\n---------\n" % time.asctime())
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
-    upd.idle()
+    application.idle()
 
 
 if __name__ == "__main__":

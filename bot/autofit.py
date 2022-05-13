@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def columns(spreadsheet):
 	update = {
 			"requests": [{
@@ -14,6 +15,7 @@ def columns(spreadsheet):
 			}]
 	}
 	spreadsheet.batch_update(update)
+
 
 def rows(spreadsheet):
 	update = {

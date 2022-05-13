@@ -1,5 +1,5 @@
 from bot.queuebot import MQBot, QueueUpdater
-from telegram.ext import PicklePersistence, Updater, messagequeue, Defaults
+from telegram.ext import PicklePersistence, Updater, Defaults
 from telegram.utils.request import Request
 from typing import Dict
 

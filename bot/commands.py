@@ -8,7 +8,6 @@ import copy
 
 from functools import partial, wraps
 from threading import Thread
-from typing import Union, List
 from configparser import ConfigParser
 
 from telegram import Update
@@ -29,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 def restricted(func):
     @wraps(func)
-    def wrapped(update, context, *args, **kwargs):
+    async def wrapped(update, context, *args, **kwargs):
         user_id = update.effective_user.id
         if user_id not in context.bot_data[consts.ADMINS_KEY]:
             logger.warning(
@@ -37,9 +36,9 @@ def restricted(func):
                     "Пользователь {id} хотел использовать администраторскую команду {command}"
                 ).format(id=user_id, command=update.message.text)
             )
-            context.bot.send_message(
-                chat_id = update.effective_chat.id,
-                text = _("Команда доступна только администраторам!\nСвяжитесь с администратором для получения доступа")
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=_("Команда доступна только администраторам!\nСвяжитесь с администратором для получения доступа")
             )
             return
         return func(update, context, *args, **kwargs)
@@ -47,15 +46,15 @@ def restricted(func):
     return wrapped
 
 
-def show_id(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text(update.message.from_user.id)
+async def show_id(update: Update, __: CallbackContext) -> None:
+    await update.message.reply_text(update.message.from_user.id)
 
 
-def show_chat_id(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text(update.effective_chat.id)
+async def show_chat_id(update: Update, __: CallbackContext) -> None:
+    await update.message.reply_text(update.effective_chat.id)
 
 
-def show_current_survey(update: Update, context: CallbackContext) -> None:
+async def show_current_survey(update: Update, context: CallbackContext) -> None:
     try:
         current = context.chat_data["current_survey"]
         out = ""
@@ -87,12 +86,12 @@ def show_current_survey(update: Update, context: CallbackContext) -> None:
             out += _("У текущего опроса нет вопросов\n\n")
     except KeyError:
         out = _("В настоящее время не обрабатывается опрос")
-    update.message.reply_text(out)
+    await update.message.reply_text(out)
 
 
-def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
+async def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
     query = update.callback_query
-    query.answer()
+    await query.answer()
     if "settings" not in context.user_data:
         context.user_data["settings"] = copy.deepcopy(
             context.bot_data[consts.DEFAULTS_KEY]
@@ -114,38 +113,38 @@ def set_lang(update: Update, context: CallbackContext, lang: str) -> None:
         logger.error(
             "User {} picked an invalid language?".format(update.effective_user.id)
         )
-    root.start(update, context)
+    await root.start(update, context)
     return cc.START_STATE
 
 
-def help(update: Update, context: CallbackContext) -> None:
+async def help(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         try:
-            test = context.bot.commands[0].long_description
+            __ = (await context.bot.get_my_commands())[0].long_description
         except AttributeError:
             bcmd = bcmds.BotCommands(context.user_data["settings"]["lang"])
-            context.bot.set_my_commands(bcmd.bot_commands)
+            await context.bot.set_my_commands(bcmd.bot_commands)
         if context.args[0] != "all":
-            commands = context.bot.commands
+            commands = await context.bot.get_my_commands()
             target = context.args[0]
-            command = list(filter(lambda command: command.command == target, commands))
+            command = list(filter(lambda cmd: cmd.command == target, commands))
             if len(command) > 0:
-                update.message.reply_text(
+                await update.message.reply_text(
                     "/{command}\n\n{desc}".format(
                         command=command[0].command, desc=command[0].long_description
                     )
                 )
             else:
-                update.message.reply_text(_("Команда не найдена! Попробуйте ещё раз"))
+                await update.message.reply_text(_("Команда не найдена! Попробуйте ещё раз"))
         else:
-            for command in context.bot.commands:
-                update.message.reply_text(
+            for command in await context.bot.get_my_commands():
+                await update.message.reply_text(
                     "/{command}\n\n{desc}".format(
                         command=command.command, desc=command.long_description
                     )
                 )
     else:
-        update.message.reply_text(
+        await update.message.reply_text(
             _(
                 "Для использования команды нужно указать команду, о которой Вы хотите узнать больше\n"
                 "Например /help show_id\n\n"
@@ -155,7 +154,7 @@ def help(update: Update, context: CallbackContext) -> None:
 
 
 @restricted
-def add_chat(update: Update, context: CallbackContext) -> None:
+async def add_chat(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
         config.read_file(open("bot.ini"))
@@ -165,34 +164,34 @@ def add_chat(update: Update, context: CallbackContext) -> None:
             chat = re.sub("[^-0-9 ]+", "", chat)
             if chat not in chat_list:
                 try:
-                    context.bot.get_chat(int(chat))
+                    await context.bot.get_chat(int(chat))
                     chats += ",{}".format(chat)
-                    update.message.reply_text(
+                    await update.message.reply_text(
                         _("Чат {id} был добавлен!").format(id=chat)
                     )
                 except BadRequest:
-                    update.message.reply_text(
+                    await update.message.reply_text(
                         _(
                             "Бота нет в чате {id}! Добавьте его в этот чат, затем попробуйте снова"
                         ).format(id=chat)
                     )
             else:
-                update.message.reply_text(
+                await update.message.reply_text(
                     _("Чат {id} уже есть в списке!").format(id=chat)
                 )
         config["bot"]["chats"] = chats.strip(",")
         config.write(open("bot.ini", "w"))
         chats = [int(chat_id) for chat_id in config["bot"]["chats"].split(",")]
         context.bot_data[consts.CHATS_KEY] = chats
-        update.message.reply_text(_("Список чатов был обновлён!"))
+        await update.message.reply_text(_("Список чатов был обновлён!"))
     else:
-        update.message.reply_text(
+        await update.message.reply_text(
             _("Для использования команды нужно указать список добавляемых чатов!")
         )
 
 
 @restricted
-def remove_chat(update: Update, context: CallbackContext) -> None:
+async def remove_chat(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
         config.read_file(open("bot.ini"))
@@ -202,22 +201,22 @@ def remove_chat(update: Update, context: CallbackContext) -> None:
             chat = re.sub("[^0-9 ]+", "", chat)
             if chat in chat_list:
                 chat_list.remove(chat)
-                update.message.reply_text(_("Чат {id} был удалён!").format(id=chat))
+                await update.message.reply_text(_("Чат {id} был удалён!").format(id=chat))
             else:
-                update.message.reply_text(_("Чата {id} нет в списке!").format(id=chat))
+                await update.message.reply_text(_("Чата {id} нет в списке!").format(id=chat))
         config["bot"]["chats"] = ",".join(chat_list)
         config.write(open("bot.ini", "w"))
         chats = [int(chat_id) for chat_id in config["bot"]["chats"].split(",")]
         context.bot_data[consts.CHATS_KEY] = chats
-        update.message.reply_text(_("Список чатов был обновлён!"))
+        await update.message.reply_text(_("Список чатов был обновлён!"))
     else:
-        update.message.reply_text(
+        await update.message.reply_text(
             _("Для использования команды нужно указать список удаляемых чатов!")
         )
 
 
 @restricted
-def add_admin(update: Update, context: CallbackContext) -> None:
+async def add_admin(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
         config.read_file(open("bot.ini"))
@@ -227,20 +226,20 @@ def add_admin(update: Update, context: CallbackContext) -> None:
             admin = re.sub("[^0-9 ]+", "", admin)
             if admin not in admin_list:
                 admins += ",{id}".format(id=admin)
-                update.message.reply_text(
+                await update.message.reply_text(
                     _("Администратор {id} был добавлен!").format(id=admin)
                 )
             else:
-                update.message.reply_text(
+                await update.message.reply_text(
                     _("Администратор {id} уже есть в списке!").format(id=admin)
                 )
         config["bot"]["admins"] = admins.strip(",")
         config.write(open("bot.ini", "w"))
         admins = [int(admin_id) for admin_id in config["bot"]["admins"].split(",")]
         context.bot_data[consts.ADMINS_KEY] = admins
-        update.message.reply_text(_("Список администраторов был обновлён!"))
+        await update.message.reply_text(_("Список администраторов был обновлён!"))
     else:
-        update.message.reply_text(
+        await update.message.reply_text(
             _(
                 "Для использования команды нужно указать список добавляемых администраторов!"
             )
@@ -248,7 +247,7 @@ def add_admin(update: Update, context: CallbackContext) -> None:
 
 
 @restricted
-def remove_admin(update: Update, context: CallbackContext) -> None:
+async def remove_admin(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         config = ConfigParser(comment_prefixes="/", allow_no_value=True)
         config.read_file(open("bot.ini"))
@@ -258,20 +257,20 @@ def remove_admin(update: Update, context: CallbackContext) -> None:
             admin = re.sub("[^0-9 ]+", "", admin)
             if admin in admin_list:
                 admin_list.remove(admin)
-                update.message.reply_text(
+                await update.message.reply_text(
                     _("Администратор {id} был удалён!").format(id=admin)
                 )
             else:
-                update.message.reply_text(
+                await update.message.reply_text(
                     _("Администратора {id} нет в списке!").format(id=admin)
                 )
         config["bot"]["admins"] = ",".join(admin_list)
         config.write(open("bot.ini", "w"))
         admins = [int(admin_id) for admin_id in config["bot"]["admins"].split(",")]
         context.bot_data[consts.ADMINS_KEY] = admins
-        update.message.reply_text(_("Список администраторов был обновлён!"))
+        await update.message.reply_text(_("Список администраторов был обновлён!"))
     else:
-        update.message.reply_text(
+        await update.message.reply_text(
             _(
                 "Для использования команды нужно указать список удаляемых администраторов!"
             )
@@ -285,13 +284,13 @@ def stop_and_restart(updater: Updater) -> None:
 
 
 @restricted
-def restart(update: Update, context: CallbackContext, updater: Updater) -> None:
-    update.message.reply_text(_("Перезапуск..."))
+async def restart(update: Update, context: CallbackContext, updater: Updater) -> None:
+    await update.message.reply_text(_("Перезапуск..."))
     Thread(target=partial(stop_and_restart, updater=updater)).start()
 
 
 @restricted
-def rotate_log(update: Update, context: CallbackContext) -> None:
+def rotate_log(update: Update, __: CallbackContext) -> None:
     logger.info(
         _("Начат новый лог-файл по запросу {id}").format(id=update.effective_user.id)
     )
@@ -300,25 +299,25 @@ def rotate_log(update: Update, context: CallbackContext) -> None:
 
 
 @restricted
-def reset_ongoing(update: Update, context: CallbackContext) -> None:
+async def reset_ongoing(update: Update, context: CallbackContext) -> None:
     context.bot_data["poll_ongoing"] = False
     del context.bot_data["ongoing"]
-    update.message.reply_text(_("Флаг сброшен"))
+    await update.message.reply_text(_("Флаг сброшен"))
 
 
 @restricted
-def set_gsheets_owner(update: Update, context: CallbackContext) -> None:
+async def set_gsheets_owner(update: Update, context: CallbackContext) -> None:
     if len(context.args) > 0:
         email = context.args[0]
         try:
             valid = email_validator.validate_email(email)
             email = valid.email
             context.bot_data[consts.SHEETS_KEY]["email"] = email
-            update.message.reply_text(_("Адрес почты изменён"))
+            await update.message.reply_text(_("Адрес почты изменён"))
         except email_validator.EmailNotValidError as e:
-            update.message.reply_text(str(e))
+            await update.message.reply_text(str(e))
     else:
-        update.message.reply_text(
+        await update.message.reply_text(
             _(
                 "Для использования команды нужно указать почтовый ящик\n"
                 "Например /set_gsheets_owner test@example.com"

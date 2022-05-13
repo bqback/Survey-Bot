@@ -112,7 +112,7 @@ def surv_diff(surv_old: Dict, surv_new: Dict, lang: str) -> str:
                 old_len = len(surv_old["questions"])
                 new_len = len(surv_new["questions"])
                 for q_idx in range(old_len, new_len):
-                    new_question = surv_new["questions"][a_idx]
+                    new_question = surv_new["questions"][q_idx]
                     diff_list += _("Добавлен вопрос №{num}\n" " -> {new}\n\n").format(
                         num=q_idx + 1, new=new_question["question"]
                     )
@@ -149,10 +149,10 @@ def num_list(stuff: List[Any], key=None) -> str:
     out = ""
     if key is None:
         for idx, item in enumerate(stuff):
-            out += f"{idx+1}. {item}\n"
+            out += f"{idx + 1}. {item}\n"
     else:
         for idx, item in enumerate(stuff):
-            out += f"{idx+1}. {item[key]}\n"
+            out += f"{idx + 1}. {item[key]}\n"
     return out
 
 
@@ -171,7 +171,7 @@ def print_question(question: Dict) -> str:
     else:
         out += _(" (можно выбрать только один вариант)")
     for idx, answer in enumerate(question["answers"]):
-        out += f"\n\t{idx+1}. {answer}"
+        out += f"\n\t{idx + 1}. {answer}"
     return out
 
 
@@ -182,8 +182,9 @@ def print_survey(survey: Dict) -> str:
     return out
 
 
-def parse_cfg(filename: str) -> Tuple[str]:
-    config = configparser.ConfigParser(comment_prefixes="/", allow_no_value=True)
+def parse_cfg(filename: str) -> Tuple[
+    str, str, List[int], List[int], Any, Dict[Union[str, Any], Union[str, float, int]], str, int, int, str, str]:
+    config = configparser.ConfigParser(comment_prefixes="#", allow_no_value=True)
     config.read_file(open(filename))
 
     token = config["bot"]["token"]
@@ -287,7 +288,7 @@ def submit_data(answers: Dict, questions: List[str], title: str, file: str, emai
 
 
 def iter_baskets_contiguous(
-    items: List[Any], per_row: int, maxbaskets: int = 3, item_count=None
+        items: List[Any], per_row: int, max_baskets: int = 3, item_count=None
 ) -> Iterable[List[Any]]:
     """
     generates balanced baskets from iterable, contiguous contents
@@ -297,11 +298,11 @@ def iter_baskets_contiguous(
     if item_count < per_row:
         yield items
     else:
-        baskets = min(item_count, maxbaskets)
+        baskets = min(item_count, max_baskets)
         items = iter(items)
         floor = item_count // baskets
         ceiling = floor + 1
-        stepdown = item_count % baskets
+        step_down = item_count % baskets
         for x_i in range(baskets):
-            length = ceiling if x_i < stepdown else floor
+            length = ceiling if x_i < step_down else floor
             yield [next(items) for _ in range(length)]
