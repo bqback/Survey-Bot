@@ -58,7 +58,7 @@ def main():
     builder.defaults(Defaults(**defaults))
     application = builder.build()
 
-    setup.register_dispatcher(
+    setup.register_application(
         application,
         admins=admins,
         chats=chats,
